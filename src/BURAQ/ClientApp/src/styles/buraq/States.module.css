@@ -1,0 +1,319 @@
+/*
+ * States — loading skeletons, empty, error, permission denied, offline.
+ * Consumed by src/components/buraq/states/*.
+ */
+
+@keyframes arzSkeletonShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Screen-reader-only text. Scoped per module because CSS Modules are file-local. */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+/* ------------------------------------------------------------ state shell */
+
+.state {
+  --buraq-state-color: var(--buraq-text-muted);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--buraq-space-3);
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+  padding: var(--buraq-space-7) var(--buraq-space-4);
+  text-align: center;
+  font-family: var(--buraq-font-sans);
+  color: var(--buraq-text-secondary);
+}
+
+.state[data-compact] {
+  padding: var(--buraq-space-5) var(--buraq-space-3);
+  gap: var(--buraq-space-2);
+}
+
+.state[data-tone='critical'] {
+  --buraq-state-color: var(--buraq-critical);
+}
+
+.state[data-tone='warning'] {
+  --buraq-state-color: var(--buraq-warning);
+}
+
+.stateIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--buraq-state-color);
+  opacity: 0.85;
+}
+
+.stateTitle {
+  margin: 0;
+  font-family: var(--buraq-font-display);
+  font-size: var(--buraq-text-xl);
+  font-weight: 600;
+  letter-spacing: var(--buraq-tracking-wide);
+  line-height: var(--buraq-leading-tight);
+  color: var(--buraq-text-primary);
+  overflow-wrap: anywhere;
+}
+
+.state[data-compact] .stateTitle {
+  font-size: var(--buraq-text-md);
+}
+
+.stateDescription {
+  margin: 0;
+  max-width: 52ch;
+  font-size: var(--buraq-text-sm);
+  line-height: var(--buraq-leading-normal);
+  color: var(--buraq-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.stateDetail {
+  margin: 0;
+  max-width: 68ch;
+  font-family: var(--buraq-font-mono);
+  font-size: var(--buraq-text-2xs);
+  line-height: var(--buraq-leading-normal);
+  color: var(--buraq-text-muted);
+  overflow-wrap: anywhere;
+}
+
+.stateActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--buraq-space-2);
+  margin-top: var(--buraq-space-1);
+}
+
+/* ----------------------------------------------------------------- action */
+
+.action {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--buraq-space-2);
+  padding: var(--buraq-space-2) var(--buraq-space-4);
+  border: 1px solid var(--buraq-border-accent);
+  border-radius: var(--buraq-radius-sm);
+  background-color: var(--buraq-bg-inset);
+  color: var(--buraq-primary);
+  font-family: var(--buraq-font-sans);
+  font-size: var(--buraq-text-sm);
+  font-weight: 600;
+  letter-spacing: var(--buraq-tracking-wide);
+  cursor: pointer;
+
+  transition:
+    background-color var(--buraq-duration-fast) var(--buraq-ease-out),
+    box-shadow var(--buraq-duration-fast) var(--buraq-ease-out);
+}
+
+.action:hover {
+  background-color: var(--buraq-bg-hover);
+}
+
+.action:focus-visible {
+  outline: none;
+  box-shadow: var(--buraq-focus-ring);
+}
+
+.action:disabled {
+  opacity: var(--buraq-disabled-opacity);
+  cursor: not-allowed;
+}
+
+/* ---------------------------------------------------------------- offline */
+
+.offlineInline {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--buraq-space-2) var(--buraq-space-3);
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+  padding: var(--buraq-space-2) var(--buraq-space-3);
+  border: 1px solid var(--buraq-warning-dim);
+  border-radius: var(--buraq-radius-sm);
+  background-color: color-mix(in srgb, var(--buraq-warning) 10%, transparent);
+  font-family: var(--buraq-font-sans);
+}
+
+.offlineStatus {
+  font-family: var(--buraq-font-mono);
+  font-size: var(--buraq-text-2xs);
+  color: var(--buraq-text-muted);
+  overflow-wrap: anywhere;
+}
+
+.offlineInline .action {
+  padding: var(--buraq-space-1) var(--buraq-space-3);
+  font-size: var(--buraq-text-2xs);
+  margin-inline-start: auto;
+}
+
+/* --------------------------------------------------------------- skeleton */
+
+.loading {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.skel {
+  display: block;
+  height: var(--buraq-space-3);
+  border-radius: var(--buraq-radius-xs);
+  background-color: var(--buraq-bg-hover);
+  background-image: linear-gradient(90deg, transparent, var(--buraq-bg-selected), transparent);
+  background-size: 200% 100%;
+
+  /*
+   * CSS animation, not a JS timer: low-energy mode pauses every animation in
+   * the document, so a scoreboard left open overnight stops repainting.
+   */
+  animation: arzSkeletonShimmer 1.4s var(--buraq-ease-in-out) infinite;
+}
+
+.skelTitle {
+  width: 40%;
+  height: var(--buraq-space-4);
+}
+
+.skelChip {
+  width: var(--buraq-space-8);
+  height: var(--buraq-space-4);
+  border-radius: var(--buraq-radius-sm);
+}
+
+.skelStack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--buraq-space-3);
+  padding: var(--buraq-space-2) 0;
+}
+
+.skelTable {
+  display: flex;
+  flex-direction: column;
+  gap: var(--buraq-space-2);
+}
+
+.skelRow {
+  display: flex;
+  align-items: center;
+  gap: var(--buraq-space-3);
+  padding: var(--buraq-space-2) 0;
+  border-bottom: 1px solid var(--buraq-border-subtle);
+}
+
+.skelCell {
+  display: block;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* The first column is the identifying one — team, challenge — so it is wider. */
+.skelRow > .skelCell:first-child {
+  flex: 2 1 0;
+}
+
+.skelRow[data-head] .skel {
+  height: var(--buraq-space-2);
+  opacity: 0.7;
+}
+
+.skelGrid {
+  display: grid;
+
+  /* min(100%, …) is what keeps the grid from overflowing a 360px viewport. */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, calc(var(--buraq-space-8) * 3.5)), 1fr));
+  gap: var(--buraq-space-4);
+}
+
+.skelCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--buraq-space-3);
+  min-width: 0;
+  padding: var(--buraq-space-4);
+  border: 1px solid var(--buraq-border-subtle);
+  border-radius: var(--buraq-radius-md);
+  background-color: var(--buraq-bg-elevated);
+}
+
+.skelChart {
+  display: flex;
+  flex-direction: column;
+  gap: var(--buraq-space-2);
+  min-width: 0;
+}
+
+.skelBars {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--buraq-space-2);
+  height: calc(var(--buraq-space-8) * 3);
+}
+
+.skelBar {
+  flex: 1 1 0;
+  min-width: 0;
+  border-radius: var(--buraq-radius-xs) var(--buraq-radius-xs) 0 0;
+}
+
+.skelAxis {
+  display: block;
+  height: 1px;
+  background-color: var(--buraq-border);
+}
+
+@media (max-width: 30em) {
+  .state {
+    padding: var(--buraq-space-5) var(--buraq-space-3);
+  }
+
+  .skelBars {
+    height: calc(var(--buraq-space-8) * 2);
+  }
+}
+
+@media (forced-colors: active) {
+  .skel {
+    background-image: none;
+    border: 1px solid canvastext;
+  }
+
+  .action {
+    border-color: buttontext;
+    color: buttontext;
+  }
+
+  .offlineInline {
+    border-color: canvastext;
+    background-color: canvas;
+  }
+}

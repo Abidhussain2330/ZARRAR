@@ -1,0 +1,617 @@
+/*
+ * ZARRAR player FX — the living cyber environment behind every player page.
+ *
+ * Global (not a module) so the backdrop component, the shell and any page can share the same
+ * primitives. Every animation here moves layers with transform/opacity only: players stream
+ * their screen while they use these pages, and paint-heavy effects (animated blur, background
+ * position, filters on large areas) would cost the encoder CPU and video quality.
+ *
+ *   .zr-backdrop     fixed full-viewport scene: key art, haze, hex mesh, data rain, grid
+ *                    floor, scan beam, glitch bands, scanlines, vignette, HUD corners
+ *   --zr-corners     background layers that draw HUD corner brackets on any panel
+ *   .zr-glitch       chrome title with periodic RGB-split glitch (needs data-text)
+ *   .zr-cut          chamfered clip for buttons and inputs
+ */
+
+/* ------------------------------------------------------------------ backdrop */
+
+.zr-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: #040304;
+}
+
+.zr-backdrop > * {
+  position: absolute;
+  inset: 0;
+}
+
+/* Key art, pushed far back. */
+.zr-bd-art {
+  background: center / cover no-repeat;
+  opacity: 0.2;
+  filter: saturate(1.3) contrast(1.15);
+  transform: scale(1.04);
+  animation: zrArtDrift 38s ease-in-out infinite alternate;
+}
+
+@keyframes zrArtDrift {
+  to {
+    transform: scale(1.1) translate(-1.5%, -1%);
+  }
+}
+
+/* Colour: red heat at the top and bottom-right, a cold cyan edge bottom-left for contrast. */
+.zr-bd-haze {
+  background:
+    radial-gradient(1100px 520px at 50% -8%, rgb(255 42 61 / 30%), transparent 70%),
+    radial-gradient(800px 600px at 105% 105%, rgb(200 16 34 / 28%), transparent 70%),
+    radial-gradient(700px 520px at -8% 100%, rgb(70 230 255 / 9%), transparent 70%),
+    linear-gradient(180deg, rgb(4 3 4 / 30%), rgb(4 3 4 / 70%));
+}
+
+/* Hexagon mesh, oversized and drifting diagonally. */
+.zr-bd-hex {
+  inset: -120px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpath d='M28 0 56 16v32L28 64 0 48V16zM28 64v33' fill='none' stroke='%23ff2a3d' stroke-opacity='.16' stroke-width='1'/%3E%3C/svg%3E");
+  background-size: 56px 97px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 20%, transparent 80%);
+  animation: zrHexDrift 26s linear infinite;
+}
+
+@keyframes zrHexDrift {
+  to {
+    transform: translate(56px, 97px);
+  }
+}
+
+/* Data rain: three columns-of-streaks layers falling at different speeds. */
+.zr-bd-rain i {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  width: 100%;
+  height: 200%;
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent 0 var(--gap),
+    rgb(255 42 61 / var(--a)) var(--gap) calc(var(--gap) + 1px),
+    transparent calc(var(--gap) + 1px) calc(var(--gap) * 2)
+  );
+  mask-image: repeating-linear-gradient(180deg, transparent 0 40px, #000 60px 120px, transparent 160px 300px);
+  animation: zrRain var(--t) linear infinite;
+}
+
+.zr-bd-rain i:nth-child(1) {
+  --gap: 73px;
+  --a: 32%;
+  --t: 9s;
+}
+
+.zr-bd-rain i:nth-child(2) {
+  --gap: 131px;
+  --a: 22%;
+  --t: 14s;
+
+  left: 37px;
+}
+
+.zr-bd-rain i:nth-child(3) {
+  --gap: 197px;
+  --a: 45%;
+  --t: 6s;
+
+  left: 91px;
+}
+
+@keyframes zrRain {
+  to {
+    transform: translateY(50%);
+  }
+}
+
+/* Perspective floor; the inner layer slides one cell and loops. */
+.zr-bd-grid {
+  top: auto;
+  right: -40%;
+  left: -40%;
+  height: 46%;
+  overflow: hidden;
+  perspective: 520px;
+  mask-image: linear-gradient(to top, #000 15%, transparent 95%);
+}
+
+.zr-bd-grid::before {
+  position: absolute;
+  inset: -64px 0 0;
+  content: '';
+  background-image:
+    linear-gradient(rgb(255 42 61 / 34%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 42 61 / 22%) 1px, transparent 1px);
+  background-size: 64px 64px;
+  transform: rotateX(62deg);
+  transform-origin: bottom;
+  animation: zrFloor 2.2s linear infinite;
+}
+
+@keyframes zrFloor {
+  from {
+    transform: rotateX(62deg) translateY(0);
+  }
+
+  to {
+    transform: rotateX(62deg) translateY(64px);
+  }
+}
+
+/* A bright band that sweeps the whole screen every few seconds. */
+.zr-bd-beam {
+  top: 0;
+  bottom: auto;
+  height: 220px;
+  background: linear-gradient(180deg, transparent, rgb(255 60 80 / 7%) 45%, rgb(255 255 255 / 5%) 50%, transparent);
+  animation: zrBeam 6.5s linear infinite;
+}
+
+@keyframes zrBeam {
+  from {
+    transform: translateY(-240px);
+  }
+
+  to {
+    transform: translateY(110vh);
+  }
+}
+
+/* Glitch: two offset slices that flash for a few frames, then sit dark. */
+.zr-bd-glitch::before,
+.zr-bd-glitch::after {
+  position: absolute;
+  right: 0;
+  left: 0;
+  content: '';
+  opacity: 0;
+}
+
+.zr-bd-glitch::before {
+  top: 31%;
+  height: 7px;
+  background: linear-gradient(90deg, transparent, rgb(255 42 61 / 80%) 20%, rgb(255 42 61 / 30%) 70%, transparent);
+  animation: zrGlitchA 7.3s steps(1) infinite;
+}
+
+.zr-bd-glitch::after {
+  top: 64%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent 10%, rgb(70 230 255 / 70%) 40%, transparent 85%);
+  animation: zrGlitchB 9.1s steps(1) infinite;
+}
+
+@keyframes zrGlitchA {
+  0%,
+  91% {
+    opacity: 0;
+    transform: none;
+  }
+
+  92% {
+    opacity: 1;
+    transform: translateX(-40px) scaleY(3);
+  }
+
+  93% {
+    opacity: 0.6;
+    transform: translate(60px, 120px);
+  }
+
+  94% {
+    opacity: 1;
+    transform: translate(-20px, -60px) scaleY(6);
+  }
+
+  95% {
+    opacity: 0;
+  }
+}
+
+@keyframes zrGlitchB {
+  0%,
+  83% {
+    opacity: 0;
+    transform: none;
+  }
+
+  84% {
+    opacity: 1;
+    transform: translateX(80px);
+  }
+
+  85% {
+    opacity: 0.4;
+    transform: translate(-50px, -90px) scaleY(4);
+  }
+
+  86% {
+    opacity: 0;
+  }
+}
+
+.zr-bd-scan {
+  background: repeating-linear-gradient(0deg, rgb(0 0 0 / 26%) 0 1px, transparent 1px 3px);
+}
+
+.zr-bd-vignette {
+  background: radial-gradient(ellipse at center, transparent 55%, rgb(0 0 0 / 75%) 100%);
+}
+
+/* HUD corner brackets with tiny readouts, framing the whole viewport. */
+.zr-hud > span {
+  position: absolute;
+  width: 46px;
+  height: 46px;
+  border-color: rgb(255 42 61 / 70%);
+  border-style: solid;
+  border-width: 0;
+}
+
+.zr-hud > .tl {
+  top: 10px;
+  left: 10px;
+  border-top-width: 2px;
+  border-left-width: 2px;
+}
+
+.zr-hud > .tr {
+  top: 10px;
+  right: 10px;
+  border-top-width: 2px;
+  border-right-width: 2px;
+}
+
+.zr-hud > .bl {
+  bottom: 10px;
+  left: 10px;
+  border-bottom-width: 2px;
+  border-left-width: 2px;
+}
+
+.zr-hud > .br {
+  right: 10px;
+  bottom: 10px;
+  border-right-width: 2px;
+  border-bottom-width: 2px;
+}
+
+.zr-hud > b {
+  position: absolute;
+  bottom: 18px;
+  font: 600 10px/1 'JetBrains Mono', ui-monospace, monospace;
+  letter-spacing: 0.24em;
+  color: rgb(255 42 61 / 55%);
+}
+
+.zr-hud > b:first-of-type {
+  left: 66px;
+}
+
+.zr-hud > b:last-of-type {
+  right: 66px;
+  animation: zrBlink 1.4s steps(2) infinite;
+}
+
+@keyframes zrBlink {
+  50% {
+    opacity: 0.2;
+  }
+}
+
+/* Anything that should sit above the backdrop. */
+.zr-above {
+  position: relative;
+  z-index: 1;
+}
+
+/* ------------------------------------------------------------------- frames */
+
+:root {
+  --zr-c: #ff2a3d;
+  --zr-corners:
+    linear-gradient(var(--zr-c), var(--zr-c)) top left / 16px 2px no-repeat,
+    linear-gradient(var(--zr-c), var(--zr-c)) top left / 2px 16px no-repeat,
+    linear-gradient(var(--zr-c), var(--zr-c)) top right / 16px 2px no-repeat,
+    linear-gradient(var(--zr-c), var(--zr-c)) top right / 2px 16px no-repeat,
+    linear-gradient(var(--zr-c), var(--zr-c)) bottom left / 16px 2px no-repeat,
+    linear-gradient(var(--zr-c), var(--zr-c)) bottom left / 2px 16px no-repeat,
+    linear-gradient(var(--zr-c), var(--zr-c)) bottom right / 16px 2px no-repeat,
+    linear-gradient(var(--zr-c), var(--zr-c)) bottom right / 2px 16px no-repeat;
+  --zr-fill: linear-gradient(160deg, rgb(28 10 14 / 86%), rgb(8 6 8 / 90%) 45%, rgb(14 6 9 / 92%));
+  --zr-edge: inset 0 1px 0 rgb(255 120 130 / 18%), 0 0 0 1px rgb(255 42 61 / 32%), 0 0 28px rgb(255 42 61 / 14%);
+  --zr-cut: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+  --zr-cut-sm: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+  --zr-slant: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+}
+
+.zr-frame {
+  position: relative;
+  background: var(--zr-corners), var(--zr-fill);
+  box-shadow: var(--zr-edge);
+}
+
+/* --------------------------------------------------------------- glitch text */
+
+/* Chrome-to-red display title. Add data-text="same text" for the glitch slices. */
+.zr-glitch {
+  position: relative;
+  display: inline-block;
+  color: transparent;
+  background: linear-gradient(180deg, #fff 0%, #f6dfe2 40%, #ff4a5a 68%, #b30f20 100%);
+  background-clip: text;
+  filter: drop-shadow(-2px 0 rgb(70 230 255 / 45%)) drop-shadow(2px 0 rgb(255 42 61 / 70%))
+    drop-shadow(0 0 16px rgb(255 42 61 / 45%));
+}
+
+.zr-glitch::before,
+.zr-glitch::after {
+  position: absolute;
+  inset: 0;
+  content: attr(data-text);
+  background: inherit;
+  background-clip: text;
+  opacity: 0;
+}
+
+.zr-glitch::before {
+  animation: zrSliceA 5.5s steps(1) infinite;
+}
+
+.zr-glitch::after {
+  animation: zrSliceB 5.5s steps(1) infinite;
+}
+
+@keyframes zrSliceA {
+  0%,
+  88% {
+    opacity: 0;
+    transform: none;
+    clip-path: none;
+  }
+
+  89% {
+    opacity: 1;
+    transform: translateX(-6px);
+    clip-path: inset(12% 0 58% 0);
+  }
+
+  91% {
+    opacity: 1;
+    transform: translateX(5px);
+    clip-path: inset(62% 0 6% 0);
+  }
+
+  93% {
+    opacity: 0;
+  }
+}
+
+@keyframes zrSliceB {
+  0%,
+  89% {
+    opacity: 0;
+    transform: none;
+    clip-path: none;
+  }
+
+  90% {
+    opacity: 1;
+    transform: translateX(7px);
+    clip-path: inset(40% 0 30% 0);
+  }
+
+  92% {
+    opacity: 0;
+  }
+}
+
+/* Blinking block cursor after eyebrows and terminal text. */
+.zr-cursor::after {
+  display: inline-block;
+  width: 0.6em;
+  height: 1em;
+  margin-left: 6px;
+  vertical-align: -0.12em;
+  content: '';
+  background: currentcolor;
+  animation: zrBlink 1s steps(2) infinite;
+}
+
+/* ------------------------------------------------------------- flag hit (M6) */
+
+/* Full-screen FLAG CAPTURED / ACCESS DENIED on the player's own page after a submit. */
+.zr-hit {
+  position: fixed;
+  inset: 0;
+  z-index: 6000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  animation: zrHitLife var(--life, 1.8s) ease-out forwards;
+}
+
+.zr-hit-ok {
+  --hit: #1ff28c;
+  --hit-rgb: 31 242 140;
+}
+
+.zr-hit-bad {
+  --hit: #ff2a3d;
+  --hit-rgb: 255 42 61;
+}
+
+.zr-hit::before {
+  position: absolute;
+  inset: 0;
+  content: '';
+  background:
+    repeating-linear-gradient(0deg, rgb(var(--hit-rgb) / 7%) 0 2px, transparent 2px 5px),
+    radial-gradient(ellipse at center, rgb(var(--hit-rgb) / 38%), rgb(0 0 0 / 88%) 72%);
+}
+
+.zr-hit::after {
+  position: absolute;
+  inset: 0;
+  content: '';
+  background: #fff;
+  opacity: 0;
+  animation: zrWhiteout 0.45s ease-out;
+}
+
+.zr-hit-band {
+  position: relative;
+  width: 100%;
+  padding: 26px 0 30px;
+  text-align: center;
+  background: linear-gradient(90deg, transparent, rgb(var(--hit-rgb) / 30%) 15%, rgb(var(--hit-rgb) / 30%) 85%, transparent);
+  border-top: 2px solid var(--hit);
+  border-bottom: 2px solid var(--hit);
+  animation: zrBandIn 0.35s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+
+.zr-hit-title {
+  font-family: orbitron, 'Chakra Petch', sans-serif;
+  font-size: clamp(44px, 8vw, 112px);
+  font-style: italic;
+  font-weight: 900;
+  line-height: 1;
+  color: #fff;
+  letter-spacing: 0.03em;
+  text-shadow:
+    0 0 24px var(--hit),
+    0 0 70px var(--hit),
+    -4px 0 rgb(70 230 255 / 60%),
+    4px 0 rgb(255 42 61 / 60%);
+  animation: zrSlam 0.5s cubic-bezier(0.2, 1.6, 0.35, 1) both;
+}
+
+.zr-hit-sub {
+  margin-top: 14px;
+  font-family: 'Chakra Petch', sans-serif;
+  font-size: clamp(16px, 2vw, 24px);
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  animation: zrBandIn 0.4s 0.15s both;
+}
+
+.zr-hit-bad .zr-hit-band {
+  animation:
+    zrBandIn 0.3s both,
+    zrShake 0.45s 0.1s;
+}
+
+@keyframes zrHitLife {
+  0% {
+    opacity: 0;
+  }
+
+  6%,
+  80% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes zrWhiteout {
+  0% {
+    opacity: 0.55;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes zrBandIn {
+  from {
+    opacity: 0;
+    transform: scaleY(0.2);
+  }
+}
+
+@keyframes zrSlam {
+  0% {
+    opacity: 0;
+    transform: scale(2.6) skewX(-12deg);
+  }
+
+  60% {
+    opacity: 1;
+    transform: scale(0.95);
+  }
+
+  100% {
+    transform: none;
+  }
+}
+
+@keyframes zrShake {
+  20%,
+  60% {
+    transform: translateX(-14px);
+  }
+
+  40%,
+  80% {
+    transform: translateX(14px);
+  }
+}
+
+/* ---------------------------------------------------- calm (screen sharing) */
+
+/* While the player streams their screen, the backdrop stands still and drops its moving layers:
+   falling data, scan beam and glitch bands would otherwise be streamed to the projector and
+   spend bitrate that should go to the player's terminal text. */
+.zr-backdrop.zr-calm .zr-bd-rain,
+.zr-backdrop.zr-calm .zr-bd-beam,
+.zr-backdrop.zr-calm .zr-bd-glitch {
+  display: none;
+}
+
+.zr-backdrop.zr-calm *,
+.zr-backdrop.zr-calm *::before,
+.zr-backdrop.zr-calm *::after {
+  animation: none !important;
+}
+
+/* ----------------------------------------------------------- reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+  .zr-bd-art,
+  .zr-bd-hex,
+  .zr-bd-rain i,
+  .zr-bd-grid::before,
+  .zr-bd-beam,
+  .zr-bd-glitch::before,
+  .zr-bd-glitch::after,
+  .zr-glitch::before,
+  .zr-glitch::after,
+  .zr-cursor::after,
+  .zr-hud > b {
+    animation: none;
+  }
+
+  .zr-hit,
+  .zr-hit-band,
+  .zr-hit-title,
+  .zr-hit-sub {
+    animation-duration: 0.01ms;
+  }
+}

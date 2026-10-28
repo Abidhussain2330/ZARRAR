@@ -1,0 +1,417 @@
+/*
+ * Event timeline — the Events page centrepiece.
+ *
+ * Rebuilt from the original GanttTimeline (7-week window, day/month headers, weekend
+ * shading, now-marker, sticky title column) with real CSS 3D.
+ *
+ * How the 3D holds together:
+ *   - ONE perspective container. The header row and the bar rows live inside a single
+ *     `preserve-3d` scene tilted on X, so they share the transform and stay aligned. Tilting
+ *     them separately would slide the bars off their own dates.
+ *   - Bars are extruded on Z with a lighter top face and a darker side face, so they read as
+ *     slabs standing on the grid rather than flat rectangles.
+ *   - Labels counter-rotate by the scene angle, keeping type upright and legible while the
+ *     plane underneath is tilted.
+ *   - The tilt is modest (7deg). Past ~12deg the day columns start to visibly converge and the
+ *     timeline stops being readable as data.
+ */
+
+.wrap {
+  position: relative;
+  padding: 22px 0 10px;
+  margin-bottom: 30px;
+  overflow: hidden;
+  background:
+    radial-gradient(900px 300px at 30% 0%, rgb(255 42 61 / 14%), transparent 70%),
+    linear-gradient(165deg, rgb(18 17 20 / 95%), rgb(6 6 7 / 95%));
+  border: 1px solid var(--bq-line);
+  border-radius: var(--bq-r-lg);
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 0 22px 16px;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--bq-display);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: var(--bq-track-display);
+}
+
+.range {
+  margin: 0;
+  font-family: var(--bq-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  color: var(--bq-ink-5);
+}
+
+/* --------------------------------------------------------------- 3D scene */
+
+.viewport {
+  overflow-x: auto;
+  overflow-y: hidden;
+  /* Perspective lives here, on the scrolling ancestor, so depth stays consistent as the
+     timeline scrolls rather than shearing with it. */
+  perspective: 1400px;
+  perspective-origin: 50% 30%;
+  scrollbar-width: thin;
+}
+
+.viewport::-webkit-scrollbar {
+  height: 8px;
+}
+
+.viewport::-webkit-scrollbar-thumb {
+  background: rgb(255 42 61 / 30%);
+  border-radius: var(--bq-r-pill);
+}
+
+.scene {
+  position: relative;
+  transform-style: preserve-3d;
+  transform: rotateX(7deg);
+  transform-origin: 50% 0%;
+  transition: transform 0.5s ease;
+}
+
+/* Flattening on hover lets someone read exact dates without fighting the perspective. */
+.viewport:hover .scene,
+.viewport:focus-within .scene {
+  transform: rotateX(0deg);
+}
+
+/* ---------------------------------------------------------------- header */
+
+.dateRow {
+  position: relative;
+  height: 44px;
+  transform-style: preserve-3d;
+}
+
+.month,
+.day {
+  position: absolute;
+  top: 0;
+  width: 40px;
+  font-family: var(--bq-mono);
+  text-align: center;
+}
+
+.month {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--bq-violet-hi);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.day {
+  top: 20px;
+  font-size: 10.5px;
+  color: var(--bq-ink-5);
+}
+
+.today {
+  font-weight: 700;
+  color: var(--bq-ink);
+}
+
+.today::after {
+  display: block;
+  width: 4px;
+  height: 4px;
+  margin: 3px auto 0;
+  content: '';
+  background: var(--bq-live);
+  border-radius: var(--bq-r-pill);
+}
+
+/* ------------------------------------------------------------------ grid */
+
+.grid {
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+.gridLines {
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(90deg, rgb(255 42 61 / 8%) 0 1px, transparent 1px 40px);
+  transform: translateZ(-2px);
+}
+
+.weekend {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 80px;
+  background: rgb(255 42 61 / 4%);
+  transform: translateZ(-1px);
+}
+
+/* The now-marker is a plane standing on the grid, not a line drawn over it — it extends on Z
+   so it visibly passes through the bars at the current moment. */
+.nowLine {
+  position: absolute;
+  top: -44px;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, transparent, var(--bq-live), rgb(46 224 138 / 20%));
+  box-shadow: 0 0 12px rgb(46 224 138 / 60%);
+  transform: translateZ(26px);
+}
+
+.nowFlag {
+  position: absolute;
+  top: -58px;
+  left: 50%;
+  padding: 3px 8px;
+  font-family: var(--bq-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: #04250f;
+  white-space: nowrap;
+  background: var(--bq-live);
+  border-radius: 3px;
+  transform: translateX(-50%);
+}
+
+/* ------------------------------------------------------------------ rows */
+
+.row {
+  position: relative;
+  height: 46px;
+  transform-style: preserve-3d;
+}
+
+/* --------------------------------------------------------------- the bar */
+
+.bar {
+  position: absolute;
+  top: 8px;
+  height: 28px;
+  text-decoration: none;
+  transform-style: preserve-3d;
+  transform: translateZ(14px);
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), filter 0.28s ease;
+  animation: barIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+.bar:hover,
+.bar:focus-visible {
+  filter: brightness(1.15);
+  transform: translateZ(34px);
+}
+
+@keyframes barIn {
+  from {
+    opacity: 0;
+    transform: translateZ(14px) scaleX(0.02);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateZ(14px) scaleX(1);
+  }
+}
+
+/* Front face. */
+.barFace {
+  position: absolute;
+  inset: 0;
+  border-left: 2px solid var(--bar-hi);
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--bar-hi), var(--bar));
+  border-radius: 1px;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 35%);
+}
+
+/* Top face — the extrusion. Rotated back on X and lifted so it reads as the lit top of a slab. */
+.barTop {
+  position: absolute;
+  right: 0;
+  left: 0;
+  height: 9px;
+  background: var(--bar-hi);
+  border-radius: 1px 1px 0 0;
+  opacity: 0.95;
+  transform: rotateX(72deg);
+  transform-origin: top;
+}
+
+/* Shadow cast down onto the grid plane, which is what actually sells the height. */
+.barShadow {
+  position: absolute;
+  inset: 0;
+  background: rgb(0 0 0 / 60%);
+  border-radius: 1px;
+  filter: blur(6px);
+  transform: translateZ(-16px) translateY(6px);
+}
+
+.barLabel {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  max-width: calc(100% - 20px);
+  overflow: hidden;
+  font-family: var(--bq-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  color: #fff;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-shadow: 0 1px 3px rgb(0 0 0 / 70%);
+  /* Counter-rotates the scene tilt so the text stays upright. */
+  transform: translateY(-50%) rotateX(-7deg);
+}
+
+.viewport:hover .barLabel,
+.viewport:focus-within .barLabel {
+  transform: translateY(-50%) rotateX(0deg);
+}
+
+/* Label parked outside the bar when the bar is too narrow to hold it. */
+.barLabelOutside {
+  position: absolute;
+  top: 50%;
+  font-family: var(--bq-mono);
+  font-size: 10.5px;
+  color: var(--bq-ink-2);
+  white-space: nowrap;
+  transform: translateY(-50%) rotateX(-7deg);
+}
+
+.viewport:hover .barLabelOutside,
+.viewport:focus-within .barLabelOutside {
+  transform: translateY(-50%) rotateX(0deg);
+}
+
+/* Marks a bar that continues past the visible window. */
+.overflowRight .barFace {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  mask-image: linear-gradient(90deg, #000 82%, transparent);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 14px 22px 4px;
+  font-family: var(--bq-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--bq-ink-5);
+}
+
+.legendItem {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.legendSwatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+.empty {
+  padding: 40px 22px;
+  font-size: 13.5px;
+  color: var(--bq-ink-4);
+  text-align: center;
+}
+
+/* Motion and depth are decorative here; the timeline reads fine flat, so drop all of it
+   rather than shipping a tilted scene to someone who asked for no animation. */
+@media (prefers-reduced-motion: reduce) {
+  .scene {
+    transform: none;
+    transition: none;
+  }
+
+  .bar {
+    animation: none;
+    transition: none;
+  }
+
+  .barLabel,
+  .barLabelOutside {
+    transform: translateY(-50%);
+  }
+
+  .barTop,
+  .barShadow {
+    display: none;
+  }
+}
+
+/* =====================================================================================
+ * M6 "cyber tussle" layer: HUD panel, Orbitron title, red month labels, glowing slabs and a
+ * pulsing NOW line.
+ * ===================================================================================== */
+
+.wrap {
+  background:
+    var(--zr-corners),
+    radial-gradient(900px 300px at 30% 0%, rgb(255 42 61 / 18%), transparent 70%),
+    var(--zr-fill);
+  border: 0;
+  border-radius: 0;
+  box-shadow: var(--zr-edge);
+}
+
+.title {
+  font-family: var(--zr-display);
+  font-size: 18px;
+  font-style: italic;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.range {
+  color: rgb(255 140 150 / 70%);
+}
+
+.month {
+  font-weight: 700;
+  color: #ff4a5a;
+  text-shadow: 0 0 8px rgb(255 42 61 / 70%);
+}
+
+.nowLine {
+  box-shadow: 0 0 16px currentcolor;
+  animation: nowPulse 1.6s ease-in-out infinite;
+}
+
+@keyframes nowPulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+.bar:hover .barFace,
+.bar:focus-visible .barFace {
+  filter: brightness(1.3) drop-shadow(0 0 10px currentcolor);
+}
+
+.legend {
+  letter-spacing: 0.16em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nowLine {
+    animation: none;
+  }
+}

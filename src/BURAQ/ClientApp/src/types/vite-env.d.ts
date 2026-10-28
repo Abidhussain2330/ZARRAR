@@ -1,0 +1,34 @@
+/// <reference types="vite/client" />
+/// <reference types="vite-plugin-pages/client-react" />
+
+interface ImportMetaEnv {
+  readonly VITE_APP_BUILD_TIMESTAMP: string
+  readonly VITE_APP_GIT_SHA: string
+  readonly VITE_APP_GIT_NAME: string
+}
+
+/** Release version from package.json, injected at build time by vite.config.mts. */
+declare const __BURAQ_VERSION__: string
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv
+}
+
+declare module 'virtual:i18n-manifest' {
+  const manifest: Record<string, string>
+
+  export default manifest
+}
+
+declare module 'virtual:contributors' {
+  interface Contributor {
+    login: string
+    html_url: string
+    avatar_url: string
+    contributions: number
+  }
+
+  const contributors: Contributor[]
+
+  export default contributors
+}

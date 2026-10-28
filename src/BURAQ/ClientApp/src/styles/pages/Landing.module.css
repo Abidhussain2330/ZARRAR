@@ -1,0 +1,523 @@
+/*
+ * Landing — the gateway page, staged as a versus poster.
+ *
+ * M6 "cyber tussle": the living backdrop (fx.css); the blue and green operatives slide in from
+ * either side and square off across a crackling lightning seam; the ZARRAR logo and a glitching
+ * chrome "OUTHACK YOUR RIVAL" hold the centre; live counters sit in hex chips; a ticker runs
+ * along the bottom. The whole stage shudders on a beat (useShudderBeat in Index.tsx).
+ */
+
+.stage {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  min-height: 640px;
+  overflow: hidden;
+  font-family: var(--bq-body);
+  color: var(--bq-ink);
+  background: #040304;
+  -webkit-font-smoothing: antialiased;
+}
+
+.shudder {
+  animation: shudder 240ms ease-out;
+}
+
+@keyframes shudder {
+  0% {
+    transform: translate(0, 0);
+  }
+
+  15% {
+    transform: translate(-10px, 4px) skewX(-1deg);
+  }
+
+  30% {
+    transform: translate(9px, -6px);
+  }
+
+  45% {
+    transform: translate(-7px, 5px) skewX(1deg);
+  }
+
+  60% {
+    transform: translate(5px, -3px);
+  }
+
+  80% {
+    transform: translate(-2px, 1px);
+  }
+
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+/* -------------------------------------------------------------- operatives */
+
+.side {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+  width: 38%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.side img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sideL {
+  left: 0;
+  mask-image: linear-gradient(90deg, #000 30%, transparent 100%);
+  animation: inLeft 0.9s cubic-bezier(0.2, 1, 0.3, 1) both;
+}
+
+.sideR {
+  right: 0;
+  mask-image: linear-gradient(270deg, #000 30%, transparent 100%);
+  animation: inRight 0.9s cubic-bezier(0.2, 1, 0.3, 1) both;
+}
+
+.sideL img {
+  opacity: 0.55;
+}
+
+.sideR img {
+  opacity: 0.55;
+}
+
+@keyframes inLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30%);
+  }
+}
+
+@keyframes inRight {
+  from {
+    opacity: 0;
+    transform: translateX(30%);
+  }
+}
+
+/* Lightning between them. */
+.seam {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 2;
+  width: 40px;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.bolt {
+  fill: none;
+  stroke: #ffd5d9;
+  stroke-width: 2;
+  filter: drop-shadow(0 0 4px #ff2a3d) drop-shadow(0 0 12px #ff2a3d);
+  vector-effect: non-scaling-stroke;
+  animation: bolt 0.9s steps(1) infinite;
+}
+
+.bolt2 {
+  animation-delay: -0.45s;
+}
+
+@keyframes bolt {
+  0%,
+  45% {
+    opacity: 0.85;
+  }
+
+  46%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ------------------------------------------------------------------- HUD */
+
+.hud {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.telemetry {
+  position: absolute;
+  top: 50%;
+  display: grid;
+  gap: 4px 0;
+  padding: 16px 20px;
+  font-family: var(--bq-mono);
+  background: var(--zr-corners), rgb(10 4 6 / 70%);
+  transform: translateY(-50%);
+}
+
+.telemetryLeft {
+  left: 40px;
+}
+
+.telemetryRight {
+  right: 40px;
+  text-align: right;
+}
+
+.telemetryKey {
+  font-size: 10px;
+  letter-spacing: 0.32em;
+  color: rgb(255 140 150 / 70%);
+}
+
+.telemetryValue {
+  margin-bottom: 10px;
+  font-family: var(--zr-display);
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  color: #fff;
+  text-shadow: 0 0 10px rgb(255 42 61 / 80%);
+}
+
+.flicker {
+  animation: flicker 3.2s steps(1) infinite;
+}
+
+@keyframes flicker {
+  0%,
+  86%,
+  90%,
+  100% {
+    opacity: 1;
+  }
+
+  88%,
+  92% {
+    opacity: 0.2;
+  }
+}
+
+/* ------------------------------------------------------------------- hero */
+
+.hero {
+  position: absolute;
+  top: 46%;
+  left: 50%;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(1000px, 92vw);
+  text-align: center;
+  transform: translate(-50%, -50%);
+}
+
+.heroLogo {
+  width: min(560px, 74vw);
+  height: auto;
+  filter: drop-shadow(0 0 30px rgb(255 42 61 / 70%));
+  animation:
+    logoIn 0.8s 0.2s cubic-bezier(0.2, 1.4, 0.4, 1) both,
+    logoPulse 3s 1s ease-in-out infinite;
+}
+
+@keyframes logoIn {
+  from {
+    opacity: 0;
+    transform: scale(1.6);
+    filter: blur(8px);
+  }
+}
+
+@keyframes logoPulse {
+  50% {
+    filter: drop-shadow(0 0 46px rgb(255 42 61 / 100%)) brightness(1.1);
+  }
+}
+
+.headline {
+  margin: 4px 0 0;
+  font-family: var(--zr-display);
+  font-size: clamp(46px, 7.4vw, 104px);
+  font-style: italic;
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: 0.02em;
+  animation: slam 0.6s 0.45s cubic-bezier(0.2, 1.6, 0.35, 1) both;
+}
+
+@keyframes slam {
+  from {
+    opacity: 0;
+    transform: scale(2.2) skewX(-10deg);
+  }
+}
+
+.headlineSmall {
+  font-size: 0.55em;
+  color: #fff;
+  text-shadow: 0 0 18px rgb(255 42 61 / 70%);
+}
+
+.headlineAccent {
+  background: linear-gradient(180deg, #fff 0%, #ff8a95 30%, #ff2a3d 60%, #8a0f1a 100%);
+  background-clip: text;
+}
+
+.tagline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0 0;
+  font-family: var(--bq-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  color: rgb(255 180 188 / 85%);
+  animation: fadeUp 0.6s 0.8s both;
+}
+
+.tagline i {
+  width: 7px;
+  height: 7px;
+  background: #ff2a3d;
+  box-shadow: 0 0 8px #ff2a3d;
+  transform: rotate(45deg);
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+/* -------------------------------------------------------------- CTA + stats */
+
+.ctaBar {
+  position: absolute;
+  bottom: 74px;
+  left: 50%;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  align-items: center;
+  width: min(900px, 92vw);
+  transform: translateX(-50%);
+  animation: fadeUp 0.6s 1s both;
+}
+
+.statStrip {
+  display: flex;
+  gap: 16px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 150px;
+  padding: 12px 18px;
+  background: var(--zr-corners), rgb(14 5 8 / 80%);
+  box-shadow: inset 0 0 0 1px rgb(255 42 61 / 35%);
+}
+
+.stat b {
+  font-family: var(--zr-display);
+  font-size: 30px;
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 0 14px rgb(255 42 61 / 90%);
+}
+
+.stat span {
+  margin-top: 2px;
+  font-family: var(--bq-mono);
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  color: var(--bq-ink-3);
+}
+
+.ctaRow {
+  display: flex;
+  gap: 14px;
+}
+
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 220px;
+  height: 58px;
+  padding: 0 34px;
+  overflow: hidden;
+  font-family: var(--zr-display);
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: 0.24em;
+  text-decoration: none;
+  text-transform: uppercase;
+  clip-path: var(--zr-cut);
+  transition: filter var(--bq-t-fast);
+}
+
+.btn::after {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -50%;
+  width: 34%;
+  content: '';
+  background: linear-gradient(100deg, transparent, rgb(255 255 255 / 50%), transparent);
+  transform: skewX(-20deg);
+  animation: sheen 3.4s ease-in-out infinite;
+}
+
+@keyframes sheen {
+  0%,
+  55% {
+    left: -50%;
+  }
+
+  85%,
+  100% {
+    left: 130%;
+  }
+}
+
+.btnPrimary {
+  color: #fff;
+  background: linear-gradient(180deg, #ff4152, #c10f20);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 30%);
+  text-shadow: 0 0 12px rgb(255 255 255 / 50%);
+}
+
+.btnPrimary:hover {
+  filter: brightness(1.2) drop-shadow(0 0 16px rgb(255 42 61 / 100%));
+}
+
+.btnGhost {
+  color: #fff;
+  background: rgb(255 42 61 / 12%);
+  box-shadow: inset 0 0 0 2px rgb(255 42 61 / 70%);
+}
+
+.btnGhost:hover {
+  background: rgb(255 42 61 / 28%);
+}
+
+/* ------------------------------------------------------------------ ticker */
+
+.ticker {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 4;
+  display: flex;
+  align-items: stretch;
+  height: 40px;
+  background: rgb(8 3 5 / 88%);
+  border-top: 1px solid rgb(255 42 61 / 50%);
+}
+
+.tickerTag {
+  display: flex;
+  align-items: center;
+  padding: 0 22px 0 18px;
+  font-family: var(--zr-display);
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.3em;
+  color: #fff;
+  background: #ff2a3d;
+  clip-path: polygon(0 0, 100% 0, calc(100% - 14px) 100%, 0 100%);
+}
+
+.tickerTrack {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+}
+
+.tickerMove {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  font-family: var(--bq-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  color: rgb(255 200 205 / 85%);
+  white-space: nowrap;
+  animation: tick 40s linear infinite;
+}
+
+@keyframes tick {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (width <= 900px) {
+  .telemetry {
+    display: none;
+  }
+
+  .side {
+    width: 50%;
+  }
+
+  .statStrip {
+    gap: 8px;
+  }
+
+  .stat {
+    min-width: 0;
+    padding: 10px 12px;
+  }
+
+  .stat b {
+    font-size: 22px;
+  }
+
+  .ctaRow {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shudder,
+  .sideL,
+  .sideR,
+  .bolt,
+  .heroLogo,
+  .headline,
+  .tagline,
+  .ctaBar,
+  .btn::after,
+  .flicker,
+  .tickerMove {
+    animation: none;
+  }
+}

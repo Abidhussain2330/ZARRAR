@@ -1,0 +1,384 @@
+/* ZARRAR monitor: login and event picker. Same language as the stage — carbon, red, chrome. */
+
+.page {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  font-family: rajdhani, 'Chakra Petch', sans-serif;
+  color: #eef1f5;
+  background: #030304;
+}
+
+.bg {
+  position: fixed;
+  inset: -20px;
+  background: center / cover no-repeat;  /* image set inline by the page */
+  filter: brightness(0.5) contrast(1.1);
+}
+
+/* The source art is green; the monitor wears ZARRAR red. */
+.bgTint {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(1000px 600px at 50% 0%, rgb(255 42 61 / 30%), transparent 70%),
+    linear-gradient(180deg, rgb(120 0 14 / 35%), rgb(0 0 0 / 70%));
+  mix-blend-mode: hard-light;
+}
+
+.scan {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(0deg, rgb(0 0 0 / 28%) 0 1px, transparent 1px 3px);
+}
+
+.grid {
+  position: fixed;
+  right: -30%;
+  bottom: -10%;
+  left: -30%;
+  height: 50%;
+  background-image:
+    linear-gradient(rgb(255 42 61 / 28%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 42 61 / 20%) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: linear-gradient(to top, #000, transparent);
+  transform: perspective(500px) rotateX(60deg);
+  transform-origin: bottom;
+  animation: run 2.2s linear infinite;
+}
+
+@keyframes run {
+  to {
+    background-position: 0 64px;
+  }
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding: 48px 20px 40px;
+}
+
+.logo {
+  width: min(560px, 86vw);
+  height: auto;
+  filter: drop-shadow(0 0 26px rgb(255 42 61 / 55%));
+}
+
+.role {
+  margin-top: 6px;
+  font-family: orbitron, sans-serif;
+  font-size: clamp(16px, 2vw, 22px);
+  font-weight: 800;
+  letter-spacing: 0.5em;
+  color: #ff2a3d;
+  text-shadow: 0 0 14px rgb(255 42 61 / 70%);
+}
+
+/* ------------------------------------------------------------------- login */
+
+.terminal {
+  position: relative;
+  width: min(520px, 100%);
+  padding: 34px 34px 30px;
+  margin-top: 40px;
+  background: linear-gradient(180deg, rgb(26 6 10 / 92%), rgb(6 6 8 / 96%));
+  border: 1px solid rgb(255 42 61 / 60%);
+  clip-path: polygon(0 0, calc(100% - 26px) 0, 100% 26px, 100% 100%, 26px 100%, 0 calc(100% - 26px));
+  box-shadow: 0 0 80px rgb(255 42 61 / 25%);
+}
+
+.terminal::before {
+  position: absolute;
+  top: 0;
+  right: 26px;
+  left: 0;
+  height: 3px;
+  content: '';
+  background: linear-gradient(90deg, #ff2a3d, transparent);
+}
+
+.terminalTitle {
+  margin: 0 0 6px;
+  font-family: orbitron, sans-serif;
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+}
+
+.terminalSub {
+  margin: 0 0 24px;
+  font-size: 17px;
+  font-weight: 500;
+  color: #9aa1ad;
+}
+
+.field {
+  display: block;
+  margin-bottom: 16px;
+}
+
+.fieldLabel {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: #c9ccd3;
+}
+
+.input {
+  width: 100%;
+  padding: 13px 14px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 16px;
+  color: #fff;
+  background: rgb(0 0 0 / 55%);
+  border: 1px solid rgb(255 255 255 / 16%);
+  border-left: 3px solid #ff2a3d;
+  outline: none;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.input:focus {
+  border-color: #ff2a3d;
+  box-shadow: 0 0 0 3px rgb(255 42 61 / 25%);
+}
+
+.captcha {
+  margin: 6px 0 16px;
+}
+
+.submit {
+  width: 100%;
+  padding: 16px;
+  font-family: orbitron, sans-serif;
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  color: #fff;
+  cursor: pointer;
+  background: linear-gradient(180deg, #ff3b4c, #a50e1c);
+  border: none;
+  clip-path: polygon(14px 0, 100% 0, calc(100% - 14px) 100%, 0 100%);
+  transition: filter 0.15s ease;
+}
+
+.submit:hover:not(:disabled) {
+  filter: brightness(1.15);
+}
+
+.submit:focus-visible,
+.card:focus-visible,
+.ghost:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
+.submit:disabled {
+  cursor: progress;
+  opacity: 0.6;
+}
+
+.error {
+  padding: 10px 12px;
+  margin: 0 0 16px;
+  font-size: 16px;
+  color: #ffd6da;
+  background: rgb(255 42 61 / 16%);
+  border: 1px solid rgb(255 42 61 / 50%);
+}
+
+.footnote {
+  margin-top: 22px;
+  font-size: 15px;
+  color: #7f828c;
+  text-align: center;
+}
+
+/* ------------------------------------------------------------------ picker */
+
+.pickerHead {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-end;
+  justify-content: space-between;
+  width: min(1200px, 100%);
+  margin-top: 40px;
+}
+
+.pickerTitle {
+  margin: 0;
+  font-family: orbitron, sans-serif;
+  font-size: clamp(26px, 3.4vw, 40px);
+  font-weight: 900;
+  letter-spacing: 0.04em;
+}
+
+.who {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-size: 17px;
+  color: #9aa1ad;
+}
+
+.ghost {
+  padding: 8px 16px;
+  font-family: rajdhani, sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #eef1f5;
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid rgb(255 255 255 / 25%);
+}
+
+.ghost:hover {
+  border-color: #ff2a3d;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 18px;
+  width: min(1200px, 100%);
+  margin-top: 26px;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 22px 22px 20px;
+  color: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  background: linear-gradient(160deg, rgb(255 42 61 / 12%), rgb(6 6 8 / 94%) 55%);
+  border: 1px solid rgb(255 255 255 / 12%);
+  clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 0 100%);
+  transition:
+    border-color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.card:hover {
+  border-color: #ff2a3d;
+  transform: translateY(-2px);
+}
+
+.cardDuel {
+  border-color: rgb(255 42 61 / 55%);
+}
+
+.cardTop {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cardTitle {
+  margin: 0;
+  overflow: hidden;
+  font-family: orbitron, sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.badge {
+  flex: none;
+  padding: 3px 10px;
+  font-family: orbitron, sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: #fff;
+  background: #3a3d45;
+}
+
+.badgeLive {
+  background: #ff2a3d;
+  box-shadow: 0 0 14px rgb(255 42 61 / 60%);
+}
+
+.badgePaused {
+  color: #140c00;
+  background: #ffb020;
+}
+
+.badgeOver {
+  background: #555a66;
+}
+
+.cardMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #9aa1ad;
+}
+
+.cardMeta b {
+  color: #eef1f5;
+}
+
+.cardCta {
+  margin-top: 4px;
+  font-family: orbitron, sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  color: #ff2a3d;
+}
+
+.empty {
+  width: min(700px, 100%);
+  padding: 30px;
+  margin-top: 30px;
+  font-size: 18px;
+  line-height: 1.5;
+  color: #c9ccd3;
+  text-align: center;
+  background: rgb(0 0 0 / 55%);
+  border: 1px dashed rgb(255 255 255 / 20%);
+}
+
+.center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: orbitron, sans-serif;
+  font-size: 18px;
+  letter-spacing: 0.3em;
+  color: #ff2a3d;
+  background: #030304;
+}
+
+.stageWrap {
+  position: fixed;
+  inset: 0;
+  background: #000;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grid {
+    animation: none;
+  }
+}

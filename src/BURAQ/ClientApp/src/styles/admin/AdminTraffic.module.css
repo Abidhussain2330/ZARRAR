@@ -1,0 +1,49 @@
+/*
+ * Traffic-capture browser: challenge → team → files.
+ *
+ * Three panes side by side once there is room, stacked below that. The file
+ * pane is twice the width of the two selectors, matching the original 3/3/6
+ * split, but only where the viewport can carry it.
+ */
+
+.panes {
+  display: grid;
+  min-width: 0;
+  gap: var(--buraq-space-3);
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 62em) {
+  .panes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .paneWide {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 90em) {
+  .panes {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 2fr);
+  }
+
+  .paneWide {
+    grid-column: auto;
+  }
+}
+
+.pane,
+.paneWide {
+  min-width: 0;
+}
+
+.paneHead {
+  display: flex;
+  min-height: 2.5rem;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--buraq-space-2);
+  padding: var(--buraq-space-2) var(--buraq-space-3);
+}

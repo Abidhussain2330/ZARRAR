@@ -1,0 +1,158 @@
+/*
+ * Access granted — the post-login interstitial.
+ *
+ * Fills the viewport, but with `position: absolute` inside a full-height fixed
+ * wrapper rather than `position: fixed` on the video itself, so the skip control
+ * stays reachable when a mobile browser's URL bar collapses.
+ */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--bq-void);
+}
+
+.video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgb(6 7 13 / 20%) 0%, rgb(6 7 13 / 10%) 55%, rgb(6 7 13 / 80%) 100%);
+}
+
+.corner {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  pointer-events: none;
+}
+
+.cTl { top: 14px; left: 14px; border-top: 2px solid var(--bq-violet); border-left: 2px solid var(--bq-violet); border-top-left-radius: 8px; }
+.cTr { top: 14px; right: 14px; border-top: 2px solid var(--bq-violet); border-right: 2px solid var(--bq-violet); border-top-right-radius: 8px; }
+.cBl { bottom: 14px; left: 14px; border-bottom: 2px solid var(--bq-violet); border-left: 2px solid var(--bq-violet); border-bottom-left-radius: 8px; }
+.cBr { bottom: 14px; right: 14px; border-bottom: 2px solid var(--bq-violet); border-right: 2px solid var(--bq-violet); border-bottom-right-radius: 8px; }
+
+/* Top-right so it reads as chrome over the clip, not as part of the caption. */
+.controls {
+  position: absolute;
+  top: 28px;
+  right: 28px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.skip {
+  padding: 10px 22px;
+  font-family: var(--bq-mono);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  color: var(--bq-ink);
+  text-transform: uppercase;
+  cursor: pointer;
+  background: rgb(6 7 13 / 55%);
+  border: 1px solid rgb(242 244 248 / 35%);
+  border-radius: var(--bq-r-gate);
+  backdrop-filter: blur(4px);
+  transition: all var(--bq-t-fast);
+}
+
+.skip:hover {
+  background: rgb(242 244 248 / 12%);
+  border-color: var(--bq-ink);
+}
+
+.dontShow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 7px 12px;
+  font-family: var(--bq-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  color: var(--bq-ink-2);
+  cursor: pointer;
+  background: rgb(6 7 13 / 55%);
+  border-radius: var(--bq-r-gate);
+  backdrop-filter: blur(4px);
+}
+
+.dontShow input {
+  width: 14px;
+  height: 14px;
+  accent-color: var(--bq-violet);
+  cursor: pointer;
+}
+
+.caption {
+  position: absolute;
+  right: 0;
+  bottom: 56px;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+.captionMain {
+  margin: 0;
+  font-family: var(--bq-mono);
+  font-size: 12px;
+  letter-spacing: 0.32em;
+  color: var(--bq-violet-hi);
+  text-transform: uppercase;
+}
+
+.captionSub {
+  margin: 0;
+  font-family: var(--bq-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: var(--bq-ink-4);
+}
+
+@media (width <= 560px) {
+  .controls {
+    top: 18px;
+    right: 18px;
+  }
+}
+
+/* =====================================================================================
+ * M6 "cyber tussle" layer: the ACCESS GRANTED intro — brighter brackets and a glowing caption.
+ * ===================================================================================== */
+
+.corner {
+  filter: drop-shadow(0 0 8px #ff2a3d);
+}
+
+.captionMain {
+  font-family: var(--zr-display);
+  font-style: italic;
+  font-weight: 900;
+  text-shadow:
+    0 0 20px rgb(255 42 61 / 90%),
+    -3px 0 rgb(70 230 255 / 50%),
+    3px 0 rgb(255 42 61 / 70%);
+}
+
+.skip,
+.dontShow {
+  border-radius: 0;
+  clip-path: var(--zr-cut-sm);
+}

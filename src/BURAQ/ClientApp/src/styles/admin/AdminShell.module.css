@@ -1,0 +1,482 @@
+/*
+ * BURAQ Admin Command Center — shell layout.
+ *
+ * Consumed by components/admin/shell/*. Every value comes from
+ * styles/buraq/tokens.css; nothing here introduces a literal colour, radius or
+ * spacing step.
+ *
+ * Layout model: the platform shell (BuraqShell) already owns the global
+ * sidebar and top bar. This file owns the *secondary* structure inside the
+ * content column — a section rail plus a page column. The rail only appears
+ * once there is genuinely room for it beside the global sidebar; below that it
+ * becomes a drawer reachable from the page header, so no admin screen is ever
+ * unreachable on a narrow viewport.
+ */
+
+.root {
+  --admin-rail-width: 56px;
+
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--buraq-space-5);
+  padding-inline: var(--buraq-space-4);
+  align-items: start;
+}
+
+/*
+ * An icon-only rail is far cheaper on width than the old 216px labelled one,
+ * so it earns its place much earlier than 75em did.
+ */
+@media (min-width: 48em) {
+  .root {
+    grid-template-columns: var(--admin-rail-width) minmax(0, 1fr);
+    padding-inline: var(--buraq-space-5);
+  }
+}
+
+/* ------------------------------------------------------------- icon rail */
+
+.iconRail {
+  position: sticky;
+  display: none;
+  inset-block-start: calc(var(--buraq-topbar-height) + var(--buraq-space-4));
+  flex-direction: column;
+  align-items: center;
+  gap: var(--buraq-space-1);
+  max-height: calc(100vh - var(--buraq-topbar-height) - var(--buraq-space-6));
+  padding-block: var(--buraq-space-3);
+  border: 1px solid var(--buraq-border);
+  border-radius: var(--buraq-radius-lg);
+  background-color: var(--buraq-glass);
+  backdrop-filter: blur(var(--buraq-glass-blur));
+  overflow: hidden auto;
+}
+
+@media (min-width: 48em) {
+  .iconRail {
+    display: flex;
+  }
+}
+
+.iconGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 100%;
+  padding-block: var(--buraq-space-2);
+  border-block-start: 1px solid var(--buraq-border);
+}
+
+.iconGroup:first-child {
+  border-block-start: none;
+  padding-block-start: 0;
+}
+
+.iconLink {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--buraq-radius-md);
+  color: var(--buraq-text-muted);
+  text-decoration: none;
+  transition:
+    background-color var(--buraq-duration-fast) var(--buraq-ease-out),
+    color var(--buraq-duration-fast) var(--buraq-ease-out);
+}
+
+.iconLink:hover {
+  background-color: var(--buraq-bg-hover);
+  color: var(--buraq-text-primary);
+}
+
+.iconLink[data-active] {
+  background-color: rgb(227 58 58 / 12%);
+  color: var(--buraq-primary);
+}
+
+.iconLink[data-active]::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: -13px;
+  inset-block: 8px;
+  width: 2px;
+  background-color: var(--buraq-primary);
+}
+
+.iconTip {
+  position: absolute;
+  inset-inline-start: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 4px 9px;
+  border: 1px solid var(--buraq-border-strong);
+  border-radius: var(--buraq-radius-sm);
+  background-color: var(--buraq-bg-elevated);
+  color: var(--buraq-text-primary);
+  font-family: var(--buraq-font-mono);
+  font-size: var(--buraq-text-xs);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--buraq-duration-fast) var(--buraq-ease-out);
+  z-index: var(--buraq-z-popover, 30);
+}
+
+.iconLink:hover .iconTip,
+.iconLink:focus-visible .iconTip {
+  opacity: 1;
+}
+
+/* ------------------------------------------------------------------- rail */
+
+.rail {
+  position: sticky;
+  display: none;
+  inset-block-start: calc(var(--buraq-topbar-height) + var(--buraq-space-4));
+  flex-direction: column;
+  gap: var(--buraq-space-4);
+  max-height: calc(100vh - var(--buraq-topbar-height) - var(--buraq-space-6));
+  min-width: 0;
+  padding: var(--buraq-space-3);
+  border: 1px solid var(--buraq-border);
+  border-radius: var(--buraq-radius-lg);
+  background-color: var(--buraq-glass);
+  backdrop-filter: blur(var(--buraq-glass-blur));
+  overflow: hidden auto;
+}
+
+/* The same nav markup is reused inside the drawer, where it is never sticky. */
+.railInDrawer {
+  display: flex;
+  position: static;
+  max-height: none;
+  border: none;
+  background: none;
+  backdrop-filter: none;
+  padding: 0;
+}
+
+.railHeading {
+  margin: 0;
+  color: var(--buraq-text-muted);
+  font-family: var(--buraq-font-display);
+  font-size: var(--buraq-text-2xs);
+  letter-spacing: var(--buraq-tracking-widest);
+  text-transform: uppercase;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--buraq-space-2);
+  min-width: 0;
+}
+
+.groupList {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  flex-direction: column;
+  gap: var(--buraq-space-1);
+  list-style: none;
+  min-width: 0;
+}
+
+.navLink {
+  position: relative;
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  align-items: center;
+  gap: var(--buraq-space-3);
+  padding: var(--buraq-space-2) var(--buraq-space-3);
+  border: 1px solid transparent;
+  border-radius: var(--buraq-radius-md);
+  background-color: transparent;
+  color: var(--buraq-text-secondary);
+  font-family: var(--buraq-font-sans);
+  font-size: var(--buraq-text-sm);
+  font-weight: 500;
+  text-align: start;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color var(--buraq-duration-fast) var(--buraq-ease-out),
+    color var(--buraq-duration-fast) var(--buraq-ease-out),
+    border-color var(--buraq-duration-fast) var(--buraq-ease-out);
+}
+
+.navLink:hover {
+  background-color: var(--buraq-bg-hover);
+  color: var(--buraq-text-primary);
+}
+
+.navLink:focus-visible {
+  outline: none;
+  box-shadow: var(--buraq-focus-ring);
+}
+
+.navLink[data-active] {
+  border-color: var(--buraq-border-accent);
+  background-color: var(--buraq-bg-selected);
+  color: var(--buraq-primary);
+}
+
+/* Shape as well as hue marks the active section. */
+.navLink[data-active]::before {
+  content: '';
+  position: absolute;
+  inset-block: var(--buraq-space-2);
+  inset-inline-start: 0;
+  width: 2px;
+  border-radius: var(--buraq-radius-xs);
+  background-color: var(--buraq-primary);
+}
+
+.navIcon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.navLabel {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.navBadge {
+  margin-inline-start: auto;
+  flex: none;
+  padding-inline: var(--buraq-space-2);
+  border-radius: var(--buraq-radius-xs);
+  background-color: var(--buraq-bg-inset);
+  color: var(--buraq-text-muted);
+  font-family: var(--buraq-font-mono);
+  font-size: var(--buraq-text-2xs);
+}
+
+/* ------------------------------------------------------------------ column */
+
+.column {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--buraq-space-4);
+}
+
+/* ------------------------------------------------------------- page header */
+
+.header {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--buraq-space-3);
+  padding-block-end: var(--buraq-space-3);
+  border-bottom: 1px solid var(--buraq-border-subtle);
+}
+
+.headerTop {
+  display: flex;
+  align-items: center;
+  gap: var(--buraq-space-3);
+  min-width: 0;
+}
+
+.crumbs {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--buraq-space-1);
+  list-style: none;
+  color: var(--buraq-text-muted);
+  font-family: var(--buraq-font-mono);
+  font-size: var(--buraq-text-2xs);
+  letter-spacing: var(--buraq-tracking-wide);
+  text-transform: uppercase;
+}
+
+.crumb {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--buraq-space-1);
+  min-width: 0;
+}
+
+.crumbLink {
+  max-width: 14rem;
+  overflow: hidden;
+  color: inherit;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border-radius: var(--buraq-radius-xs);
+}
+
+.crumbLink:hover {
+  color: var(--buraq-primary);
+}
+
+.crumbLink:focus-visible {
+  outline: none;
+  box-shadow: var(--buraq-focus-ring);
+}
+
+.crumbCurrent {
+  max-width: 18rem;
+  overflow: hidden;
+  color: var(--buraq-text-secondary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.crumbSep {
+  color: var(--buraq-text-faint);
+}
+
+.headerMain {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--buraq-space-3);
+}
+
+.headings {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--buraq-space-1);
+}
+
+.title {
+  margin: 0;
+  color: var(--buraq-text-primary);
+  font-family: var(--buraq-font-display);
+  font-size: var(--buraq-text-2xl);
+  font-weight: 600;
+  letter-spacing: var(--buraq-tracking-wide);
+  line-height: var(--buraq-leading-tight);
+
+  /* Long game and challenge names must wrap, never widen the page. */
+  overflow-wrap: anywhere;
+}
+
+.description {
+  margin: 0;
+  max-width: 68ch;
+  color: var(--buraq-text-secondary);
+  font-size: var(--buraq-text-sm);
+  overflow-wrap: anywhere;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--buraq-space-2);
+}
+
+/*
+ * The rail trigger is the only route to the other admin sections below 75em,
+ * so it is a normal in-flow control rather than something that can scroll away.
+ */
+.railTrigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--buraq-space-2);
+  padding: var(--buraq-space-2) var(--buraq-space-3);
+  border: 1px solid var(--buraq-border);
+  border-radius: var(--buraq-radius-md);
+  background-color: var(--buraq-bg-inset);
+  color: var(--buraq-text-secondary);
+  font-family: var(--buraq-font-display);
+  font-size: var(--buraq-text-xs);
+  letter-spacing: var(--buraq-tracking-wide);
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.railTrigger:hover {
+  border-color: var(--buraq-border-accent);
+  color: var(--buraq-text-primary);
+}
+
+.railTrigger:focus-visible {
+  outline: none;
+  box-shadow: var(--buraq-focus-ring);
+}
+
+@media (min-width: 48em) {
+  .railTrigger {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------------------------- body */
+
+/* `position: relative` anchors the page-level LoadingOverlay to the body only,
+ * so the header and breadcrumbs stay readable while data is in flight. */
+.body {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: 8rem;
+  flex-direction: column;
+  gap: var(--buraq-space-4);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (max-width: $mantine-breakpoint-sm) {
+  .root {
+    padding-inline: var(--buraq-space-3);
+    gap: var(--buraq-space-4);
+  }
+
+  .title {
+    font-size: var(--buraq-text-xl);
+  }
+
+  /*
+   * On a phone the action cluster is the primary way to act on the page, so it
+   * spans the full width and its buttons grow rather than being squeezed into a
+   * corner they cannot be tapped in.
+   */
+  .actions {
+    width: 100%;
+  }
+
+  .actions > * {
+    flex: 1 1 auto;
+  }
+}
+
+@media (forced-colors: active) {
+  .rail,
+  .railTrigger {
+    border-color: canvastext;
+  }
+}

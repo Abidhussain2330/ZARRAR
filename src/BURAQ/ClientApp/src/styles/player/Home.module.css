@@ -1,0 +1,625 @@
+/*
+ * Home — the briefing room a player lands in after signing in.
+ *
+ * Two columns: the announcements feed carries the weight, the events rail sits
+ * beside it so joining a competition is always one click from the landing page.
+ * The rail collapses above the feed on narrow screens, because on a phone the
+ * thing you came to do (join an event) should not be below eight announcements.
+ */
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 28px;
+  align-items: start;
+}
+
+.feed {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.more {
+  align-self: center;
+  margin-top: 8px;
+}
+
+/* ------------------------------------------------------------- post card */
+
+.postCard {
+  display: grid;
+  grid-template-columns: 168px minmax(0, 1fr);
+  overflow: hidden;
+  background: linear-gradient(165deg, rgb(18 17 20 / 95%), rgb(6 6 7 / 95%));
+  border: 1px solid var(--bq-line);
+  border-radius: var(--bq-r-lg);
+  transition: border-color var(--bq-t-fast), transform var(--bq-t-fast);
+}
+
+.postCard:hover {
+  border-color: var(--bq-line-hi);
+  transform: translateY(-2px);
+}
+
+/* Pinned posts get a violet edge, tying the sponsor slot back to the brand. */
+.postPinned {
+  border-color: rgb(255 42 61 / 45%);
+}
+
+.postCover {
+  display: block;
+  overflow: hidden;
+  background: var(--bq-surface);
+}
+
+.postCover img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 150px;
+  object-fit: cover;
+}
+
+.postBody {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 20px 22px;
+}
+
+.postTagRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag,
+.pinTag {
+  padding: 4px 10px;
+  font-family: var(--bq-mono);
+  font-size: 9.5px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  border-radius: var(--bq-r-pill);
+}
+
+.tag {
+  color: var(--bq-azure-hi);
+  background: rgb(255 42 61 / 10%);
+  border: 1px solid rgb(255 42 61 / 28%);
+}
+
+.pinTag {
+  color: var(--bq-violet-hi);
+  background: rgb(255 42 61 / 14%);
+  border: 1px solid rgb(255 42 61 / 40%);
+}
+
+.postTitle {
+  margin: 0;
+  font-family: var(--bq-display);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: var(--bq-track-display);
+  line-height: 1.25;
+  letter-spacing: var(--bq-track-display);
+}
+
+.postLink {
+  color: var(--bq-ink);
+  text-decoration: none;
+}
+
+.postLink:hover {
+  color: var(--bq-azure-hi);
+}
+
+.postBlurb {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--bq-ink-3);
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.postMeta {
+  margin: auto 0 0;
+  font-family: var(--bq-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  color: var(--bq-ink-5);
+}
+
+/* ------------------------------------------------------------------ rail */
+
+.rail {
+  position: sticky;
+  top: 88px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px;
+  background: rgb(10 9 11 / 80%);
+  border: 1px solid var(--bq-line-soft);
+  border-radius: var(--bq-r-lg);
+}
+
+.railHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.railTitle {
+  margin: 0;
+  font-family: var(--bq-display);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: var(--bq-track-display);
+}
+
+.railAll {
+  font-family: var(--bq-mono);
+  font-size: 10.5px;
+  letter-spacing: 1.4px;
+  color: var(--bq-azure-hi);
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.railAll:hover {
+  text-decoration: underline;
+}
+
+.railNote {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--bq-ink-4);
+}
+
+.railList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.railSkeletons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.railSkeletons > span {
+  height: 96px;
+}
+
+/* ------------------------------------------------------------ event card */
+
+.eventCard {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  color: inherit;
+  text-decoration: none;
+  background: rgb(18 17 20 / 90%);
+  border: 1px solid var(--bq-line);
+  border-radius: var(--bq-r-md);
+  transition: all var(--bq-t-fast);
+}
+
+.eventCard:hover {
+  background: rgb(255 42 61 / 8%);
+  border-color: var(--bq-line-hi);
+}
+
+.eventPoster {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  overflow: hidden;
+  background: var(--bq-surface);
+  border-radius: var(--bq-r-sm);
+}
+
+.eventPoster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.eventPosterFallback {
+  font-family: var(--bq-mono);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--bq-ink-4);
+}
+
+.eventBody {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.eventTop {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.eventTitle {
+  margin: 0;
+  overflow: hidden;
+  font-family: var(--bq-display);
+  font-size: 14px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.eventSummary {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--bq-ink-4);
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.eventMeta {
+  margin: 0;
+  font-family: var(--bq-mono);
+  font-size: 10px;
+  color: var(--bq-ink-5);
+}
+
+@media (width <= 1040px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  /* Events first on narrow screens — see the note at the top of this file. */
+  .rail {
+    position: static;
+    order: -1;
+  }
+}
+
+@media (width <= 620px) {
+  .postCard {
+    grid-template-columns: 1fr;
+  }
+
+  .postCover img {
+    min-height: 160px;
+    max-height: 200px;
+  }
+
+  .postBody {
+    padding: 16px 18px;
+  }
+}
+
+/* --------------------------------------------------------- sponsor band */
+
+/*
+ * Partners sit above the announcement feed in their own band. Deliberately a different
+ * shape from a post card — full width, horizontal, framed in accent — so a sponsor never
+ * reads as just another item in the list, which is the whole point of the section.
+ */
+
+.sponsorBand {
+  margin-bottom: 30px;
+}
+
+.bandHead {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.bandTitle {
+  margin: 0;
+  font-family: var(--bq-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: var(--bq-track-mono);
+  color: var(--bq-accent-hi);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.bandRule {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--bq-line-hi), transparent);
+}
+
+.sponsorList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sponsorCard {
+  position: relative;
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  overflow: hidden;
+  background:
+    radial-gradient(600px 200px at 0% 0%, rgb(255 42 61 / 14%), transparent 70%),
+    linear-gradient(150deg, rgb(22 20 24 / 96%), rgb(6 6 7 / 96%));
+  border: 1px solid rgb(255 42 61 / 40%);
+  border-radius: var(--bq-r-lg);
+  transition: border-color var(--bq-t-fast), transform var(--bq-t-fast);
+}
+
+.sponsorCard:hover {
+  border-color: var(--bq-accent);
+  transform: translateY(-2px);
+}
+
+/* Accent spine down the left edge — the strongest single cue separating a partner
+   feature from an announcement. */
+.sponsorRail {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--bq-accent-hi), var(--bq-accent-dim));
+}
+
+.sponsorMedia {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+  background: rgb(255 255 255 / 3%);
+  border-right: 1px solid var(--bq-line-soft);
+}
+
+.sponsorMedia img {
+  max-width: 100%;
+  max-height: 84px;
+  object-fit: contain;
+}
+
+.sponsorMark {
+  font-family: var(--bq-mono);
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: rgb(255 107 120 / 45%);
+}
+
+.sponsorBody {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px 24px;
+}
+
+.sponsorTag {
+  align-self: flex-start;
+  padding: 4px 10px;
+  font-family: var(--bq-mono);
+  font-size: 9px;
+  letter-spacing: 1.6px;
+  color: var(--bq-accent-hi);
+  background: rgb(255 42 61 / 16%);
+  border: 1px solid rgb(255 42 61 / 45%);
+  border-radius: var(--bq-r-pill);
+}
+
+.sponsorTitle {
+  margin: 0;
+  font-family: var(--bq-display);
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: var(--bq-track-display);
+}
+
+.plainLink {
+  color: var(--bq-ink);
+  text-decoration: none;
+}
+
+.plainLink:hover {
+  color: var(--bq-accent-hi);
+}
+
+.sponsorBlurb {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--bq-ink-3);
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.sponsorMore {
+  margin-top: auto;
+  font-family: var(--bq-mono);
+  font-size: 10.5px;
+  letter-spacing: 1.2px;
+  color: var(--bq-accent-hi);
+  text-decoration: none;
+}
+
+.sponsorMore:hover {
+  text-decoration: underline;
+}
+
+@media (width <= 620px) {
+  .sponsorCard {
+    grid-template-columns: 1fr;
+  }
+
+  .sponsorMedia {
+    padding: 18px;
+    border-right: 0;
+    border-bottom: 1px solid var(--bq-line-soft);
+  }
+
+  .sponsorBody {
+    padding: 16px 18px;
+  }
+}
+
+/* =====================================================================================
+ * M6 "cyber tussle" layer: the briefing feed — HUD-framed post cards with scanned covers,
+ * Orbitron titles, slanted tags, a pinned post that glows, and a framed events rail.
+ * ===================================================================================== */
+
+.postCard,
+.eventCard,
+.sponsorCard {
+  position: relative;
+  background: var(--zr-corners), var(--zr-fill);
+  border: 0;
+  border-radius: 0;
+  clip-path: var(--zr-cut);
+  box-shadow: var(--zr-edge);
+  transition:
+    transform var(--bq-t-fast),
+    box-shadow var(--bq-t-fast),
+    filter var(--bq-t-fast);
+}
+
+.postCard:hover,
+.eventCard:hover,
+.sponsorCard:hover {
+  filter: drop-shadow(0 0 12px rgb(255 42 61 / 50%));
+  box-shadow:
+    inset 0 0 0 1px var(--bq-accent),
+    0 0 36px rgb(255 42 61 / 22%);
+  transform: translateY(-3px);
+}
+
+.postPinned {
+  background:
+    var(--zr-corners),
+    radial-gradient(ellipse at 0% 0%, rgb(255 42 61 / 26%), transparent 60%),
+    var(--zr-fill);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 42 61 / 70%),
+    0 0 40px rgb(255 42 61 / 22%);
+}
+
+.postCover,
+.eventPoster,
+.sponsorMedia {
+  position: relative;
+  border-radius: 0;
+}
+
+.postCover::after,
+.eventPoster::after {
+  position: absolute;
+  inset: 0;
+  content: '';
+  background: repeating-linear-gradient(0deg, rgb(0 0 0 / 25%) 0 1px, transparent 1px 3px);
+}
+
+.tag,
+.pinTag,
+.sponsorTag {
+  font-weight: 700;
+  border-radius: 0;
+  clip-path: var(--zr-slant);
+}
+
+.pinTag {
+  color: #fff;
+  background: #ff2a3d;
+  box-shadow: 0 0 12px rgb(255 42 61 / 70%);
+}
+
+.postTitle,
+.eventTitle,
+.sponsorTitle {
+  font-family: var(--zr-display);
+  font-style: italic;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.postCard:hover .postTitle,
+.eventCard:hover .eventTitle {
+  text-shadow:
+    -2px 0 rgb(70 230 255 / 50%),
+    2px 0 rgb(255 42 61 / 80%);
+}
+
+.postLink,
+.plainLink,
+.sponsorMore,
+.railAll {
+  color: #ff8a95;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+.postLink:hover,
+.plainLink:hover,
+.sponsorMore:hover,
+.railAll:hover {
+  color: #fff;
+  text-shadow: 0 0 10px #ff2a3d;
+}
+
+.rail {
+  background: var(--zr-corners), var(--zr-fill);
+  border: 0;
+  border-radius: 0;
+  box-shadow: var(--zr-edge);
+}
+
+.railTitle,
+.bandTitle {
+  font-family: var(--zr-display);
+  font-style: italic;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  color: #fff;
+  text-transform: uppercase;
+  text-shadow: 0 0 12px rgb(255 42 61 / 60%);
+}
+
+.bandRule {
+  height: 2px;
+  background: linear-gradient(90deg, #ff2a3d, transparent);
+  box-shadow: 0 0 10px #ff2a3d;
+}
+
+.sponsorRail {
+  box-shadow: 0 0 12px currentcolor;
+}
+
+.sponsorMark {
+  font-family: var(--zr-display);
+  font-weight: 900;
+}
+
+/* A post with no cover image used to fall into the 168px cover column; give it the full width. */
+.postCard:not(:has(.postCover)) {
+  grid-template-columns: minmax(0, 1fr);
+}

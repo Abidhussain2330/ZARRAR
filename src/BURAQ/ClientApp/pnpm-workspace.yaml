@@ -1,0 +1,9 @@
+allowBuilds:
+  esbuild: false
+minimumReleaseAge: 360
+overrides:
+  baseline-browser-mapping: '>=2.11.0'
+  browserslist: '>=4.28.7'
+  canvas: npm:dry-uninstall
+publicHoistPattern:
+  - pdfjs-dist

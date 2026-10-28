@@ -1,0 +1,109 @@
+/*
+ * Admin sub-navigation — the tab strip inside a game or challenge editor.
+ *
+ * A horizontal strip rather than the previous vertical `Tabs`: a 10rem vertical
+ * rail beside the global sidebar left roughly 500px of usable editor at tablet
+ * width, and nothing at all at 360px. Here the strip scrolls sideways on its
+ * own while the page never does.
+ */
+
+.strip {
+  display: flex;
+  min-width: 0;
+  max-width: 100%;
+  gap: var(--buraq-space-1);
+  padding-block-end: var(--buraq-space-1);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+
+  /* Thin, unobtrusive scrollbar — the strip is chrome, not content. */
+  scrollbar-width: thin;
+}
+
+.strip::-webkit-scrollbar {
+  height: 4px;
+}
+
+.strip::-webkit-scrollbar-thumb {
+  border-radius: var(--buraq-radius-xs);
+  background-color: var(--buraq-border-strong);
+}
+
+.tab {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: var(--buraq-space-2);
+  padding: var(--buraq-space-2) var(--buraq-space-3);
+  border: 1px solid var(--buraq-border-subtle);
+  border-radius: var(--buraq-radius-md);
+  background-color: var(--buraq-bg-secondary);
+  color: var(--buraq-text-secondary);
+  font-family: var(--buraq-font-sans);
+  font-size: var(--buraq-text-sm);
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color var(--buraq-duration-fast) var(--buraq-ease-out),
+    border-color var(--buraq-duration-fast) var(--buraq-ease-out),
+    color var(--buraq-duration-fast) var(--buraq-ease-out);
+}
+
+.tab:hover {
+  border-color: var(--buraq-border);
+  background-color: var(--buraq-bg-hover);
+  color: var(--buraq-text-primary);
+}
+
+.tab:focus-visible {
+  outline: none;
+  box-shadow: var(--buraq-focus-ring);
+}
+
+.tab[data-active] {
+  border-color: var(--buraq-border-accent);
+  background-color: var(--buraq-bg-selected);
+  color: var(--buraq-primary);
+}
+
+.tabIcon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+}
+
+/* ------------------------------------------------------- prev / next pager */
+
+.stepper {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--buraq-space-3);
+  padding-block-start: var(--buraq-space-3);
+  border-top: 1px solid var(--buraq-border-subtle);
+}
+
+.stepperCurrent {
+  min-width: 0;
+  flex: 1 1 12rem;
+  overflow: hidden;
+  color: var(--buraq-text-muted);
+  font-size: var(--buraq-text-xs);
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: $mantine-breakpoint-sm) {
+  .stepper > * {
+    flex: 1 1 auto;
+  }
+
+  .stepperCurrent {
+    order: -1;
+    flex-basis: 100%;
+  }
+}

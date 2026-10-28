@@ -1,0 +1,542 @@
+/*
+ * Mantine retheme — player surface only.
+ *
+ * The shared functional components (GameChallengeModal, ScoreboardTable, the team
+ * modals, AccountPreferences, ApiTokenManager, PasswordChangeModal, Dropzone…)
+ * carry flag submission, container instancing, SignalR and the crypto handshake.
+ * Rewriting their markup to restyle them would put all of that at risk for a
+ * purely visual gain, so instead this sheet retunes Mantine's own tokens and they
+ * inherit the player look without a single line of their logic changing.
+ *
+ * SCOPING — why `body.bq-player` and not a wrapper element:
+ * Mantine renders modals, menus, popovers and tooltips through a portal attached
+ * to document.body, i.e. outside the React tree of PlayerShell. A wrapper class
+ * would style the page and miss every overlay. PlayerShell and GateShell add this
+ * class to <body> on mount and remove it on unmount, so the admin pages — which
+ * never mount either shell — keep stock Mantine exactly as before.
+ *
+ * Most of the work is done by re-pointing Mantine's `dark` palette. Nearly every
+ * component reads from it, so ten variables cover far more ground than chasing
+ * individual component class names, and it stays correct if Mantine renames an
+ * internal part in a future release.
+ */
+
+body.bq-player {
+  /* Mantine's dark scale, retuned to the arena's navy. 0 is lightest. */
+  --mantine-color-dark-0: #eceef1;
+  --mantine-color-dark-1: #c9ccd3;
+  --mantine-color-dark-2: #9aa6c6;
+  --mantine-color-dark-3: #6f7fa6;
+  --mantine-color-dark-4: #2c3555;
+  --mantine-color-dark-5: #1e1c21;
+  --mantine-color-dark-6: #121114;
+  --mantine-color-dark-7: #0e0d10;
+  --mantine-color-dark-8: #070b18;
+  --mantine-color-dark-9: #04060e;
+
+  --mantine-font-family: var(--bq-body);
+  --mantine-font-family-monospace: var(--bq-mono);
+  --mantine-font-family-headings: var(--bq-display);
+
+  --mantine-color-body: var(--bq-panel);
+  --mantine-color-text: var(--bq-ink);
+  --mantine-color-dimmed: var(--bq-ink-4);
+  --mantine-color-anchor: var(--bq-azure-hi);
+  --mantine-color-placeholder: var(--bq-ink-5);
+
+  --mantine-color-default: rgb(13 12 14 / 90%);
+  --mantine-color-default-hover: rgb(255 42 61 / 10%);
+  --mantine-color-default-color: var(--bq-ink);
+  --mantine-color-default-border: var(--bq-line);
+
+  --mantine-primary-color-filled: var(--bq-azure-dim);
+  --mantine-primary-color-filled-hover: #ff2a3d;
+  --mantine-primary-color-light: rgb(255 42 61 / 14%);
+  --mantine-primary-color-light-hover: rgb(255 42 61 / 22%);
+  --mantine-primary-color-light-color: var(--bq-azure-hi);
+
+  --mantine-radius-default: var(--bq-r-md);
+}
+
+/* ---------------------------------------------------------------- overlays */
+
+body.bq-player .mantine-Modal-content,
+body.bq-player .mantine-Drawer-content,
+body.bq-player .mantine-Popover-dropdown,
+body.bq-player .mantine-Menu-dropdown,
+body.bq-player .mantine-Select-dropdown {
+  background: linear-gradient(165deg, rgb(22 20 24 / 98%), rgb(7 10 22 / 98%));
+  border: 1px solid var(--bq-line-hi);
+  border-radius: var(--bq-r-lg);
+  box-shadow: var(--bq-lift);
+}
+
+body.bq-player .mantine-Modal-header,
+body.bq-player .mantine-Drawer-header {
+  background: transparent;
+  border-bottom: 1px solid var(--bq-line-soft);
+}
+
+body.bq-player .mantine-Modal-title,
+body.bq-player .mantine-Drawer-title {
+  font-family: var(--bq-display);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: var(--bq-track-display);
+  color: var(--bq-ink);
+}
+
+body.bq-player .mantine-Modal-overlay,
+body.bq-player .mantine-Drawer-overlay {
+  background: rgb(3 1 6 / 78%);
+  backdrop-filter: blur(3px);
+}
+
+/* ------------------------------------------------------------------ inputs */
+
+body.bq-player :is(
+  .mantine-TextInput-input,
+  .mantine-PasswordInput-input,
+  .mantine-Textarea-input,
+  .mantine-NumberInput-input,
+  .mantine-Select-input,
+  .mantine-MultiSelect-input,
+  .mantine-Autocomplete-input,
+  .mantine-JsonInput-input,
+  .mantine-InputBase-input
+) {
+  color: var(--bq-ink);
+  background: rgb(13 12 14 / 90%);
+  border: 1px solid rgb(255 42 61 / 26%);
+  border-radius: var(--bq-r-md);
+  transition: border-color var(--bq-t-fast), box-shadow var(--bq-t-fast);
+}
+
+body.bq-player :is(
+  .mantine-TextInput-input,
+  .mantine-PasswordInput-input,
+  .mantine-Textarea-input,
+  .mantine-NumberInput-input,
+  .mantine-Select-input,
+  .mantine-InputBase-input
+):focus,
+body.bq-player .mantine-PasswordInput-input:focus-within {
+  border-color: var(--bq-azure);
+  box-shadow: 0 0 0 3px rgb(255 42 61 / 14%);
+  outline: none;
+}
+
+body.bq-player .mantine-InputWrapper-label {
+  margin-bottom: 6px;
+  font-family: var(--bq-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  color: var(--bq-ink-4);
+  text-transform: uppercase;
+}
+
+body.bq-player .mantine-InputWrapper-description {
+  font-size: 12px;
+  color: var(--bq-ink-5);
+}
+
+body.bq-player .mantine-InputWrapper-error {
+  font-family: var(--bq-mono);
+  font-size: 11px;
+  color: var(--bq-crit);
+}
+
+/* ----------------------------------------------------------------- buttons */
+
+body.bq-player .mantine-Button-root {
+  font-family: var(--bq-mono);
+  font-size: 12px;
+  letter-spacing: 1.2px;
+  border-radius: 9px;
+}
+
+body.bq-player .mantine-Button-root[data-variant='filled'] {
+  background: linear-gradient(90deg, var(--bq-azure-dim), #c4101f 55%, #e0142b);
+  border: 0;
+  box-shadow: 0 8px 26px rgb(200 16 34 / 32%);
+}
+
+body.bq-player .mantine-Button-root[data-variant='filled']:hover:not(:disabled) {
+  filter: brightness(1.12);
+}
+
+body.bq-player .mantine-Button-root:is([data-variant='outline'], [data-variant='default']) {
+  color: var(--bq-ink-2);
+  background: transparent;
+  border: 1px solid var(--bq-line-hi);
+}
+
+body.bq-player .mantine-Button-root:is([data-variant='outline'], [data-variant='default']):hover:not(:disabled) {
+  color: var(--bq-ink);
+  background: rgb(255 42 61 / 10%);
+}
+
+body.bq-player .mantine-ActionIcon-root {
+  border-radius: var(--bq-r-sm);
+}
+
+/* ------------------------------------------------------------------ tables */
+
+body.bq-player .mantine-Table-table {
+  font-size: 13.5px;
+}
+
+body.bq-player .mantine-Table-th {
+  font-family: var(--bq-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--bq-ink-4);
+  text-transform: uppercase;
+  background: rgb(255 42 61 / 6%);
+  border-bottom: 1px solid var(--bq-line);
+}
+
+body.bq-player .mantine-Table-td {
+  border-bottom: 1px solid var(--bq-line-soft);
+}
+
+body.bq-player .mantine-Table-tr:hover .mantine-Table-td {
+  background: rgb(255 42 61 / 6%);
+}
+
+/* Scoreboard leans on tabular figures — rank and score columns must not shimmy
+   as digits change during a live event. */
+body.bq-player .mantine-Table-td {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------ misc surfaces */
+
+body.bq-player :is(.mantine-Paper-root, .mantine-Card-root) {
+  background: linear-gradient(165deg, rgb(18 17 20 / 95%), rgb(6 6 7 / 95%));
+  border: 1px solid var(--bq-line);
+  border-radius: var(--bq-r-lg);
+}
+
+/* Paper is the modal's own backing element; re-adding a border there would draw a
+   second frame inside the one the modal already has. */
+body.bq-player :is(.mantine-Modal-content, .mantine-Drawer-content) .mantine-Paper-root {
+  background: transparent;
+  border: 0;
+}
+
+body.bq-player .mantine-Badge-root {
+  font-family: var(--bq-mono);
+  font-size: 9.5px;
+  letter-spacing: 1.4px;
+}
+
+body.bq-player .mantine-Tabs-tab {
+  font-family: var(--bq-mono);
+  font-size: 11.5px;
+  letter-spacing: 1.3px;
+  color: var(--bq-ink-3);
+}
+
+body.bq-player .mantine-Tabs-tab[data-active] {
+  color: var(--bq-ink);
+  background: rgb(255 42 61 / 12%);
+  border-color: var(--bq-azure);
+}
+
+body.bq-player .mantine-Progress-section {
+  background: linear-gradient(90deg, var(--bq-azure), var(--bq-violet));
+}
+
+body.bq-player .mantine-Code-root {
+  font-family: var(--bq-mono);
+  color: var(--bq-azure-hi);
+  background: rgb(255 42 61 / 10%);
+}
+
+body.bq-player .mantine-Dropzone-root {
+  background: rgb(13 12 14 / 70%);
+  border: 1px dashed var(--bq-line-hi);
+  border-radius: var(--bq-r-md);
+}
+
+body.bq-player .mantine-Dropzone-root[data-accept] {
+  background: rgb(255 42 61 / 12%);
+  border-color: var(--bq-azure);
+}
+
+body.bq-player :is(.mantine-Title-root, .mantine-Text-root:has(> b)) {
+  font-family: var(--bq-display);
+}
+
+body.bq-player .mantine-Divider-root {
+  border-color: var(--bq-line-soft);
+}
+
+body.bq-player .mantine-Notification-root {
+  background: var(--bq-panel-hi);
+  border: 1px solid var(--bq-line-hi);
+}
+
+body.bq-player .mantine-Accordion-control:hover {
+  background: rgb(255 42 61 / 8%);
+}
+
+body.bq-player .mantine-Accordion-item {
+  border-bottom: 1px solid var(--bq-line-soft);
+}
+
+/* Consistent keyboard affordance across retuned Mantine controls, matching
+   .bqFocusRing on the hand-built ones. */
+body.bq-player :is(.mantine-Button-root, .mantine-ActionIcon-root, .mantine-Tabs-tab):focus-visible {
+  outline: 2px solid var(--bq-azure-hi);
+  outline-offset: 3px;
+}
+
+/* ------------------------------------------- admin design-system overrides */
+
+/*
+ * Some shared components — AccountPreferences and ApiTokenManager on the Settings page — are
+ * styled with the ADMIN design system (styles/buraq/tokens.css, `--buraq-*`), whose primary is
+ * cyan. Rendered inside the player Settings page they came out teal on navy, visibly out of
+ * place against the black-and-purple surface.
+ *
+ * Rather than editing those components or their stylesheet (both shared with admin, which must
+ * stay untouched), the admin tokens are re-pointed for the duration of a player page only.
+ * Admin never mounts PlayerShell, so `body.bq-player` is absent there and the real admin theme
+ * is unaffected.
+ */
+
+body.bq-player {
+  --buraq-bg-base: var(--bq-deep);
+  --buraq-bg-secondary: var(--bq-surface);
+  --buraq-bg-elevated: var(--bq-panel);
+  --buraq-bg-panel: var(--bq-panel);
+  --buraq-bg-inset: #0d0c0e;
+  --buraq-bg-hover: rgb(255 42 61 / 12%);
+  --buraq-bg-selected: rgb(255 42 61 / 18%);
+
+  --buraq-primary: var(--bq-accent);
+  --buraq-cyan: var(--bq-accent);
+
+  --buraq-text-primary: var(--bq-ink);
+  --buraq-text-secondary: var(--bq-ink-3);
+
+  --buraq-border: var(--bq-line-soft);
+  --buraq-border-strong: var(--bq-line);
+  --buraq-border-accent: var(--bq-line-hi);
+
+  --buraq-focus-ring: 0 0 0 2px var(--bq-deep), 0 0 0 4px var(--bq-accent-hi);
+
+  --buraq-font-display: var(--bq-display);
+  --buraq-font-mono: var(--bq-mono);
+}
+
+/* The segmented control and toggles read as the accent colour rather than cyan. */
+body.bq-player .mantine-SegmentedControl-indicator {
+  background: rgb(255 42 61 / 22%);
+  border: 1px solid var(--bq-line-hi);
+}
+
+body.bq-player .mantine-Switch-input:checked + .mantine-Switch-track {
+  background: var(--bq-accent);
+  border-color: var(--bq-accent);
+}
+
+/* =====================================================================================
+ * M6 "cyber tussle" layer — appended last so it wins over the rules above.
+ * HUD-cornered overlays, chamfered glowing buttons, red-barred inputs, slanted badges.
+ * ===================================================================================== */
+
+body.bq-player :is(.mantine-Modal-content, .mantine-Drawer-content, .mantine-Popover-dropdown, .mantine-Menu-dropdown, .mantine-Select-dropdown) {
+  background: var(--zr-corners), linear-gradient(165deg, rgb(34 10 16 / 98%), rgb(8 5 7 / 98%) 55%, rgb(18 6 10 / 98%));
+  border: 0;
+  border-radius: 0;
+  box-shadow: var(--zr-edge), 0 30px 80px rgb(0 0 0 / 70%);
+}
+
+body.bq-player .mantine-Modal-content {
+  animation: zrModalIn 0.28s cubic-bezier(0.2, 1.2, 0.4, 1);
+}
+
+@keyframes zrModalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+    clip-path: inset(48% 0 48% 0);
+  }
+
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+body.bq-player :is(.mantine-Modal-header, .mantine-Drawer-header) {
+  background: linear-gradient(90deg, rgb(255 42 61 / 18%), transparent 70%);
+  border-bottom: 1px solid var(--bq-line);
+}
+
+body.bq-player :is(.mantine-Modal-title, .mantine-Drawer-title) {
+  font-family: var(--zr-display);
+  font-size: 18px;
+  font-style: italic;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  color: #fff;
+  text-transform: uppercase;
+  text-shadow: 0 0 14px rgb(255 42 61 / 70%);
+}
+
+body.bq-player :is(.mantine-Modal-overlay, .mantine-Drawer-overlay) {
+  background:
+    repeating-linear-gradient(0deg, rgb(255 42 61 / 5%) 0 1px, transparent 1px 4px),
+    rgb(4 1 3 / 82%);
+  backdrop-filter: none;
+}
+
+body.bq-player :is(
+  .mantine-TextInput-input,
+  .mantine-PasswordInput-input,
+  .mantine-Textarea-input,
+  .mantine-NumberInput-input,
+  .mantine-Select-input,
+  .mantine-MultiSelect-input,
+  .mantine-Autocomplete-input,
+  .mantine-InputBase-input
+) {
+  color: #fff;
+  background:
+    linear-gradient(var(--bq-accent), var(--bq-accent)) left / 3px 100% no-repeat,
+    rgb(10 5 7 / 90%);
+  border: 1px solid rgb(255 42 61 / 40%);
+  border-radius: 0;
+}
+
+body.bq-player :is(.mantine-TextInput-input, .mantine-PasswordInput-input, .mantine-Textarea-input, .mantine-NumberInput-input, .mantine-Select-input, .mantine-InputBase-input):focus,
+body.bq-player .mantine-PasswordInput-input:focus-within {
+  border-color: var(--bq-accent);
+  box-shadow:
+    0 0 0 1px var(--bq-accent),
+    0 0 22px rgb(255 42 61 / 35%);
+}
+
+body.bq-player .mantine-InputWrapper-label {
+  font-family: var(--bq-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--bq-ink-2);
+  text-transform: uppercase;
+}
+
+body.bq-player .mantine-Button-root {
+  font-family: var(--bq-display);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  border: 0;
+  border-radius: 0;
+  clip-path: var(--zr-cut-sm);
+  transition:
+    filter var(--bq-t-fast),
+    transform var(--bq-t-fast);
+}
+
+body.bq-player .mantine-Button-root[data-variant='filled'] {
+  color: #fff;
+  background: linear-gradient(180deg, #ff4152, #c10f20);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 30%);
+}
+
+body.bq-player .mantine-Button-root[data-variant='filled']:hover:not(:disabled) {
+  filter: brightness(1.15) drop-shadow(0 0 10px rgb(255 42 61 / 80%));
+}
+
+body.bq-player .mantine-Button-root:is([data-variant='outline'], [data-variant='default'], [data-variant='light'], [data-variant='subtle']) {
+  color: var(--bq-ink);
+  background: rgb(255 42 61 / 10%);
+  box-shadow: inset 0 0 0 1px var(--bq-line-hi);
+}
+
+body.bq-player .mantine-Button-root:is([data-variant='outline'], [data-variant='default'], [data-variant='light'], [data-variant='subtle']):hover:not(:disabled) {
+  color: #fff;
+  background: rgb(255 42 61 / 24%);
+}
+
+body.bq-player .mantine-ActionIcon-root {
+  border-radius: 0;
+  clip-path: var(--zr-cut-sm);
+}
+
+body.bq-player :is(.mantine-Paper-root, .mantine-Card-root) {
+  background: var(--zr-corners), var(--zr-fill);
+  border: 0;
+  border-radius: 0;
+  box-shadow: var(--zr-edge);
+}
+
+body.bq-player .mantine-Badge-root {
+  font-family: var(--bq-mono);
+  letter-spacing: 0.14em;
+  border-radius: 0;
+  clip-path: var(--zr-slant);
+}
+
+body.bq-player .mantine-Tabs-tab {
+  font-family: var(--bq-display);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+body.bq-player .mantine-Tabs-tab[data-active] {
+  color: #fff;
+  background: rgb(255 42 61 / 22%);
+  border-color: var(--bq-accent);
+  box-shadow: 0 6px 18px -8px rgb(255 42 61 / 90%);
+}
+
+body.bq-player .mantine-Progress-root {
+  border-radius: 0;
+  background: rgb(255 42 61 / 12%);
+}
+
+body.bq-player .mantine-Progress-section {
+  background: linear-gradient(90deg, #b3121f, #ff2a3d, #ff8a95);
+  box-shadow: 0 0 12px rgb(255 42 61 / 80%);
+}
+
+body.bq-player .mantine-Notification-root {
+  background: var(--zr-corners), linear-gradient(90deg, rgb(40 10 16 / 97%), rgb(10 5 7 / 97%));
+  border: 0;
+  border-radius: 0;
+  box-shadow: var(--zr-edge), 0 18px 50px rgb(0 0 0 / 60%);
+}
+
+body.bq-player .mantine-Notification-title {
+  font-family: var(--bq-display);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+body.bq-player .mantine-Alert-root {
+  background: var(--zr-corners), rgb(255 42 61 / 10%);
+  border: 0;
+  border-radius: 0;
+  box-shadow: inset 3px 0 0 var(--bq-accent);
+}
+
+body.bq-player .mantine-Code-root {
+  font-family: var(--bq-mono);
+  color: #ffb3bb;
+  background: rgb(255 42 61 / 12%);
+  border-radius: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.bq-player .mantine-Modal-content {
+    animation: none;
+  }
+}

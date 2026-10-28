@@ -1,0 +1,178 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyVersion>1.8.7.0</AssemblyVersion>
+    <Description>BURAQ $(VITE_APP_GIT_NAME)-$(VITE_APP_GIT_SHA) build at $(VITE_APP_BUILD_TIMESTAMP)</Description>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+    <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
+    <IsPackable>false</IsPackable>
+    <SpaRoot>ClientApp\</SpaRoot>
+    <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
+    <!--
+      The React ClientApp is the whole site again: it now owns the landing page,
+      login and registration as routes, which the standalone wwwroot/*.html pages
+      used to serve. Those pages have been moved to legacy-static-frontend/ and the
+      build is re-enabled, so `dotnet publish` produces the current frontend. There
+      is no longer a hand-maintained wwwroot frontend for it to overwrite.
+    -->
+    <SkipFrontendBuild>false</SkipFrontendBuild>
+    <UserSecretsId>291cc810-6142-49a5-8134-1175254665a9</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+    <Configurations>Debug;Release</Configurations>
+    <ReleaseVersion>1.8.7</ReleaseVersion>
+    <WarningLevel>4</WarningLevel>
+    <ServerGarbageCollection>true</ServerGarbageCollection>
+    <AcceptNPOIOSMFLicense>true</AcceptNPOIOSMFLicense>
+    <EFPrecompileQueriesStage>none</EFPrecompileQueriesStage>
+    <EnableRequestDelegateGenerator>true</EnableRequestDelegateGenerator>
+    <CETCompat>false</CETCompat>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aigamo.ResXGenerator"/>
+    <PackageReference Include="Azure.Monitor.OpenTelemetry.AspNetCore"/>
+    <PackageReference Include="Cronos"/>
+    <PackageReference Include="AWSSDK.S3"/>
+    <PackageReference Include="Docker.DotNet.Enhanced"/>
+    <PackageReference Include="Docker.DotNet.Enhanced.BasicAuth"/>
+    <PackageReference Include="KubernetesClient"/>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tasks"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools"/>
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.Common"/>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL"/>
+    <PackageReference Include="Npgsql.OpenTelemetry"/>
+    <PackageReference Include="NPOI"/>
+    <PackageReference Include="NSwag.AspNetCore"/>
+    <PackageReference Include="NSwag.MSBuild"/>
+    <PackageReference Include="OpenTelemetry.Exporter.Console"/>
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol"/>
+    <PackageReference Include="OpenTelemetry.Exporter.Prometheus.AspNetCore"/>
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting"/>
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore"/>
+    <PackageReference Include="OpenTelemetry.Instrumentation.AWS"/>
+    <PackageReference Include="OpenTelemetry.Instrumentation.EntityFrameworkCore"/>
+    <PackageReference Include="OpenTelemetry.Instrumentation.GrpcNetClient"/>
+    <PackageReference Include="OpenTelemetry.Instrumentation.Http"/>
+    <PackageReference Include="OpenTelemetry.Instrumentation.Process"/>
+    <PackageReference Include="OpenTelemetry.Instrumentation.Runtime"/>
+    <PackageReference Include="OpenTelemetry.Instrumentation.StackExchangeRedis"/>
+    <PackageReference Include="Scalar.AspNetCore"/>
+    <PackageReference Include="Serilog.AspNetCore"/>
+    <PackageReference Include="Serilog.Expressions"/>
+    <PackageReference Include="Serilog.Extensions.Logging"/>
+    <PackageReference Include="Serilog.Sinks.Async"/>
+    <PackageReference Include="Serilog.Sinks.File"/>
+    <PackageReference Include="Serilog.Sinks.File.Archive"/>
+    <PackageReference Include="MailKit"/>
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore"/>
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis"/>
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis"/>
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience"/>
+    <PackageReference Include="Microsoft.Extensions.ServiceDiscovery"/>
+    <!-- Build-only override for CVE-2026-62900 pulled transitively by SourceLink 8.0.0. -->
+    <PackageReference Include="Microsoft.Build.Tasks.Git" PrivateAssets="All" />
+    <PackageReference Include="MemoryPack"/>
+    <PackageReference Include="Serilog.Sinks.Grafana.Loki"/>
+    <PackageReference Include="Serilog.Sinks.OpenTelemetry"/>
+    <PackageReference Include="Magick.NET-Q8-AnyCPU"/>
+
+    <PackageReference Include="BouncyCastle.Cryptography"/>
+    <PackageReference Include="PacketDotNet"/>
+    <PackageReference Include="SharpPcap"/>
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt"/>
+    <PackageReference Include="ZstdSharp.Port"/>
+    <!-- Security pins for transitive packages (see Directory.Packages.props). -->
+    <PackageReference Include="MessagePack"/>
+    <PackageReference Include="System.Security.Cryptography.Pkcs"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="BURAQ.Test"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Don't publish the SPA source files, but do show them in the project files list -->
+    <Content Remove="$(SpaRoot)**"/>
+    <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="ClientApp\build\**"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\favicon.webp"/>
+    <EmbeddedResource Update="Resources\Program.resx">
+      <PublicClass>true</PublicClass>
+      <CustomToolNamespace>BURAQ.Resources</CustomToolNamespace>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="kube-config.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <Target Name="DetectNodeEnv">
+    <!-- Ensure Node.js is installed -->
+    <Exec Command="node --version" ContinueOnError="true">
+      <Output TaskParameter="ExitCode" PropertyName="ErrorCode"/>
+    </Exec>
+    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE."/>
+
+    <PropertyGroup>
+      <NodePackageManager>pnpm</NodePackageManager>
+      <NodePackageInstallArgs></NodePackageInstallArgs>
+    </PropertyGroup>
+
+    <!-- Check if pnpm is installed -->
+    <Exec Command="pnpm --version" ContinueOnError="true">
+      <Output TaskParameter="ExitCode" PropertyName="ErrorCode"/>
+    </Exec>
+
+    <Error Condition="'$(ErrorCode)' != '0'" Text="pnpm 10.14.0 is required to build and publish the frontend. Activate it with Corepack before continuing."/>
+  </Target>
+
+  <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" DependsOnTargets="DetectNodeEnv" Condition=" '$(SkipFrontendBuild)' != 'true' And '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
+    <Exec Command="$(NodePackageManager) --version" ContinueOnError="true">
+      <Output TaskParameter="ExitCode" PropertyName="ErrorCode"/>
+    </Exec>
+    <Error Condition="'$(ErrorCode)' != '0'" Text="pnpm is required to build and run this project. To continue, please install pnpm from https://pnpm.io/installation/, and then restart your command prompt or IDE."/>
+
+    <Message Importance="high" Text="Restoring dependencies using '$(NodePackageManager)'. This may take several minutes..."/>
+    <Exec WorkingDirectory="$(SpaRoot)" Command="$(NodePackageManager) install --frozen-lockfile $(NodePackageInstallArgs)"/>
+  </Target>
+
+  <Target Name="PublishFrontend" AfterTargets="ComputeFilesToPublish" DependsOnTargets="DetectNodeEnv"
+          Condition="'$(SkipFrontendBuild)' != 'true'">
+    <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
+    <Exec WorkingDirectory="$(SpaRoot)" Command="$(NodePackageManager) install --frozen-lockfile $(NodePackageInstallArgs)"/>
+    <Exec WorkingDirectory="$(SpaRoot)" Command="$(NodePackageManager) run build"/>
+
+    <!-- Include the newly-built files in the publish output -->
+    <ItemGroup>
+      <DistFiles Include="$(SpaRoot)build\**"/>
+      <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
+        <!--
+          Must stay in step with two other things: ClientApp/vite.config.mts sets
+          base to /admin/, and HandlerExtension.UseAdminIndexAsync loads
+          wwwroot/admin/index.html. Publishing to wwwroot/ root instead would put
+          the bundle where neither the asset URLs nor the fallback handler look for
+          it, and the site would serve a 404 for every client route.
+        -->
+        <RelativePath>wwwroot\admin\%(RecursiveDir)%(FileName)%(Extension)</RelativePath>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      </ResolvedFileToPublish>
+    </ItemGroup>
+  </Target>
+
+</Project>

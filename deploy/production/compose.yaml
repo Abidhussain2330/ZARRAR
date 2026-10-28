@@ -1,0 +1,255 @@
+name: ${COMPOSE_PROJECT_NAME:-buraq}
+
+services:
+  proxy:
+    image: caddy:2.11.4-alpine
+    restart: unless-stopped
+    depends_on:
+      buraq:
+        condition: service_healthy
+    environment:
+      BURAQ_DOMAIN: ${BURAQ_DOMAIN:?set the public DNS name}
+      ACME_EMAIL: ${ACME_EMAIL:?set the ACME contact address}
+      BURAQ_PROXY_BODY_LIMIT: ${BURAQ_PROXY_BODY_LIMIT:-512MB}
+    ports:
+      - "${BURAQ_HTTP_PORT:-80}:80"
+      - "${BURAQ_HTTPS_PORT:-443}:443"
+      - "${BURAQ_HTTPS_PORT:-443}:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      edge:
+        ipv4_address: ${BURAQ_PROXY_IP:-172.30.0.10}
+    user: "65532:65532"
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp:size=32m,mode=1777
+    cpus: ${CADDY_CPUS:-0.50}
+    mem_limit: ${CADDY_MEMORY:-256m}
+    pids_limit: 128
+    healthcheck:
+      test: ["CMD", "caddy", "validate", "--config", "/etc/caddy/Caddyfile"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  buraq:
+    image: ${BURAQ_IMAGE:-buraq:production}
+    build:
+      context: ../..
+      dockerfile: deploy/production/Dockerfile
+    restart: unless-stopped
+    init: true
+    stop_grace_period: 60s
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      BURAQ_PUBLIC_URL: ${BURAQ_PUBLIC_URL:?set the canonical https origin}
+      BURAQ_ALLOWED_HOSTS: ${BURAQ_ALLOWED_HOSTS:?set exact public host names}
+      BURAQ_XOR_KEY: ${BURAQ_XOR_KEY:?set a high-entropy root secret}
+      BURAQ_DYNAMIC_FLAG_HMAC_KEY: ${BURAQ_DYNAMIC_FLAG_HMAC_KEY:?set an independent dynamic flag HMAC secret}
+      BURAQ_SHARED_GATEWAY_SIGNING_KEY: ${BURAQ_SHARED_GATEWAY_SIGNING_KEY:?set an independent shared gateway signing secret}
+      BURAQ_SHARED_GATEWAY_ALLOWED_ORIGIN: ${BURAQ_SHARED_GATEWAY_ALLOWED_ORIGIN:-}
+      BURAQ_VARIANT_SEED_KEY: ${BURAQ_VARIANT_SEED_KEY:?set an independent deterministic variant seed secret}
+      BURAQ_VARIANT_BUILDER_ENABLED: ${BURAQ_VARIANT_BUILDER_ENABLED:-false}
+      BURAQ_VARIANT_BUILDER_ORIGIN: ${BURAQ_VARIANT_BUILDER_ORIGIN:-}
+      BURAQ_VARIANT_BUILDER_TOKEN: ${BURAQ_VARIANT_BUILDER_TOKEN:-}
+      BURAQ_VARIANT_BUILDER_PARALLELISM: ${BURAQ_VARIANT_BUILDER_PARALLELISM:-2}
+      BURAQ_VARIANT_MAX_ARTIFACT_BYTES: ${BURAQ_VARIANT_MAX_ARTIFACT_BYTES:-67108864}
+      BURAQ_BOOTSTRAP_ADMIN_PASSWORD: ${BURAQ_BOOTSTRAP_ADMIN_PASSWORD:-}
+      BURAQ_PROXY_IP: ${BURAQ_PROXY_IP:-172.30.0.10}
+      BURAQ_MAX_REQUEST_BODY_BYTES: ${BURAQ_MAX_REQUEST_BODY_BYTES:-536870912}
+      BURAQ_REQUEST_LOGGING: ${BURAQ_REQUEST_LOGGING:-false}
+      BURAQ_ENABLE_TRAFFIC_CAPTURE: ${BURAQ_ENABLE_TRAFFIC_CAPTURE:-false}
+      BURAQ_CONTAINER_PORT_MAPPING: ${BURAQ_CONTAINER_PORT_MAPPING:-PlatformProxy}
+      BURAQ_CONTAINER_PUBLIC_ENTRY: ${BURAQ_CONTAINER_PUBLIC_ENTRY:-}
+      BURAQ_RUNTIME_PROVIDER: ${BURAQ_RUNTIME_PROVIDER:-Docker}
+      BURAQ_RUNTIME_MAX_INSTANCES: ${BURAQ_RUNTIME_MAX_INSTANCES:-0}
+      BURAQ_MICROVM_ORIGIN: ${BURAQ_MICROVM_ORIGIN:-}
+      BURAQ_MICROVM_TOKEN: ${BURAQ_MICROVM_TOKEN:-}
+      BURAQ_MICROVM_NODE: ${BURAQ_MICROVM_NODE:-microvm-primary}
+      BURAQ_MICROVM_HEALTH_PATH: ${BURAQ_MICROVM_HEALTH_PATH:-v1/health}
+      BURAQ_MICROVM_TIMEOUT_SECONDS: ${BURAQ_MICROVM_TIMEOUT_SECONDS:-30}
+      BURAQ_CHALLENGE_NETWORK_PREFIX: ${BURAQ_CHALLENGE_NETWORK_PREFIX:-buraq}
+      BURAQ_CHALLENGE_PIDS_LIMIT: ${BURAQ_CHALLENGE_PIDS_LIMIT:-512}
+      POSTGRES_DB: ${POSTGRES_DB:?set the PostgreSQL database}
+      POSTGRES_USER: ${POSTGRES_USER:?set the PostgreSQL user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set a strong PostgreSQL password}
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?set a strong Redis password}
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:?set a bucket-scoped MinIO access key}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:?set a strong bucket-scoped MinIO secret}
+      MINIO_BUCKET: ${MINIO_BUCKET:?set the BURAQ object bucket}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USERNAME: ${SMTP_USERNAME:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_SENDER_ADDRESS: ${SMTP_SENDER_ADDRESS:-}
+      SMTP_SENDER_NAME: ${SMTP_SENDER_NAME:-BURAQ}
+      BURAQ_REQUIRE_SMTP: ${BURAQ_REQUIRE_SMTP:-false}
+      SMTP_TLS_BYPASS: "false"
+    group_add:
+      - "${DOCKER_GID:-65534}"
+    volumes:
+      - buraq_files:/app/files
+      - ${BURAQ_RUNTIME_SOCKET_SOURCE:-/var/run/docker.sock}:/var/run/docker.sock:ro
+    networks:
+      edge:
+        ipv4_address: ${BURAQ_APP_EDGE_IP:-172.30.0.20}
+      data: {}
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp:size=128m,mode=1777
+    cpus: ${BURAQ_APP_CPUS:-2.0}
+    mem_limit: ${BURAQ_APP_MEMORY:-2g}
+    pids_limit: 512
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider --header=Host:$$BURAQ_ALLOWED_HOSTS http://127.0.0.1:3000/healthz"]
+      interval: 15s
+      timeout: 5s
+      start_period: 120s
+      retries: 8
+
+  postgres:
+    image: postgres:17.10-alpine
+    restart: unless-stopped
+    stop_grace_period: 60s
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?set the PostgreSQL database}
+      POSTGRES_USER: ${POSTGRES_USER:?set the PostgreSQL user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set a strong PostgreSQL password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - data
+    shm_size: 256m
+    cpus: ${POSTGRES_CPUS:-2.0}
+    mem_limit: ${POSTGRES_MEMORY:-2g}
+    pids_limit: 256
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:8.2.8-alpine
+    restart: unless-stopped
+    user: "999:1000"
+    command:
+      - sh
+      - -ec
+      - exec redis-server --appendonly yes --appendfsync everysec --requirepass "$$REDIS_PASSWORD"
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?set a strong Redis password}
+    volumes:
+      - redis_data:/data
+    networks:
+      - data
+    cpus: ${REDIS_CPUS:-0.75}
+    mem_limit: ${REDIS_MEMORY:-512m}
+    pids_limit: 128
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli --no-auth-warning -a \"$$REDIS_PASSWORD\" ping | grep -q PONG"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  minio:
+    image: ${BURAQ_MINIO_IMAGE:-buraq-minio:7aac2a2}
+    build:
+      context: ../..
+      dockerfile: deploy/production/Dockerfile.minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?set a non-default MinIO root user}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?set a strong MinIO password}
+    volumes:
+      - minio_data:/data
+    networks:
+      - data
+    cpus: ${MINIO_CPUS:-1.0}
+    mem_limit: ${MINIO_MEMORY:-1g}
+    pids_limit: 256
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "http://127.0.0.1:9000/minio/health/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  minio-init:
+    image: ${BURAQ_MC_IMAGE:-buraq-minio-client:77f82e1}
+    build:
+      context: ../..
+      dockerfile: deploy/production/Dockerfile.mc
+    restart: "no"
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: ["/bin/sh", "/opt/buraq/minio-init.sh"]
+    environment:
+      MC_CONFIG_DIR: /tmp/mc
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?set a non-default MinIO root user}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?set a strong MinIO root password}
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:?set a bucket-scoped MinIO access key}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:?set a strong bucket-scoped MinIO secret}
+      MINIO_BUCKET: ${MINIO_BUCKET:?set the BURAQ object bucket}
+    volumes:
+      - ./minio-init.sh:/opt/buraq/minio-init.sh:ro
+    networks:
+      - data
+    user: "65532:65532"
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    cpus: 0.25
+    mem_limit: 128m
+    pids_limit: 64
+
+networks:
+  edge:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: ${BURAQ_EDGE_SUBNET:-172.30.0.0/24}
+  data:
+    driver: bridge
+    internal: true
+
+volumes:
+  buraq_files:
+    name: ${BURAQ_VOLUME_PREFIX:-buraq}_files
+  postgres_data:
+    name: ${BURAQ_VOLUME_PREFIX:-buraq}_postgres
+  redis_data:
+    name: ${BURAQ_VOLUME_PREFIX:-buraq}_redis
+  minio_data:
+    name: ${BURAQ_VOLUME_PREFIX:-buraq}_minio
+  caddy_data:
+    name: ${BURAQ_VOLUME_PREFIX:-buraq}_caddy_data
+  caddy_config:
+    name: ${BURAQ_VOLUME_PREFIX:-buraq}_caddy_config

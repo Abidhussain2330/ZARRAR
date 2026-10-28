@@ -1,0 +1,12 @@
+.git
+.gitignore
+.vs
+.vscode
+.idea
+**/node_modules
+**/bin
+**/obj
+**/.cache
+src/BURAQ/ClientApp/build
+src/BURAQ/wwwroot/admin
+deploy/production/.env.production

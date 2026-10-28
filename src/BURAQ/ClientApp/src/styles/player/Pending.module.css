@@ -1,0 +1,44 @@
+.message {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--bq-ink-2);
+}
+
+.email {
+  margin: 0;
+  padding: 12px 16px;
+  font-family: var(--bq-mono);
+  font-size: 14px;
+  color: #fff;
+  overflow-wrap: anywhere;
+  background: var(--zr-corners), rgb(255 42 61 / 10%);
+  box-shadow: inset 3px 0 0 #ff2a3d;
+}
+
+.helpBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.helpTitle {
+  margin: 0;
+  font-family: var(--bq-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: #ff4a5a;
+  text-transform: uppercase;
+}
+
+.helpList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding-left: 18px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--bq-ink-4);
+}

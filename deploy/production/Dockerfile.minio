@@ -1,0 +1,21 @@
+# syntax=docker/dockerfile:1.7
+FROM golang:1.26.5-alpine3.24 AS build
+ARG MINIO_COMMIT=7aac2a2c5b7c882e68c1ce017d8256be2feea27f
+RUN apk add --no-cache ca-certificates git
+WORKDIR /src
+RUN git clone https://github.com/minio/minio.git . \
+    && git checkout --detach "$MINIO_COMMIT" \
+    && test "$(git rev-parse HEAD)" = "$MINIO_COMMIT"
+RUN LDFLAGS="$(go run buildscripts/gen-ldflags.go)" \
+    && CGO_ENABLED=0 go build -tags kqueue -trimpath -ldflags "$LDFLAGS" -o /out/minio .
+
+FROM alpine:3.24
+RUN apk add --no-cache ca-certificates curl \
+    && addgroup -S -g 10001 minio \
+    && adduser -S -D -H -u 10001 -G minio minio \
+    && mkdir -p /data \
+    && chown 10001:10001 /data
+COPY --from=build --chmod=0555 /out/minio /usr/local/bin/minio
+USER 10001:10001
+EXPOSE 9000 9001
+ENTRYPOINT ["/usr/local/bin/minio"]

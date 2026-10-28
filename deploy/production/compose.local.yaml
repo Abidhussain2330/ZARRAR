@@ -1,0 +1,16 @@
+services:
+  buraq:
+    ports:
+      # Debug port, loopback only: on the venue LAN, plain-HTTP 8080 would let anyone skip
+      # Caddy (TLS, body limits, the trusted-proxy address) and reach the app directly.
+      - "127.0.0.1:8080:8080"
+
+  proxy:
+    environment:
+      ACME_EMAIL: internal
+    volumes:
+      - ./Caddyfile.local:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    healthcheck:
+      test: ["CMD", "caddy", "validate", "--config", "/etc/caddy/Caddyfile"]

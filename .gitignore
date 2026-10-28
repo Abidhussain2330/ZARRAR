@@ -1,0 +1,46 @@
+# IDE and local workspace state
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+
+# .NET and frontend build output
+**/bin/
+**/obj/
+**/node_modules/
+src/BURAQ/ClientApp/build/
+src/BURAQ/wwwroot/admin/
+
+# Local runtime data, Docker exports, and release artifacts
+.buraq-runtime/
+release/
+Buraq-Demo-*/
+Buraq-Demo-*.zip
+Buraq_Demo_Deployment_Guide.docx
+pcc buraq.zip
+*.tar
+*.tar.gz
+
+# Secrets and machine-specific deployment configuration
+.env
+.env.*
+!.env.production.example
+deploy/production/.env.production
+*.key
+*.pfx
+*.pem
+
+# ZARRAR runtime data and packages
+src/BURAQ/files/
+*.ivf
+ZARRAR-*.zip
+_zarrar_backup_originals*.zip
+
+# Test output and local logs
+TestResults/
+coverage/
+*.log
+
+# Isolated local worktrees
+.worktrees/

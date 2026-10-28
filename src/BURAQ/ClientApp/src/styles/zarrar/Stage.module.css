@@ -1,0 +1,2294 @@
+/*
+ * ZARRAR stage — the auditorium screen.
+ *
+ * Drawn on a fixed 1920×1080 artboard and scaled to fit, so the projector, the monitor laptop and
+ * the admin's preview all show the same picture. Coordinates below are artboard pixels.
+ *
+ *   red     #ff2a3d  brand, timer, alerts, denied
+ *   chrome  silver gradient for titles
+ *   p1      cobalt  #2f8cff  (blue mascot, left)
+ *   p2      venom   #1ff28c  (green mascot, right)
+ *   amber   #ffb020  paused
+ */
+
+.viewport {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+}
+
+.artboard {
+  --red: #ff2a3d;
+  --red-deep: #9e0d1b;
+  --p1: #2f8cff;
+  --p1-rgb: 47 140 255;
+  --p2: #1ff28c;
+  --p2-rgb: 31 242 140;
+  --amber: #ffb020;
+  --ink: #eef1f5;
+  --ink-dim: #9aa1ad;
+  --chrome: linear-gradient(180deg, #fff 0%, #dfe3e9 36%, #8b929c 52%, #eef1f4 68%, #a6acb5 100%);
+  --display: orbitron, 'Chakra Petch', sans-serif;
+  --label: rajdhani, 'Chakra Petch', sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+  --move: 650ms cubic-bezier(0.7, 0, 0.2, 1);
+
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  color: var(--ink);
+  font-family: var(--label);
+  background: #030304;
+  transform-origin: 0 0;
+  user-select: none;
+}
+
+.hideCursor {
+  cursor: none;
+}
+
+/* ------------------------------------------------------------------ background */
+
+.bg {
+  position: absolute;
+  inset: -20px;
+  background: center / cover no-repeat;  /* image set inline by Stage.tsx */
+  filter: brightness(0.34) saturate(1.35) blur(2px);
+}
+
+.bgTint {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(900px 700px at 0% 55%, rgb(var(--p1-rgb) / 22%), transparent 70%),
+    radial-gradient(900px 700px at 100% 55%, rgb(var(--p2-rgb) / 18%), transparent 70%),
+    radial-gradient(700px 300px at 50% 0%, rgb(255 42 61 / 22%), transparent 70%),
+    radial-gradient(160px 520px at 50% 52%, rgb(255 42 61 / 16%), transparent 70%);
+}
+
+.floor {
+  position: absolute;
+  right: -400px;
+  bottom: -40px;
+  left: -400px;
+  height: 520px;
+  background-image:
+    linear-gradient(rgb(255 42 61 / 22%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 42 61 / 16%) 1px, transparent 1px);
+  background-size: 80px 80px;
+  mask-image: linear-gradient(to top, #000 10%, transparent 90%);
+  transform: perspective(600px) rotateX(62deg);
+  transform-origin: bottom;
+  animation: floorRun 2.4s linear infinite;
+}
+
+@keyframes floorRun {
+  to {
+    background-position: 0 80px;
+  }
+}
+
+/* Scanlines and vignette sit under the player panels: they texture the stage, never the feeds. */
+.scanlines {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background: repeating-linear-gradient(0deg, rgb(0 0 0 / 22%) 0 1px, transparent 1px 3px);
+  mix-blend-mode: multiply;
+}
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 62%, rgb(0 0 0 / 55%) 100%);
+}
+
+/* ---------------------------------------------------------------------- header */
+
+.header {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 12;
+  height: 110px;
+}
+
+.logo {
+  position: absolute;
+  top: 16px;
+  left: 40px;
+  width: 300px;
+  height: auto;
+  filter: drop-shadow(0 0 14px rgb(255 42 61 / 55%));
+}
+
+.titleBlock {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  text-align: center;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+
+.kicker {
+  font-family: var(--label);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.55em;
+  color: var(--ink-dim);
+}
+
+/* Chrome-to-red title with a blue/green split edge: the two sides pulling at it. */
+.title {
+  margin: 2px 0 0;
+  font-family: var(--display);
+  font-size: 50px;
+  font-style: italic;
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: 0.05em;
+  color: transparent;
+  background: linear-gradient(180deg, #fff 0%, #f3d9dc 38%, #ff4a5a 62%, #b30f20 100%);
+  background-clip: text;
+  filter: drop-shadow(-3px 0 rgb(var(--p1-rgb) / 75%)) drop-shadow(3px 0 rgb(var(--p2-rgb) / 65%))
+    drop-shadow(0 0 18px rgb(255 42 61 / 55%));
+}
+
+.subtitle {
+  margin-top: 2px;
+  font-family: var(--label);
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 0.32em;
+  color: var(--red);
+  text-transform: uppercase;
+  text-shadow: 0 0 12px rgb(255 42 61 / 60%);
+}
+
+.subSep {
+  margin: 0 14px;
+  color: var(--ink-dim);
+  text-shadow: none;
+}
+
+.headerRight {
+  position: absolute;
+  top: 22px;
+  right: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.livePill {
+  display: inline-flex;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 18px 8px 14px;
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  color: #fff;
+  background: rgb(255 42 61 / 18%);
+  border: 2px solid var(--red);
+  clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+  box-shadow: inset 0 0 18px rgb(255 42 61 / 40%);
+}
+
+.liveDot {
+  width: 14px;
+  height: 14px;
+  background: var(--red);
+  border-radius: 50%;
+  box-shadow: 0 0 14px var(--red);
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.25;
+    transform: scale(0.7);
+  }
+}
+
+.roundTag {
+  font-family: var(--label);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--ink-dim);
+}
+
+.roundTag b {
+  color: var(--ink);
+}
+
+/* ----------------------------------------------------------------------- timer */
+
+.timerBlock {
+  position: absolute;
+  z-index: 12;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  align-items: center;
+  transition:
+    left var(--move),
+    top var(--move),
+    width var(--move);
+}
+
+/* Digital readout in a hex-ended frame, like the mockup's clock box. */
+.timerBox {
+  position: relative;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  height: 78px;
+  padding: 0 46px;
+  background: var(--red);
+  clip-path: polygon(26px 0, calc(100% - 26px) 0, 100% 50%, calc(100% - 26px) 100%, 26px 100%, 0 50%);
+}
+
+.timerBox::before {
+  position: absolute;
+  inset: 2px;
+  z-index: 0;
+  content: '';
+  background:
+    repeating-linear-gradient(90deg, rgb(255 255 255 / 3%) 0 1px, transparent 1px 6px),
+    linear-gradient(180deg, rgb(40 6 12 / 96%), rgb(6 4 6 / 98%));
+  clip-path: polygon(25px 0, calc(100% - 25px) 0, 100% 50%, calc(100% - 25px) 100%, 25px 100%, 0 50%);
+}
+
+.timerLabel {
+  position: relative;
+  width: 74px;
+  font-family: var(--label);
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: 0.2em;
+  color: var(--red);
+  text-align: right;
+  white-space: normal;
+}
+
+.timerDigits {
+  position: relative;
+  display: flex;
+  font-family: var(--display);
+  font-size: 58px;
+  font-weight: 900;
+  line-height: 1;
+  color: #fff;
+  text-shadow:
+    0 0 16px rgb(255 42 61 / 85%),
+    0 0 40px rgb(255 42 61 / 40%);
+}
+
+/* Fixed cells so the clock never jitters as digit widths change. */
+.digit {
+  display: inline-block;
+  width: 0.8em;
+  text-align: center;
+}
+
+.colon {
+  display: inline-block;
+  width: 0.36em;
+  text-align: center;
+  animation: colonBlink 1s steps(2) infinite;
+}
+
+@keyframes colonBlink {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+.timerCritical {
+  background: var(--amber);
+}
+
+.timerCritical .timerDigits {
+  color: var(--amber);
+  text-shadow: 0 0 18px rgb(255 176 32 / 80%);
+  animation: critical 1.2s steps(2) infinite;
+}
+
+@keyframes critical {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+.timerPaused {
+  background: var(--amber);
+}
+
+.timerPaused .timerDigits {
+  color: var(--amber);
+  text-shadow: 0 0 18px rgb(255 176 32 / 70%);
+}
+
+.timerPaused .timerLabel {
+  color: var(--amber);
+}
+
+/* ------------------------------------------------------------ dominance (tug-of-war) */
+
+.dominance {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  width: min(100%, 860px);
+}
+
+.domPct {
+  flex: none;
+  width: 66px;
+  font-family: var(--display);
+  font-size: 19px;
+  font-weight: 900;
+  text-align: center;
+  text-shadow: 0 0 10px currentcolor;
+}
+
+.domTrack {
+  position: relative;
+  flex: 1;
+  height: 14px;
+  background: rgb(0 0 0 / 80%);
+  border: 1px solid rgb(255 255 255 / 16%);
+}
+
+.domP1,
+.domP2 {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  transition: width 0.9s cubic-bezier(0.7, 0, 0.2, 1);
+}
+
+.domP1 {
+  left: 0;
+  background:
+    repeating-linear-gradient(115deg, rgb(255 255 255 / 14%) 0 6px, transparent 6px 14px),
+    linear-gradient(90deg, rgb(var(--p1-rgb) / 35%), var(--p1));
+  box-shadow: 0 0 16px rgb(var(--p1-rgb) / 70%);
+}
+
+.domP2 {
+  right: 0;
+  background:
+    repeating-linear-gradient(65deg, rgb(255 255 255 / 14%) 0 6px, transparent 6px 14px),
+    linear-gradient(270deg, rgb(var(--p2-rgb) / 35%), var(--p2));
+  box-shadow: 0 0 16px rgb(var(--p2-rgb) / 70%);
+}
+
+.domP1,
+.domP2 {
+  animation: domFlow 1.2s linear infinite;
+}
+
+@keyframes domFlow {
+  to {
+    background-position: 28px 0, 0 0;
+  }
+}
+
+/* Where the two sides meet: a white-hot spark. */
+.domClash {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  width: 34px;
+  height: 34px;
+  background: radial-gradient(circle, #fff 0 16%, rgb(255 90 104 / 95%) 34%, rgb(255 42 61 / 0%) 70%);
+  transform: translate(-50%, -50%);
+  transition: left 0.9s cubic-bezier(0.7, 0, 0.2, 1);
+  animation: clash 0.5s ease-in-out infinite alternate;
+}
+
+.domClash::before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 3px;
+  height: 40px;
+  content: '';
+  background: linear-gradient(180deg, transparent, #fff, transparent);
+  box-shadow: 0 0 10px #ff2a3d;
+  transform: translate(-50%, -50%) rotate(14deg);
+}
+
+@keyframes clash {
+  from {
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+
+  to {
+    transform: translate(-50%, -50%) scale(1.25);
+  }
+}
+
+/* ------------------------------------------------------------------- target */
+
+.target {
+  display: flex;
+  gap: 14px;
+  align-items: baseline;
+  justify-content: center;
+  max-width: 100%;
+  padding: 6px 30px;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+  background: linear-gradient(90deg, transparent, rgb(255 42 61 / 22%) 20%, rgb(255 42 61 / 22%) 80%, transparent);
+  border-top: 1px solid rgb(255 42 61 / 50%);
+  border-bottom: 1px solid rgb(255 42 61 / 50%);
+}
+
+.targetKey {
+  color: var(--red);
+}
+
+.targetTitle {
+  overflow: hidden;
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  letter-spacing: 0.06em;
+}
+
+.targetPts {
+  color: var(--ink-dim);
+}
+
+/* How long the current target has been live (pauses excluded). */
+.targetClock {
+  padding-left: 14px;
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--amber);
+  letter-spacing: 0.08em;
+  border-left: 1px solid rgb(255 255 255 / 25%);
+}
+
+/* ------------------------------------------------------------------------ seam */
+
+/* Lightning crackling in the gap between the two feeds. */
+.seam {
+  position: absolute;
+  top: 300px;
+  left: 940px;
+  z-index: 9;
+  width: 40px;
+  height: 548px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgb(255 42 61 / 22%), transparent);
+  transition: opacity var(--move);
+}
+
+.seam svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.bolt {
+  fill: none;
+  stroke: #ffd5d9;
+  stroke-width: 2;
+  stroke-linejoin: bevel;
+  filter: drop-shadow(0 0 4px #ff2a3d) drop-shadow(0 0 10px #ff2a3d);
+  vector-effect: non-scaling-stroke;
+  animation: bolt 0.9s steps(1) infinite;
+}
+
+.bolt2 {
+  animation-delay: -0.45s;
+}
+
+@keyframes bolt {
+  0%,
+  45% {
+    opacity: 1;
+  }
+
+  46%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ---------------------------------------------------------------------- panels */
+
+/* One frame per player: header, live feed and player card, like the mockup. */
+.panel {
+  --accent: var(--p1);
+  --accent-rgb: var(--p1-rgb);
+
+  position: absolute;
+  z-index: 10;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 12px 10px;
+  transition:
+    left var(--move),
+    top var(--move),
+    width var(--move),
+    opacity var(--move),
+    transform var(--move);
+}
+
+.panelP2 {
+  --accent: var(--p2);
+  --accent-rgb: var(--p2-rgb);
+}
+
+/* Notched neon border: colored outer shape, dark inner shape 2px in. */
+.frame {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--accent);
+  clip-path: polygon(26px 0, 100% 0, 100% calc(100% - 26px), calc(100% - 26px) 100%, 0 100%, 0 26px);
+  filter: drop-shadow(0 0 14px rgb(var(--accent-rgb) / 60%));
+  will-change: transform;
+}
+
+.frame::before {
+  position: absolute;
+  inset: 2px;
+  content: '';
+  background:
+    linear-gradient(180deg, rgb(var(--accent-rgb) / 16%), transparent 70px),
+    linear-gradient(0deg, rgb(var(--accent-rgb) / 18%), transparent 150px),
+    rgb(5 8 14 / 94%);
+  clip-path: polygon(25px 0, 100% 0, 100% calc(100% - 25px), calc(100% - 25px) 100%, 0 100%, 0 25px);
+}
+
+.panelP2 .frame,
+.panelP2 .frame::before {
+  clip-path: polygon(0 0, calc(100% - 26px) 0, 100% 26px, 100% 100%, 26px 100%, 0 calc(100% - 26px));
+}
+
+.panelHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 36px;
+  padding: 0 6px 6px;
+}
+
+.panelP2 .panelHead {
+  flex-direction: row-reverse;
+}
+
+.slotTag {
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  font-family: var(--display);
+  font-size: 21px;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  color: var(--accent);
+  text-shadow: 0 0 14px rgb(var(--accent-rgb) / 80%);
+}
+
+.slotIcon {
+  width: 26px;
+  height: 26px;
+}
+
+.uplink {
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  font-family: var(--label);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  color: var(--ink-dim);
+}
+
+.panelP2 .uplink {
+  flex-direction: row-reverse;
+}
+
+.bars {
+  display: inline-flex;
+  gap: 3px;
+  align-items: flex-end;
+  height: 18px;
+}
+
+.bars i {
+  width: 5px;
+  background: rgb(255 255 255 / 16%);
+}
+
+.bars i:nth-child(1) {
+  height: 6px;
+}
+
+.bars i:nth-child(2) {
+  height: 10px;
+}
+
+.bars i:nth-child(3) {
+  height: 14px;
+}
+
+.bars i:nth-child(4) {
+  height: 18px;
+}
+
+.uplinkOn {
+  color: var(--accent);
+}
+
+.uplinkOn .bars i {
+  background: var(--accent);
+  box-shadow: 0 0 6px rgb(var(--accent-rgb) / 80%);
+}
+
+.uplinkOn .bars i:nth-child(4) {
+  animation: barFlicker 2.4s steps(1) infinite;
+}
+
+@keyframes barFlicker {
+  40% {
+    opacity: 0.25;
+  }
+
+  48% {
+    opacity: 1;
+  }
+}
+
+.feedLost .uplink {
+  color: var(--red);
+}
+
+.feedBox {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #000;
+  border: 1px solid rgb(var(--accent-rgb) / 55%);
+}
+
+.feedCanvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* ------------------------------------------------- full-screen focus (layouts 5 / 6) */
+
+/* One player's screen fills the stage edge to edge; only a slim name strip sits on top. */
+.full {
+  z-index: 20;
+  padding: 0;
+}
+
+.full .frame,
+.full .panelHead,
+.full .card {
+  display: none;
+}
+
+.full .feedBox {
+  border: 0;
+}
+
+.fullTag {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  display: inline-flex;
+  gap: 14px;
+  align-items: center;
+  padding: 6px 16px 6px 6px;
+  font-family: var(--label);
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #fff;
+  background: rgb(5 8 14 / 82%);
+  border-left: 4px solid var(--accent);
+  box-shadow: 0 4px 18px rgb(0 0 0 / 50%);
+  opacity: 0.92;
+}
+
+.panelP2 .fullTag {
+  right: 14px;
+  left: auto;
+  flex-direction: row-reverse;
+  padding: 6px 6px 6px 16px;
+  border-right: 4px solid var(--accent);
+  border-left: 0;
+}
+
+.fullSlot {
+  padding: 2px 10px;
+  font-family: var(--display);
+  font-size: 18px;
+  font-weight: 900;
+  color: #05080e;
+  background: var(--accent);
+}
+
+.fullName {
+  font-family: var(--display);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.fullHandle {
+  color: var(--ink-dim);
+}
+
+.fullScore {
+  min-width: 56px;
+  font-family: var(--display);
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--accent);
+  text-align: center;
+}
+
+/* LIVE / OFFLINE sits in the panel header, next to the uplink, never over the picture. */
+.headRight {
+  display: inline-flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.panelP2 .headRight {
+  flex-direction: row-reverse;
+}
+
+.liveBadge,
+.offBadge {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  padding: 3px 10px;
+  font-family: var(--display);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  color: #fff;
+  background: var(--red);
+  box-shadow: 0 0 16px rgb(255 42 61 / 70%);
+}
+
+.offBadge {
+  background: #3a3d45;
+  box-shadow: none;
+}
+
+.badgeDot {
+  width: 9px;
+  height: 9px;
+  background: #fff;
+  border-radius: 50%;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+.offBadge .badgeDot {
+  animation: none;
+}
+
+.feedStatus {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background:
+    repeating-linear-gradient(0deg, rgb(255 255 255 / 3%) 0 2px, transparent 2px 4px),
+    radial-gradient(circle at center, rgb(var(--accent-rgb) / 14%), rgb(0 0 0 / 92%) 70%);
+}
+
+.feedStatusTitle {
+  font-family: var(--display);
+  font-size: 44px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+  text-shadow: 0 0 20px rgb(var(--accent-rgb) / 80%);
+}
+
+.feedStatusSub {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: var(--ink-dim);
+}
+
+.feedLost .feedStatusTitle {
+  color: var(--red);
+  text-shadow: 0 0 22px rgb(255 42 61 / 90%);
+  animation: glitch 1.6s steps(1) infinite;
+}
+
+.feedLost .feedStatus {
+  background:
+    repeating-linear-gradient(0deg, rgb(255 42 61 / 6%) 0 2px, transparent 2px 4px),
+    radial-gradient(circle at center, rgb(255 42 61 / 18%), rgb(0 0 0 / 94%) 70%);
+}
+
+.feedLost .feedBox {
+  border-color: rgb(255 42 61 / 80%);
+}
+
+@keyframes glitch {
+  0%,
+  100% {
+    transform: none;
+    clip-path: none;
+  }
+
+  20% {
+    transform: translate(-6px, 2px);
+    clip-path: inset(10% 0 55% 0);
+  }
+
+  22% {
+    transform: translate(5px, -3px);
+    clip-path: inset(60% 0 8% 0);
+  }
+
+  24% {
+    transform: none;
+    clip-path: none;
+  }
+
+  70% {
+    transform: translate(3px, 0) skewX(-8deg);
+  }
+
+  72% {
+    transform: none;
+  }
+}
+
+/* --------------------------------------------------------------- player card */
+
+.card {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  height: 112px;
+  padding: 0 72px 0 12px; /* room on the inner side for the VS badge */
+  margin-top: 10px;
+  background: linear-gradient(90deg, rgb(var(--accent-rgb) / 22%), rgb(0 0 0 / 35%) 65%);
+  border-top: 1px solid rgb(var(--accent-rgb) / 50%);
+}
+
+/* Mirrored for P2, so the two scores face off across the VS. */
+.panelP2 .card {
+  flex-direction: row-reverse;
+  padding: 0 12px 0 72px;
+  text-align: right;
+  background: linear-gradient(270deg, rgb(var(--accent-rgb) / 22%), rgb(0 0 0 / 35%) 65%);
+}
+
+.avatar {
+  flex: none;
+  width: 92px;
+  height: 92px;
+  padding: 2px;
+  background: var(--accent);
+  clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
+  box-shadow: 0 0 20px rgb(var(--accent-rgb) / 60%);
+}
+
+.avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  clip-path: polygon(13px 0, 100% 0, 100% calc(100% - 13px), calc(100% - 13px) 100%, 0 100%, 0 13px);
+}
+
+.who {
+  flex: 1;
+  min-width: 0;
+}
+
+.name {
+  overflow: hidden;
+  font-family: var(--display);
+  font-size: 32px;
+  font-weight: 900;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  color: #fff;
+  text-shadow: 0 0 14px rgb(var(--accent-rgb) / 60%);
+}
+
+.handle {
+  margin-top: 2px;
+  overflow: hidden;
+  font-size: 21px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  color: var(--accent);
+}
+
+.stats {
+  display: flex;
+  flex: none;
+  gap: 26px;
+  align-items: flex-end;
+}
+
+.panelP2 .stats {
+  flex-direction: row-reverse;
+}
+
+.stat {
+  text-align: center;
+}
+
+.statLabel {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.26em;
+  color: var(--ink-dim);
+}
+
+.score {
+  min-width: 150px;
+  font-family: var(--display);
+  font-size: 54px;
+  font-weight: 900;
+  line-height: 1;
+  color: #fff;
+  text-shadow:
+    0 0 14px rgb(var(--accent-rgb) / 90%),
+    0 0 34px rgb(var(--accent-rgb) / 50%);
+}
+
+.statValue {
+  font-family: var(--display);
+  font-size: 30px;
+  font-weight: 900;
+  line-height: 1.1;
+  color: var(--accent);
+}
+
+.statSub {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--ink-dim);
+}
+
+.scoreBump {
+  animation: bump 0.9s cubic-bezier(0.2, 1.6, 0.4, 1);
+}
+
+@keyframes bump {
+  0% {
+    transform: scale(1);
+  }
+
+  25% {
+    transform: scale(1.35);
+    filter: brightness(2);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Compact card for the small panel in a focus layout. */
+.compact .card,
+.compact.panelP2 .card {
+  gap: 12px;
+  padding: 0 12px;
+  height: 78px;
+  margin-top: 8px;
+}
+
+.compact .avatar {
+  width: 62px;
+  height: 62px;
+}
+
+.compact .name {
+  font-size: 21px;
+}
+
+.compact .handle {
+  font-size: 15px;
+}
+
+.compact .statMinor {
+  display: none;
+}
+
+.compact .score {
+  min-width: 96px;
+  font-size: 34px;
+}
+
+.compact .statLabel {
+  font-size: 11px;
+}
+
+.compact .panelHead {
+  height: 30px;
+}
+
+.compact .slotTag {
+  font-size: 16px;
+}
+
+.compact .slotIcon {
+  width: 20px;
+  height: 20px;
+}
+
+.compact .uplink {
+  font-size: 12px;
+}
+
+.compact .liveBadge,
+.compact .offBadge {
+  top: 10px;
+  right: 40px;
+  font-size: 12px;
+}
+
+.compact .feedStatusTitle {
+  font-size: 26px;
+}
+
+.compact .feedStatusSub {
+  font-size: 15px;
+}
+
+/* Flash on a capture / denial for that player's panel. */
+.flashWin .feedBox {
+  animation: flashWin 1.4s ease-out;
+}
+
+.flashLose .feedBox {
+  animation: flashLose 0.9s ease-out;
+}
+
+@keyframes flashWin {
+  0%,
+  40% {
+    filter: brightness(2.2);
+    box-shadow: 0 0 120px rgb(var(--accent-rgb) / 100%);
+  }
+}
+
+@keyframes flashLose {
+  0%,
+  30% {
+    filter: brightness(1.6) hue-rotate(-40deg) saturate(3);
+    transform: translateX(-10px);
+  }
+
+  15% {
+    transform: translateX(10px);
+  }
+}
+
+/* ------------------------------------------------------------------------- VS */
+
+/* Hex badge between the two player cards, as in the mockup. */
+.vs {
+  position: absolute;
+  top: 905px;
+  left: 960px;
+  z-index: 13;
+  display: grid;
+  place-items: center;
+  width: 150px;
+  height: 150px;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: opacity var(--move);
+}
+
+.vs::before,
+.vs::after {
+  position: absolute;
+  content: '';
+  clip-path: polygon(25% 3%, 75% 3%, 100% 50%, 75% 97%, 25% 97%, 0 50%);
+}
+
+.vs::before {
+  inset: 0;
+  background: linear-gradient(90deg, var(--p1), #ff2a3d 50%, var(--p2));
+}
+
+.vs::after {
+  inset: 4px;
+  background: radial-gradient(circle, rgb(60 6 14 / 96%), rgb(4 4 6 / 98%) 70%);
+}
+
+.vsSlash {
+  position: absolute;
+  z-index: 1;
+  width: 6px;
+  height: 200px;
+  background: linear-gradient(180deg, transparent, #fff 35%, #ff2a3d 65%, transparent);
+  box-shadow: 0 0 18px #ff2a3d;
+  transform: rotate(24deg);
+  animation: slashFlicker 2.2s steps(1) infinite;
+}
+
+@keyframes slashFlicker {
+  0%,
+  92% {
+    opacity: 0.85;
+  }
+
+  93%,
+  96% {
+    opacity: 0.2;
+  }
+}
+
+.vsText {
+  position: relative;
+  z-index: 2;
+  font-family: var(--display);
+  font-size: 74px;
+  font-style: italic;
+  font-weight: 900;
+  line-height: 1;
+  color: transparent;
+  background: var(--chrome);
+  background-clip: text;
+  filter: drop-shadow(-3px 0 rgb(var(--p1-rgb) / 95%)) drop-shadow(3px 0 rgb(var(--p2-rgb) / 95%))
+    drop-shadow(0 0 16px rgb(255 42 61 / 85%));
+}
+
+/* --------------------------------------------------------------------- ticker */
+
+.ticker {
+  position: absolute;
+  right: 40px;
+  bottom: 22px;
+  left: 40px;
+  z-index: 12;
+  display: flex;
+  align-items: stretch;
+  height: 56px;
+  overflow: hidden;
+  background: rgb(4 4 6 / 88%);
+  border: 1px solid rgb(255 42 61 / 45%);
+}
+
+.tickerTag {
+  display: flex;
+  flex: none;
+  gap: 10px;
+  align-items: center;
+  padding: 0 26px 0 20px;
+  font-family: var(--display);
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  color: #fff;
+  background: var(--red);
+  clip-path: polygon(0 0, 100% 0, calc(100% - 18px) 100%, 0 100%);
+}
+
+.tickerTrack {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+}
+
+.tickerMove {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  gap: 64px;
+  align-items: center;
+  white-space: nowrap;
+  animation: ticker var(--ticker-duration, 40s) linear infinite;
+}
+
+@keyframes ticker {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.tickerItem {
+  display: inline-flex;
+  gap: 12px;
+  align-items: center;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.tickerItem::before {
+  width: 10px;
+  height: 10px;
+  content: '';
+  background: var(--dot, var(--red));
+  transform: rotate(45deg);
+  box-shadow: 0 0 10px var(--dot, var(--red));
+}
+
+/* ---------------------------------------------------------------------- board */
+
+.board {
+  position: absolute;
+  top: 290px;
+  right: 60px;
+  left: 60px;
+  z-index: 9;
+  display: grid;
+  grid-template-columns: 1fr 360px 1fr;
+  gap: 30px;
+  align-items: start;
+  opacity: 0;
+  transform: scale(0.94);
+  transition:
+    opacity var(--move),
+    transform var(--move);
+  pointer-events: none;
+}
+
+.boardOn {
+  opacity: 1;
+  transform: none;
+}
+
+.boardSide {
+  --accent: var(--p1);
+  --accent-rgb: var(--p1-rgb);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 20px 26px;
+  text-align: center;
+  background: linear-gradient(180deg, rgb(var(--accent-rgb) / 20%), rgb(4 6 10 / 92%) 60%);
+  border-top: 3px solid var(--accent);
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 30px), calc(100% - 30px) 100%, 30px 100%, 0 calc(100% - 30px));
+}
+
+.boardSideP2 {
+  --accent: var(--p2);
+  --accent-rgb: var(--p2-rgb);
+}
+
+.boardMascot {
+  width: 260px;
+  height: 260px;
+  object-fit: cover;
+  clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
+  filter: drop-shadow(0 0 18px rgb(var(--accent-rgb) / 80%));
+}
+
+.boardName {
+  max-width: 100%;
+  margin-top: 18px;
+  overflow: hidden;
+  font-family: var(--display);
+  font-size: 48px;
+  font-weight: 900;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-shadow: 0 0 18px rgb(var(--accent-rgb) / 70%);
+}
+
+.boardScore {
+  margin-top: 8px;
+  font-family: var(--display);
+  font-size: 130px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  color: var(--accent);
+  text-shadow: 0 0 30px rgb(var(--accent-rgb) / 80%);
+}
+
+.boardMeta {
+  margin-top: 10px;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  color: var(--ink-dim);
+}
+
+.targets {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 20px;
+}
+
+.targetsTitle {
+  margin-bottom: 6px;
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0.3em;
+  color: var(--red);
+  text-align: center;
+}
+
+.targetRow {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 14px;
+  font-size: 21px;
+  font-weight: 700;
+  background: rgb(255 255 255 / 4%);
+  border-left: 4px solid #333842;
+}
+
+.targetRow span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.targetRowP1 {
+  border-left-color: var(--p1);
+  background: rgb(var(--p1-rgb) / 14%);
+}
+
+.targetRowP2 {
+  border-left-color: var(--p2);
+  background: rgb(var(--p2-rgb) / 14%);
+}
+
+.targetRowLive {
+  border-left-color: var(--red);
+  background: rgb(255 42 61 / 16%);
+  animation: critical 1.4s steps(2) infinite;
+}
+
+.targetState {
+  font-size: 16px;
+  letter-spacing: 0.16em;
+  color: var(--ink-dim);
+}
+
+/* ------------------------------------------------------------------- takeovers */
+
+.takeover {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.shake {
+  animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+@keyframes shake {
+  10%,
+  90% {
+    transform: translate(-4px, 2px);
+  }
+
+  20%,
+  80% {
+    transform: translate(8px, -4px);
+  }
+
+  30%,
+  50%,
+  70% {
+    transform: translate(-14px, 6px);
+  }
+
+  40%,
+  60% {
+    transform: translate(14px, -6px);
+  }
+}
+
+/* Flag captured: the winner's colour floods the screen, a shockwave rolls out, the chrome
+   title slams in. This is the one moment the stage is built around. */
+.capture {
+  --accent: var(--p1);
+  --accent-rgb: var(--p1-rgb);
+
+  background:
+    radial-gradient(circle at center, rgb(var(--accent-rgb) / 55%), transparent 62%),
+    rgb(0 0 0 / 86%);
+  animation: floodIn 4.4s ease-out forwards;
+}
+
+.captureP2 {
+  --accent: var(--p2);
+  --accent-rgb: var(--p2-rgb);
+}
+
+@keyframes floodIn {
+  0% {
+    opacity: 0;
+  }
+
+  6%,
+  85% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+/* The white-out flash at the moment of capture. */
+.capture::before {
+  position: absolute;
+  inset: 0;
+  content: '';
+  background: #fff;
+  opacity: 0;
+  animation: whiteout 0.7s ease-out;
+}
+
+@keyframes whiteout {
+  8% {
+    opacity: 0.75;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+.ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200px;
+  height: 200px;
+  border: 6px solid var(--accent);
+  border-radius: 50%;
+  box-shadow:
+    0 0 40px var(--accent),
+    inset 0 0 40px var(--accent);
+  transform: translate(-50%, -50%) scale(0);
+  animation: ring 1.6s cubic-bezier(0.1, 0.8, 0.2, 1) forwards;
+}
+
+.ring2 {
+  animation-delay: 0.18s;
+}
+
+.ring3 {
+  border-color: var(--red);
+  box-shadow: 0 0 40px var(--red);
+  animation-delay: 0.36s;
+}
+
+@keyframes ring {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(12);
+  }
+}
+
+.rays {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2400px;
+  height: 2400px;
+  background: repeating-conic-gradient(from 0deg, rgb(var(--accent-rgb) / 22%) 0deg 4deg, transparent 4deg 16deg);
+  border-radius: 50%;
+  mask-image: radial-gradient(circle, #000 0%, transparent 60%);
+  transform: translate(-50%, -50%);
+  animation: spin 9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+.takeKicker {
+  position: relative;
+  font-family: var(--display);
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: 0.5em;
+  color: var(--accent);
+  text-shadow: 0 0 18px var(--accent);
+  animation: slideDown 0.5s 0.15s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+
+.takeTitle {
+  position: relative;
+  font-family: var(--display);
+  font-size: 132px;
+  font-style: italic;
+  font-weight: 900;
+  line-height: 0.95;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+  color: transparent;
+  background: var(--chrome);
+  background-clip: text;
+  filter: drop-shadow(0 0 24px rgb(var(--accent-rgb) / 90%)) drop-shadow(0 8px 0 rgb(0 0 0 / 60%));
+  animation: slam 0.55s cubic-bezier(0.2, 1.6, 0.35, 1) both;
+}
+
+@keyframes slam {
+  0% {
+    opacity: 0;
+    transform: scale(3.2) skewX(-12deg);
+  }
+
+  60% {
+    opacity: 1;
+    transform: scale(0.94) skewX(0);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-40px);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+}
+
+.takeWho {
+  position: relative;
+  margin-top: 26px;
+  font-family: var(--display);
+  font-size: 72px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  color: #fff;
+  text-shadow: 0 0 26px var(--accent);
+  animation: slideUp 0.5s 0.35s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+
+.takeDetail {
+  position: relative;
+  display: flex;
+  gap: 30px;
+  align-items: center;
+  padding: 14px 40px;
+  margin-top: 22px;
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  background: rgb(0 0 0 / 82%);
+  border-top: 2px solid var(--accent);
+  border-bottom: 2px solid var(--accent);
+  animation: slideUp 0.5s 0.5s both;
+}
+
+.takeTime {
+  font-family: var(--display);
+  font-size: 34px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.1em;
+  color: #fff;
+}
+
+.takePoints {
+  font-family: var(--display);
+  font-size: 54px;
+  font-weight: 900;
+  color: var(--accent);
+  text-shadow: 0 0 20px var(--accent);
+}
+
+/* Access denied: a red band tears across the screen and glitches out. */
+.denied {
+  background: radial-gradient(ellipse at center, rgb(255 42 61 / 35%), transparent 70%);
+  animation: deniedLife 2.4s ease-out forwards;
+}
+
+@keyframes deniedLife {
+  0% {
+    opacity: 0;
+    background-color: rgb(255 42 61 / 45%);
+  }
+
+  8% {
+    opacity: 1;
+    background-color: transparent;
+  }
+
+  85% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+.deniedBand {
+  position: relative;
+  width: 100%;
+  padding: 26px 0 30px;
+  text-align: center;
+  background:
+    repeating-linear-gradient(-45deg, rgb(0 0 0 / 30%) 0 14px, transparent 14px 28px),
+    linear-gradient(90deg, rgb(158 13 27 / 92%), rgb(255 42 61 / 92%), rgb(158 13 27 / 92%));
+  box-shadow: 0 0 80px rgb(255 42 61 / 70%);
+  animation: tear 0.35s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+
+@keyframes tear {
+  from {
+    clip-path: inset(48% 0 48% 0);
+  }
+
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.deniedTitle {
+  font-family: var(--display);
+  font-size: 128px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  color: #fff;
+  text-shadow:
+    5px 0 0 rgb(0 255 255 / 55%),
+    -5px 0 0 rgb(255 0 80 / 75%);
+  animation: glitch 0.9s steps(1) infinite;
+}
+
+.deniedSub {
+  margin-top: 12px;
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: #fff;
+}
+
+/* Release: a new target drops in from the top. */
+.release {
+  background:
+    radial-gradient(ellipse at center, rgb(255 42 61 / 26%), transparent 60%),
+    rgb(0 0 0 / 86%);
+  animation: floodIn 4s ease-out forwards;
+}
+
+.releaseKicker {
+  font-family: var(--display);
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: 0.5em;
+  color: var(--red);
+  text-shadow: 0 0 18px var(--red);
+  animation: slideDown 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+
+.releaseTitle {
+  max-width: 1700px;
+  margin-top: 18px;
+  overflow: hidden;
+  font-family: var(--display);
+  font-size: 104px;
+  font-weight: 900;
+  line-height: 1.05;
+  text-align: center;
+  color: transparent;
+  background: var(--chrome);
+  background-clip: text;
+  filter: drop-shadow(0 0 22px rgb(255 42 61 / 80%));
+  animation: slam 0.6s 0.15s cubic-bezier(0.2, 1.6, 0.35, 1) both;
+}
+
+.releaseMeta {
+  margin-top: 26px;
+  font-size: 38px;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  color: var(--ink);
+  animation: slideUp 0.5s 0.4s both;
+}
+
+/* Small banners: feed lost, feed back, resumed. */
+.banner {
+  position: absolute;
+  top: 300px;
+  left: 50%;
+  z-index: 42;
+  padding: 18px 56px;
+  font-family: var(--display);
+  font-size: 46px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+  color: #fff;
+  background: var(--red);
+  clip-path: polygon(24px 0, 100% 0, calc(100% - 24px) 100%, 0 100%);
+  box-shadow: 0 0 60px rgb(255 42 61 / 70%);
+  transform: translateX(-50%);
+  animation: bannerLife 2.6s ease-out forwards;
+}
+
+.bannerWarn {
+  color: #140c00;
+  background: var(--amber);
+  box-shadow: 0 0 60px rgb(255 176 32 / 70%);
+}
+
+.bannerOk {
+  color: #04120a;
+  background: var(--p2);
+  box-shadow: 0 0 60px rgb(var(--p2-rgb) / 70%);
+}
+
+@keyframes bannerLife {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) scaleX(0.2);
+  }
+
+  10% {
+    opacity: 1;
+    transform: translateX(-50%) scaleX(1);
+  }
+
+  85% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ------------------------------------------------------------ persistent states */
+
+.pausedLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background:
+    repeating-linear-gradient(-45deg, rgb(255 176 32 / 7%) 0 30px, transparent 30px 60px),
+    rgb(0 0 0 / 62%);
+  backdrop-filter: blur(3px) grayscale(0.6);
+}
+
+.pausedTitle {
+  font-family: var(--display);
+  font-size: 120px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  color: var(--amber);
+  text-shadow: 0 0 40px rgb(255 176 32 / 70%);
+  animation: critical 1.6s steps(2) infinite;
+}
+
+.pausedReason {
+  padding: 12px 36px;
+  margin-top: 18px;
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: #111;
+  background: var(--amber);
+}
+
+.winnerLayer {
+  --accent: var(--p1);
+  --accent-rgb: var(--p1-rgb);
+
+  position: absolute;
+  inset: 0;
+  z-index: 35;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at center, rgb(var(--accent-rgb) / 42%), transparent 60%),
+    rgb(0 0 0 / 90%);
+}
+
+.winnerP2 {
+  --accent: var(--p2);
+  --accent-rgb: var(--p2-rgb);
+}
+
+.winnerDraw {
+  --accent: var(--red);
+  --accent-rgb: 255 42 61;
+}
+
+.winnerMascot {
+  position: relative;
+  width: 360px;
+  height: 360px;
+  object-fit: cover;
+  clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
+  filter: drop-shadow(0 0 30px var(--accent));
+  animation: slam 0.8s cubic-bezier(0.2, 1.6, 0.35, 1) both;
+}
+
+.winnerKicker {
+  position: relative;
+  margin-top: 26px;
+  font-family: var(--display);
+  font-size: 44px;
+  font-weight: 800;
+  letter-spacing: 0.6em;
+  color: var(--accent);
+  text-shadow: 0 0 20px var(--accent);
+}
+
+.winnerName {
+  position: relative;
+  font-family: var(--display);
+  max-width: 1800px;
+  overflow: hidden;
+  font-size: 116px;
+  font-style: italic;
+  font-weight: 900;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: transparent;
+  background: var(--chrome);
+  background-clip: text;
+  filter: drop-shadow(0 0 28px rgb(var(--accent-rgb) / 90%));
+  animation: slam 0.7s 0.3s cubic-bezier(0.2, 1.6, 0.35, 1) both;
+}
+
+.winnerScore {
+  position: relative;
+  margin-top: 20px;
+  font-family: var(--display);
+  font-size: 64px;
+  font-weight: 900;
+  color: var(--accent);
+}
+
+/* ------------------------------------------------------------------ enter gate */
+
+.gate {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  align-items: center;
+  justify-content: center;
+  background: rgb(0 0 0 / 82%);
+}
+
+.gateLogo {
+  width: 900px;
+  filter: drop-shadow(0 0 40px rgb(255 42 61 / 60%));
+}
+
+.gateButton {
+  padding: 26px 80px;
+  font-family: var(--display);
+  font-size: 44px;
+  font-weight: 900;
+  letter-spacing: 0.24em;
+  color: #fff;
+  cursor: pointer;
+  background: linear-gradient(180deg, #ff3b4c, #a50e1c);
+  border: none;
+  clip-path: polygon(28px 0, 100% 0, calc(100% - 28px) 100%, 0 100%);
+  box-shadow: 0 0 60px rgb(255 42 61 / 70%);
+  animation: pulseGlow 1.6s ease-in-out infinite;
+}
+
+.gateButton:focus-visible {
+  outline: 4px solid #fff;
+  outline-offset: 6px;
+}
+
+@keyframes pulseGlow {
+  50% {
+    filter: brightness(1.3);
+  }
+}
+
+.gateNote {
+  max-width: 1100px;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--ink-dim);
+  text-align: center;
+}
+
+/* Shown when this browser cannot decode the feeds at all (http:// origin or no WebCodecs). */
+.setupWarn {
+  position: absolute;
+  bottom: 120px;
+  left: 50%;
+  z-index: 60;
+  max-width: 1500px;
+  padding: 22px 34px;
+  font-family: 'Chakra Petch', rajdhani, sans-serif;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: #140c00;
+  text-align: center;
+  background: #ffb020;
+  box-shadow: 0 0 60px rgb(255 176 32 / 45%);
+  transform: translateX(-50%);
+}
+
+.connLost {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  z-index: 55;
+  padding: 6px 18px;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: #111;
+  background: var(--amber);
+  transform: translateX(-50%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floor,
+  .rays,
+  .tickerMove {
+    animation: none;
+  }
+}
+
+/* ------------------------------------------------------------- start countdown */
+
+/* 3, 2, 1 slam in one per second; FIGHT floods the screen red. */
+.countdown {
+  background:
+    radial-gradient(ellipse at center, rgb(255 42 61 / 30%), transparent 65%),
+    rgb(0 0 0 / 92%);
+  animation: countLife 4.3s ease-out forwards;
+  transition: background 0.25s ease-out;
+}
+
+@keyframes countLife {
+  0% {
+    opacity: 0;
+  }
+
+  4%,
+  92% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+.countdownFight {
+  background:
+    radial-gradient(ellipse at center, rgb(255 42 61 / 75%), rgb(120 0 14 / 92%) 70%),
+    #000;
+}
+
+.countKicker {
+  font-family: var(--display);
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: 0.5em;
+  color: var(--red);
+  text-shadow: 0 0 18px var(--red);
+}
+
+.countdownFight .countKicker {
+  color: #fff;
+}
+
+.countNum {
+  font-family: var(--display);
+  font-size: 420px;
+  font-weight: 900;
+  line-height: 1;
+  color: transparent;
+  background: var(--chrome);
+  background-clip: text;
+  filter: drop-shadow(0 0 40px rgb(255 42 61 / 90%)) drop-shadow(0 12px 0 rgb(0 0 0 / 60%));
+  animation: countSlam 0.95s cubic-bezier(0.2, 1.6, 0.35, 1) both;
+}
+
+@keyframes countSlam {
+  0% {
+    opacity: 0;
+    transform: scale(2.6);
+  }
+
+  25% {
+    opacity: 1;
+    transform: scale(0.92);
+  }
+
+  40% {
+    transform: scale(1);
+  }
+
+  85% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(0.75);
+  }
+}
+
+.countFight {
+  font-family: var(--display);
+  font-size: 300px;
+  font-style: italic;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: #fff;
+  text-shadow:
+    0 0 40px var(--red),
+    0 0 120px var(--red),
+    0 14px 0 rgb(0 0 0 / 60%);
+  animation: slam 0.55s cubic-bezier(0.2, 1.6, 0.35, 1) both;
+}
+
+.countVs {
+  display: flex;
+  gap: 34px;
+  align-items: baseline;
+  margin-top: 24px;
+  font-family: var(--display);
+  font-size: 48px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-shadow: 0 0 18px rgb(0 0 0 / 90%);
+}
+
+.countVsMid {
+  font-size: 32px;
+  color: var(--ink-dim);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .countNum,
+  .countFight {
+    animation: none;
+  }
+}
+
+/* ================================================================ tag team */
+
+/* Panel: a tagged-in player who has not shared yet. Amber, not the red of a lost feed. */
+.feedSwap .feedStatusTitle {
+  color: var(--amber);
+  text-shadow: 0 0 24px rgb(255 176 32 / 80%);
+  animation: swapBlink 1s steps(2) infinite;
+}
+
+@keyframes swapBlink {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+.tagChip {
+  display: inline-block;
+  margin-left: 12px;
+  padding: 1px 8px;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  vertical-align: 3px;
+  color: #0a0a0a;
+  background: var(--amber);
+  clip-path: polygon(5px 0, 100% 0, calc(100% - 5px) 100%, 0 100%);
+}
+
+/* Takeover: a side-coloured slab slams across the stage, TAG IN, then OUT ⇄ IN. */
+.tag {
+  --tag: var(--p1);
+
+  overflow: hidden;
+  background: rgb(0 0 0 / 72%);
+  animation: floodIn 3.4s ease-out forwards;
+}
+
+.tagP2 {
+  --tag: var(--p2);
+}
+
+.tagSlab {
+  position: absolute;
+  top: 50%;
+  left: -10%;
+  width: 120%;
+  height: 380px;
+  background:
+    repeating-linear-gradient(115deg, rgb(0 0 0 / 22%) 0 18px, transparent 18px 36px),
+    linear-gradient(90deg, transparent, color-mix(in srgb, var(--tag) 70%, transparent) 20%, var(--tag) 50%,
+      color-mix(in srgb, var(--tag) 70%, transparent) 80%, transparent);
+  box-shadow: 0 0 120px var(--tag);
+  transform: translateY(-50%) skewY(-6deg);
+  animation: tagSlab 0.55s cubic-bezier(0.2, 1, 0.3, 1) both;
+}
+
+@keyframes tagSlab {
+  from {
+    transform: translate(-100%, -50%) skewY(-6deg);
+  }
+}
+
+.tagKicker,
+.tagTitle,
+.tagSwap {
+  position: relative;
+}
+
+.tagKicker {
+  font-family: var(--display);
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: 0.4em;
+  color: #fff;
+  text-shadow: 0 2px 0 rgb(0 0 0 / 60%);
+  animation: slideDown 0.45s 0.2s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+
+.tagTitle {
+  font-family: var(--display);
+  font-size: 230px;
+  font-style: italic;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  color: transparent;
+  background: var(--chrome);
+  background-clip: text;
+  filter: drop-shadow(0 6px 0 rgb(0 0 0 / 70%)) drop-shadow(0 0 30px #fff);
+  animation: slam 0.55s 0.25s cubic-bezier(0.2, 1.6, 0.35, 1) both;
+}
+
+.tagSwap {
+  display: flex;
+  gap: 34px;
+  align-items: center;
+  margin-top: 18px;
+  font-family: var(--display);
+  font-size: 58px;
+  font-weight: 900;
+  text-transform: uppercase;
+  animation: slideDown 0.45s 0.55s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+
+.tagOut {
+  color: rgb(255 255 255 / 55%);
+  text-decoration: line-through 6px rgb(255 42 61 / 90%);
+}
+
+.tagArrow {
+  font-size: 64px;
+  color: #fff;
+}
+
+.tagIn {
+  color: #fff;
+  text-shadow:
+    0 0 24px var(--tag),
+    0 0 4px #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feedSwap .feedStatusTitle,
+  .tagSlab,
+  .tagKicker,
+  .tagTitle,
+  .tagSwap {
+    animation: none;
+  }
+}

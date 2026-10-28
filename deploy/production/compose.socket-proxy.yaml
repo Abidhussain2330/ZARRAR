@@ -1,0 +1,78 @@
+# Optional hardening (S4): the app reaches Docker through a filtering proxy instead of mounting
+# the Docker socket itself.
+#
+#   docker compose --env-file .env.production -f compose.yaml -f compose.local.yaml \
+#       -f compose.socket-proxy.yaml up -d
+#
+# What it buys: a compromised app can only use the Docker API sections listed below. Exec,
+# volumes, build, swarm, secrets, plugins and system-wide calls are refused, and the socket is no
+# longer mounted into the internet-facing app container.
+#
+# What it does NOT buy: container create is still allowed (the platform needs it), and the proxy
+# does not inspect request bodies, so a determined attacker with app-level code execution could
+# still ask for a privileged container. For full separation run challenges on a separate Docker
+# host or the MicroVM provider. Test challenge start/stop/reset during the smoke test with this
+# file enabled before relying on it at the venue. Requires Docker Compose 2.24+ (for !override).
+
+services:
+  docker-proxy:
+    image: tecnativa/docker-socket-proxy:v0.4.2
+    restart: unless-stopped
+    environment:
+      # Read access the platform needs
+      INFO: 1
+      VERSION: 1
+      PING: 1
+      EVENTS: 1
+      CONTAINERS: 1
+      NETWORKS: 1
+      IMAGES: 1
+      # Writes (create / start / stop / remove containers, networks; pull images)
+      POST: 1
+      ALLOW_START: 1
+      ALLOW_STOP: 1
+      ALLOW_RESTARTS: 1
+      # Everything else stays closed
+      EXEC: 0
+      VOLUMES: 0
+      BUILD: 0
+      COMMIT: 0
+      SWARM: 0
+      SERVICES: 0
+      TASKS: 0
+      NODES: 0
+      SECRETS: 0
+      CONFIGS: 0
+      PLUGINS: 0
+      SYSTEM: 0
+      AUTH: 0
+      DISTRIBUTION: 0
+      SESSION: 0
+      GRPC: 0
+    volumes:
+      - ${BURAQ_RUNTIME_SOCKET_SOURCE:-/var/run/docker.sock}:/var/run/docker.sock:ro
+    networks:
+      - data
+    read_only: true
+    tmpfs:
+      - /run
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETUID
+      - SETGID
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 64m
+    pids_limit: 64
+
+  buraq:
+    environment:
+      BURAQ_DOCKER_URI: tcp://docker-proxy:2375
+    # Same volumes as compose.yaml minus the Docker socket.
+    volumes: !override
+      - buraq_files:/app/files
+    depends_on:
+      docker-proxy:
+        condition: service_started

@@ -1,0 +1,15 @@
+.card {
+  border: 2px solid transparent;
+  border-radius: var(--buraq-radius-md);
+  background: var(--buraq-glass);
+  padding: var(--buraq-space-3);
+}
+
+.selected {
+  border-color: var(--buraq-primary);
+  box-shadow: var(--buraq-glow-1);
+}
+
+.meta {
+  color: var(--buraq-text-muted);
+}

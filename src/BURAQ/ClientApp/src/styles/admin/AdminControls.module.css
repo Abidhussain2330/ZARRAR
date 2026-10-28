@@ -1,0 +1,447 @@
+/*
+ * BURAQ Admin Command Center — shared controls.
+ *
+ * Toolbar (search + filters + result count), bulk-selection bar, pagination,
+ * status badges, metric grids, form sections and table cell primitives. One
+ * file so the dense-admin rhythm is defined once rather than per screen.
+ *
+ * Every value comes from styles/buraq/tokens.css.
+ */
+
+/* ---------------------------------------------------------------- toolbar */
+
+.toolbar {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--buraq-space-3);
+  padding: var(--buraq-space-3);
+  border: 1px solid var(--buraq-border);
+  border-radius: var(--buraq-radius-lg);
+  background-color: var(--buraq-bg-secondary);
+}
+
+/*
+ * `flex: 1 1 16rem` rather than a percentage width: the filter cluster keeps a
+ * usable minimum and wraps onto its own line instead of collapsing to nothing,
+ * which is what a fixed `w="36%"` did at tablet width.
+ */
+.toolbarLead {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 18rem;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--buraq-space-2);
+}
+
+.toolbarTrail {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--buraq-space-3);
+  margin-inline-start: auto;
+}
+
+.search {
+  min-width: 0;
+  flex: 1 1 16rem;
+  max-width: 26rem;
+}
+
+.filter {
+  min-width: 0;
+  flex: 0 1 13rem;
+}
+
+.count {
+  color: var(--buraq-text-secondary);
+  font-family: var(--buraq-font-mono);
+  font-size: var(--buraq-text-2xs);
+  letter-spacing: var(--buraq-tracking-wide);
+  white-space: nowrap;
+}
+
+.countValue {
+  color: var(--buraq-primary);
+  font-weight: 600;
+}
+
+@media (max-width: $mantine-breakpoint-sm) {
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .toolbarTrail {
+    margin-inline-start: 0;
+    justify-content: space-between;
+  }
+
+  .search,
+  .filter {
+    flex: 1 1 100%;
+    max-width: none;
+  }
+}
+
+/* ----------------------------------------------------------- bulk actions */
+
+/*
+ * Announced with role="status": selecting rows changes what the page's actions
+ * will do, and that has to reach someone who cannot see the bar appear.
+ */
+.bulkBar {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--buraq-space-3);
+  padding: var(--buraq-space-2) var(--buraq-space-3);
+  border: 1px solid var(--buraq-border-accent);
+  border-radius: var(--buraq-radius-md);
+  background-color: var(--buraq-bg-selected);
+}
+
+.bulkCount {
+  color: var(--buraq-text-primary);
+  font-family: var(--buraq-font-mono);
+  font-size: var(--buraq-text-xs);
+  letter-spacing: var(--buraq-tracking-wide);
+}
+
+.bulkActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--buraq-space-2);
+  margin-inline-start: auto;
+}
+
+@media (max-width: $mantine-breakpoint-sm) {
+  .bulkActions {
+    width: 100%;
+    margin-inline-start: 0;
+  }
+
+  .bulkActions > * {
+    flex: 1 1 auto;
+  }
+}
+
+/* ------------------------------------------------------------- pagination */
+
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--buraq-space-3);
+}
+
+.pageState {
+  color: var(--buraq-text-secondary);
+  font-family: var(--buraq-font-mono);
+  font-size: var(--buraq-text-2xs);
+  letter-spacing: var(--buraq-tracking-wide);
+  white-space: nowrap;
+}
+
+/* ----------------------------------------------------------------- badges */
+
+.badge {
+  --badge-color: var(--buraq-text-muted);
+
+  display: inline-flex;
+  max-width: 100%;
+  align-items: center;
+  gap: var(--buraq-space-1);
+  padding: 1px var(--buraq-space-2);
+  border: 1px solid var(--badge-color);
+  border-radius: var(--buraq-radius-xs);
+  background-color: transparent;
+  color: var(--badge-color);
+  font-family: var(--buraq-font-mono);
+  font-size: var(--buraq-text-2xs);
+  letter-spacing: var(--buraq-tracking-wide);
+  line-height: 1.6;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.badge[data-tone='accent'] {
+  --badge-color: var(--buraq-primary);
+}
+
+.badge[data-tone='success'] {
+  --badge-color: var(--buraq-success);
+}
+
+.badge[data-tone='warning'] {
+  --badge-color: var(--buraq-warning);
+}
+
+.badge[data-tone='critical'] {
+  --badge-color: var(--buraq-critical);
+}
+
+.badge[data-tone='info'] {
+  --badge-color: var(--buraq-info);
+}
+
+.badge[data-solid] {
+  background-color: color-mix(in srgb, var(--badge-color) 16%, transparent);
+}
+
+/*
+ * A leading glyph so status is never carried by hue alone — the same reason
+ * StatCard renders a delta arrow.
+ */
+.badgeGlyph {
+  flex: none;
+  font-size: var(--buraq-text-2xs);
+  line-height: 1;
+}
+
+.badgeLabel {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------------------------------------------------------------- metrics */
+
+.metricGrid {
+  display: grid;
+  min-width: 0;
+  gap: var(--buraq-space-3);
+
+  /*
+   * `min()` keeps the track from demanding 15rem when the viewport itself is
+   * narrower than that, which is the classic auto-fit overflow at 360px.
+   */
+  grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
+}
+
+/* ----------------------------------------------------------- form section */
+
+.section {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--buraq-space-3);
+}
+
+.sectionHead {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--buraq-space-2);
+  padding-block-end: var(--buraq-space-2);
+  border-bottom: 1px solid var(--buraq-border-subtle);
+}
+
+.sectionTitle {
+  margin: 0;
+  color: var(--buraq-text-primary);
+  font-family: var(--buraq-font-display);
+  font-size: var(--buraq-text-md);
+  font-weight: 600;
+  letter-spacing: var(--buraq-tracking-wide);
+  text-transform: uppercase;
+}
+
+.sectionDescription {
+  margin: 0;
+  max-width: 72ch;
+  color: var(--buraq-text-muted);
+  font-size: var(--buraq-text-xs);
+}
+
+/*
+ * The single responsive form grid used by every admin editor. Fields declare a
+ * span in whole tracks; the track itself never drops below `min(18rem, 100%)`,
+ * so a four-up desktop row becomes two-up on tablet and one-up on a phone
+ * without any screen writing its own media query.
+ */
+.formGrid {
+  display: grid;
+  min-width: 0;
+  gap: var(--buraq-space-3);
+  grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
+}
+
+.formGrid[data-columns='2'] {
+  grid-template-columns: repeat(auto-fit, minmax(min(22rem, 100%), 1fr));
+}
+
+.formWide {
+  grid-column: 1 / -1;
+}
+
+/* ------------------------------------------------------------ table cells */
+
+.cellStack {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cellIdentity {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--buraq-space-2);
+}
+
+.cellName {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--buraq-text-primary);
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cellMeta {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--buraq-text-muted);
+  font-size: var(--buraq-text-2xs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/*
+ * Long values — GUIDs, hashes, flag fingerprints, emails — are clamped to a
+ * single line with a tooltip/copy affordance rather than being allowed to set
+ * the column width. `max-width` is in ch so it tracks the mono font.
+ */
+.cellMono {
+  display: inline-block;
+  max-width: 22ch;
+  overflow: hidden;
+  color: var(--buraq-text-secondary);
+  font-family: var(--buraq-font-mono);
+  font-size: var(--buraq-text-2xs);
+  text-overflow: ellipsis;
+  vertical-align: bottom;
+  white-space: nowrap;
+}
+
+.cellMonoWide {
+  max-width: 40ch;
+}
+
+.cellActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--buraq-space-1);
+}
+
+.copyable {
+  border: none;
+  background: none;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  text-align: start;
+}
+
+.copyable:hover {
+  color: var(--buraq-primary);
+}
+
+.copyable:focus-visible {
+  outline: none;
+  box-shadow: var(--buraq-focus-ring);
+  border-radius: var(--buraq-radius-xs);
+}
+
+/* --------------------------------------------------------------- outages */
+
+/*
+ * Partial-service notice. Distinct from ErrorState: the page still has data,
+ * one dependency is degraded, and the operator needs to know which.
+ */
+.outage {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--buraq-space-2);
+  padding: var(--buraq-space-2) var(--buraq-space-3);
+  border: 1px solid var(--buraq-warning);
+  border-radius: var(--buraq-radius-md);
+  background-color: color-mix(in srgb, var(--buraq-warning) 10%, transparent);
+  color: var(--buraq-text-primary);
+  font-size: var(--buraq-text-xs);
+}
+
+.outageIcon {
+  display: inline-flex;
+  flex: none;
+  color: var(--buraq-warning);
+}
+
+.outageText {
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.outageActions {
+  display: flex;
+  align-items: center;
+  gap: var(--buraq-space-2);
+  margin-inline-start: auto;
+}
+
+/* ------------------------------------------------------------------ misc */
+
+.pending {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--buraq-space-2);
+  color: var(--buraq-text-muted);
+  font-family: var(--buraq-font-mono);
+  font-size: var(--buraq-text-2xs);
+  letter-spacing: var(--buraq-tracking-wide);
+  text-transform: uppercase;
+}
+
+.scrollShell {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (forced-colors: active) {
+  .toolbar,
+  .bulkBar,
+  .badge,
+  .outage {
+    border-color: canvastext;
+  }
+}

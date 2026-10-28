@@ -1,0 +1,238 @@
+.hero {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  padding: 24px 20px 48px;
+  text-align: center;
+}
+
+.logo {
+  width: 120px;
+  height: auto;
+  mix-blend-mode: screen;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--bq-display);
+  font-size: clamp(36px, 6vw, 56px);
+  font-weight: 700;
+  letter-spacing: 4px;
+}
+
+.tagline {
+  margin: 0;
+  font-size: 15px;
+  color: var(--bq-ink-3);
+}
+
+.slogan {
+  margin: 8px 0 0;
+  font-family: var(--bq-mono);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  color: var(--bq-azure-hi);
+}
+
+.caret {
+  animation: blink 1.1s steps(1) infinite;
+}
+
+@keyframes blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .caret {
+    animation: none;
+  }
+}
+
+.blurb {
+  max-width: 56ch;
+  margin: 6px 0 0;
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--bq-ink-4);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.card {
+  padding: 20px 22px;
+  background: linear-gradient(165deg, rgb(18 17 20 / 95%), rgb(6 6 7 / 95%));
+  border: 1px solid var(--bq-line);
+  border-radius: var(--bq-r-lg);
+}
+
+.cardTitle {
+  margin: 0 0 8px;
+  font-family: var(--bq-display);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: var(--bq-track-display);
+}
+
+.cardBody {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--bq-ink-3);
+}
+
+.version {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  margin-top: 44px;
+}
+
+.versionBadge {
+  padding: 7px 16px;
+  font-family: var(--bq-mono);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: var(--bq-live);
+  background: rgb(46 224 138 / 10%);
+  border: 1px solid rgb(46 224 138 / 35%);
+  border-radius: var(--bq-r-pill);
+}
+
+.section {
+  margin-top: 40px;
+}
+
+.prose {
+  max-width: 72ch;
+  font-size: 14.5px;
+  line-height: 1.75;
+  color: var(--bq-ink-3);
+}
+
+.prose p {
+  margin: 0 0 14px;
+}
+
+.prose p:last-child {
+  margin-bottom: 0;
+}
+
+.principles {
+  display: grid;
+  gap: 10px;
+  max-width: 72ch;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.principles li {
+  position: relative;
+  padding-left: 22px;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--bq-ink-3);
+}
+
+.principles li::before {
+  position: absolute;
+  left: 0;
+  font-family: var(--bq-mono);
+  color: var(--bq-azure-hi);
+  content: '>';
+}
+
+.versionNote {
+  margin: 0;
+  font-family: var(--bq-mono);
+  font-size: 10.5px;
+  color: var(--bq-ink-5);
+}
+
+.legal {
+  max-width: 62ch;
+  margin: 32px auto 0;
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: var(--bq-ink-5);
+  text-align: center;
+}
+
+.legalLink {
+  color: var(--bq-ink-4);
+  text-underline-offset: 3px;
+}
+
+.legalLink:hover {
+  color: var(--bq-azure-hi);
+}
+
+/* =====================================================================================
+ * M6 "cyber tussle" layer: the manifesto — glowing logo, glitch-chrome title, HUD cards.
+ * ===================================================================================== */
+
+.logo {
+  filter: drop-shadow(0 0 28px rgb(255 42 61 / 80%));
+  animation: aboutPulse 3s ease-in-out infinite;
+}
+
+@keyframes aboutPulse {
+  50% {
+    filter: drop-shadow(0 0 44px rgb(255 42 61 / 100%)) brightness(1.1);
+  }
+}
+
+.title {
+  font-family: var(--zr-display);
+  font-style: italic;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: transparent;
+  background: linear-gradient(180deg, #fff 0%, #f6dfe2 40%, #ff4a5a 68%, #b30f20 100%);
+  background-clip: text;
+  filter: drop-shadow(-2px 0 rgb(70 230 255 / 40%)) drop-shadow(2px 0 rgb(255 42 61 / 70%));
+}
+
+.tagline,
+.slogan {
+  letter-spacing: 0.3em;
+  color: #ff4a5a;
+}
+
+.card,
+.section {
+  background: var(--zr-corners), var(--zr-fill);
+  border: 0;
+  border-radius: 0;
+  box-shadow: var(--zr-edge);
+}
+
+.card {
+  clip-path: var(--zr-cut);
+}
+
+.cardTitle {
+  font-family: var(--zr-display);
+  font-style: italic;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.versionBadge {
+  border-radius: 0;
+  clip-path: var(--zr-slant);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo {
+    animation: none;
+  }
+}

@@ -1,0 +1,78 @@
+/*
+ * BURAQ footer.
+ *
+ * Sits in the document flow rather than fixed to the viewport, so a short page
+ * never leaves a floating band over the content.
+ */
+
+.footer {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding-block: var(--buraq-space-6);
+  border-top: 1px solid var(--buraq-border);
+  background-color: var(--buraq-bg-secondary);
+}
+
+.inner {
+  display: flex;
+  max-width: var(--buraq-content-max);
+  margin-inline: auto;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--buraq-space-5);
+  padding-inline: 10%;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--buraq-space-2);
+}
+
+.brandLine {
+  margin: 0;
+  color: var(--buraq-text-muted);
+  font-family: var(--buraq-font-mono);
+  font-size: var(--buraq-text-2xs);
+  letter-spacing: var(--buraq-tracking-wide);
+}
+
+.legal {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--buraq-space-3);
+  color: var(--buraq-text-muted);
+}
+
+.links {
+  max-width: 100%;
+  color: var(--buraq-text-muted);
+  font-size: var(--buraq-text-sm);
+  text-align: end;
+}
+
+@media (max-width: $mantine-breakpoint-sm) {
+  .inner {
+    flex-direction: column;
+    align-items: center;
+    padding-inline: var(--buraq-space-4);
+  }
+
+  .brand {
+    align-items: center;
+  }
+
+  .legal {
+    align-items: center;
+  }
+
+  .links {
+    text-align: center;
+  }
+}

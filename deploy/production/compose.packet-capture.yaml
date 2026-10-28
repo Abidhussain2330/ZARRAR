@@ -1,0 +1,8 @@
+services:
+  buraq:
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    environment:
+      BURAQ_ENABLE_TRAFFIC_CAPTURE: "true"
+

@@ -1,0 +1,322 @@
+/*
+ * Post detail — a reading page.
+ *
+ * Measure is capped at ~72ch. Announcements are prose, and full-bleed body text
+ * across a 1360px shell is unreadable.
+ */
+
+.back {
+  display: inline-block;
+  margin-bottom: 22px;
+  font-family: var(--bq-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.12em;
+  color: var(--bq-ink-4);
+  text-decoration: none;
+}
+
+.back:hover {
+  color: var(--bq-azure-hi);
+}
+
+.article {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-bottom: 24px;
+  margin-bottom: 28px;
+  border-bottom: 1px solid var(--bq-line-soft);
+}
+
+.tagRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag,
+.pinTag {
+  padding: 4px 10px;
+  font-family: var(--bq-mono);
+  font-size: 9.5px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  border-radius: var(--bq-r-pill);
+}
+
+.tag {
+  color: var(--bq-azure-hi);
+  background: rgb(255 42 61 / 10%);
+  border: 1px solid rgb(255 42 61 / 28%);
+}
+
+.pinTag {
+  color: var(--bq-violet-hi);
+  background: rgb(255 42 61 / 14%);
+  border: 1px solid rgb(255 42 61 / 40%);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--bq-display);
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: var(--bq-track-display);
+}
+
+.byline {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.avatar,
+.avatarFallback {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  object-fit: cover;
+  border-radius: var(--bq-r-pill);
+}
+
+.avatarFallback {
+  font-family: var(--bq-mono);
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, var(--bq-azure-dim), #e0142b);
+}
+
+.author {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--bq-ink);
+}
+
+.date {
+  margin: 2px 0 0;
+  font-family: var(--bq-mono);
+  font-size: 11px;
+  color: var(--bq-ink-4);
+}
+
+.editBtn {
+  height: 34px;
+  padding: 0 14px;
+  margin-left: auto;
+}
+
+/* Markdown output is not ours to class individually, so it's styled by element
+   inside this wrapper. Scoped to .content so it can't leak into the admin editor. */
+.content {
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--bq-ink-2);
+}
+
+.content :is(h1, h2, h3, h4) {
+  margin: 2em 0 0.6em;
+  font-family: var(--bq-display);
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--bq-ink);
+}
+
+.content h1 { font-size: 28px; }
+.content h2 { font-size: 23px; }
+.content h3 { font-size: 19px; }
+.content h4 { font-size: 16px; }
+
+.content p {
+  margin: 0 0 1.15em;
+}
+
+.content a {
+  color: var(--bq-azure-hi);
+  text-underline-offset: 3px;
+}
+
+.content :is(ul, ol) {
+  padding-left: 22px;
+  margin: 0 0 1.15em;
+}
+
+.content li {
+  margin-bottom: 0.4em;
+}
+
+.content img {
+  max-width: 100%;
+  height: auto;
+  margin: 1.4em 0;
+  border: 1px solid var(--bq-line-soft);
+  border-radius: var(--bq-r-md);
+}
+
+.content blockquote {
+  padding-left: 18px;
+  margin: 1.4em 0;
+  color: var(--bq-ink-3);
+  border-left: 3px solid rgb(255 42 61 / 55%);
+  border-radius: 0;
+}
+
+.content :is(code, pre) {
+  font-family: var(--bq-mono);
+  font-size: 13.5px;
+}
+
+.content code {
+  padding: 2px 6px;
+  color: var(--bq-azure-hi);
+  background: rgb(255 42 61 / 10%);
+  border-radius: 5px;
+}
+
+.content pre {
+  padding: 16px 18px;
+  margin: 1.4em 0;
+  overflow-x: auto;
+  background: var(--bq-surface);
+  border: 1px solid var(--bq-line-soft);
+  border-radius: var(--bq-r-md);
+}
+
+.content pre code {
+  padding: 0;
+  background: none;
+}
+
+.content table {
+  width: 100%;
+  margin: 1.4em 0;
+  font-size: 14px;
+  border-collapse: collapse;
+}
+
+.content :is(th, td) {
+  padding: 9px 12px;
+  text-align: left;
+  border: 1px solid var(--bq-line-soft);
+}
+
+.content th {
+  font-family: var(--bq-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--bq-ink-3);
+  text-transform: uppercase;
+  background: rgb(255 42 61 / 6%);
+}
+
+.content hr {
+  margin: 2em 0;
+  border: 0;
+  border-top: 1px solid var(--bq-line-soft);
+}
+
+/* Sponsor identity carried through from the Partners band on the feed. */
+.sponsorTag {
+  padding: 4px 10px;
+  font-family: var(--bq-mono);
+  font-size: 9.5px;
+  letter-spacing: 1.6px;
+  color: var(--bq-accent-hi);
+  text-transform: uppercase;
+  background: rgb(255 42 61 / 16%);
+  border: 1px solid rgb(255 42 61 / 45%);
+  border-radius: var(--bq-r-pill);
+}
+
+/* =====================================================================================
+ * M6 "cyber tussle" layer: the article as a classified dossier — HUD frame, chrome glitch
+ * title, slanted tags, red-ruled headings and terminal code blocks.
+ * ===================================================================================== */
+
+.back {
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.back:hover {
+  color: #fff;
+  text-shadow: 0 0 10px #ff2a3d;
+}
+
+.article {
+  position: relative;
+  background:
+    var(--zr-corners),
+    radial-gradient(900px 300px at 10% 0%, rgb(255 42 61 / 18%), transparent 70%),
+    var(--zr-fill);
+  border: 0;
+  border-radius: 0;
+  box-shadow: var(--zr-edge);
+}
+
+.tag,
+.pinTag,
+.sponsorTag {
+  font-weight: 700;
+  border-radius: 0;
+  clip-path: var(--zr-slant);
+}
+
+.title {
+  font-family: var(--zr-display);
+  font-style: italic;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: transparent;
+  background: linear-gradient(180deg, #fff 0%, #f6dfe2 40%, #ff4a5a 68%, #b30f20 100%);
+  background-clip: text;
+  filter: drop-shadow(-2px 0 rgb(70 230 255 / 40%)) drop-shadow(2px 0 rgb(255 42 61 / 70%));
+}
+
+.avatar,
+.avatarFallback {
+  border-radius: 0;
+  clip-path: polygon(25% 3%, 75% 3%, 100% 50%, 75% 97%, 25% 97%, 0 50%);
+}
+
+.editBtn {
+  border-radius: 0;
+  clip-path: var(--zr-cut-sm);
+}
+
+.content :is(h1, h2, h3) {
+  padding-left: 12px;
+  font-family: var(--zr-display);
+  font-style: italic;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-left: 3px solid #ff2a3d;
+}
+
+.content :is(pre) {
+  background: rgb(4 2 3 / 92%);
+  border-radius: 0;
+  box-shadow: inset 3px 0 0 #ff2a3d;
+}
+
+.content :is(code) {
+  color: #ffb3bb;
+  border-radius: 0;
+}
+
+.content :is(blockquote) {
+  background: rgb(255 42 61 / 8%);
+  border-left: 3px solid #ff2a3d;
+}
