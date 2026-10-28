@@ -32,6 +32,8 @@ deploy/production/.env.production
 *.pem
 
 # ZARRAR runtime data and packages
+DEMO_ACCOUNTS.txt
+zarrar-root.crt
 src/BURAQ/files/
 *.ivf
 ZARRAR-*.zip
