@@ -1,0 +1,388 @@
+.page {
+  display: grid;
+  gap: var(--zarrar-space-5);
+  width: 100%;
+  max-width: var(--zarrar-content-max);
+  min-width: 0;
+  margin-inline: auto;
+  padding-block: var(--zarrar-space-4) var(--zarrar-space-7);
+  color: var(--zarrar-text-primary);
+}
+
+.pageHeading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--zarrar-space-5);
+  min-width: 0;
+}
+
+.pageHeading > div {
+  min-width: 0;
+}
+
+.eyebrow {
+  margin: 0 0 var(--zarrar-space-1);
+  color: var(--zarrar-primary);
+  font-family: var(--zarrar-font-mono);
+  font-size: var(--zarrar-text-2xs);
+  font-weight: 700;
+  letter-spacing: var(--zarrar-tracking-widest);
+  text-transform: uppercase;
+}
+
+.pageHeading h1 {
+  margin: 0;
+  color: var(--zarrar-text-primary);
+  font-family: var(--zarrar-font-display);
+  font-size: clamp(var(--zarrar-text-2xl), 4vw, var(--zarrar-text-4xl));
+  font-weight: 700;
+  letter-spacing: var(--zarrar-tracking-wide);
+  line-height: var(--zarrar-leading-tight);
+}
+
+.lede {
+  max-width: 72ch;
+  margin: var(--zarrar-space-2) 0 0;
+  color: var(--zarrar-text-secondary);
+  font-size: var(--zarrar-text-sm);
+  line-height: var(--zarrar-leading-normal);
+}
+
+.statusBadge {
+  flex: 0 0 auto;
+  color: var(--zarrar-success);
+  background: color-mix(in srgb, var(--zarrar-success) 7%, transparent);
+  border-color: var(--zarrar-success-dim);
+  font-family: var(--zarrar-font-mono);
+  letter-spacing: var(--zarrar-tracking-wide);
+}
+
+.settingsStack,
+.preferenceForm,
+.tokenForm {
+  display: grid;
+  gap: var(--zarrar-space-4);
+  min-width: 0;
+}
+
+.preferenceGroup,
+.scopeChoice {
+  display: grid;
+  gap: var(--zarrar-space-3);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.preferenceGroup legend,
+.scopeChoice legend {
+  margin-bottom: var(--zarrar-space-1);
+  color: var(--zarrar-text-primary);
+  font-family: var(--zarrar-font-display);
+  font-size: var(--zarrar-text-md);
+  font-weight: 700;
+}
+
+.preferenceForm :global(.mantine-SegmentedControl-root) {
+  padding: 3px;
+  background: var(--zarrar-bg-inset);
+  border: 1px solid var(--zarrar-border-strong);
+}
+
+.preferenceForm :global(.mantine-SegmentedControl-label) {
+  min-height: 2.45rem;
+  color: var(--zarrar-text-secondary);
+  font-family: var(--zarrar-font-mono);
+  font-size: var(--zarrar-text-xs);
+  letter-spacing: var(--zarrar-tracking-wide);
+}
+
+.preferenceForm :global(.mantine-SegmentedControl-indicator) {
+  background: color-mix(in srgb, var(--zarrar-primary) 12%, var(--zarrar-bg-panel));
+  border: 1px solid var(--zarrar-border-accent);
+  box-shadow: none;
+}
+
+.accessibilityNote,
+.tokenIntro,
+.oneTimeWarning {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--zarrar-space-3);
+  min-width: 0;
+  padding: var(--zarrar-space-3);
+  color: var(--zarrar-text-secondary);
+  background: color-mix(in srgb, var(--zarrar-primary) 5%, var(--zarrar-bg-inset));
+  border: 1px solid var(--zarrar-border-accent);
+  border-radius: var(--zarrar-radius-sm);
+  font-size: var(--zarrar-text-xs);
+  line-height: var(--zarrar-leading-normal);
+}
+
+.accessibilityNote svg,
+.tokenIntro > svg,
+.oneTimeWarning > svg {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  color: var(--zarrar-primary);
+}
+
+.accessibilityNote code {
+  color: var(--zarrar-text-primary);
+  font-family: var(--zarrar-font-mono);
+}
+
+.preferenceSwitches {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--zarrar-space-3);
+}
+
+.preferenceSwitches > div,
+.scopeChoice > div {
+  min-width: 0;
+  padding: var(--zarrar-space-3);
+  background: var(--zarrar-bg-inset);
+  border: 1px solid var(--zarrar-border-subtle);
+  border-radius: var(--zarrar-radius-sm);
+}
+
+.preferenceSwitches :global(.mantine-Switch-label),
+.scopeChoice :global(.mantine-Checkbox-label) {
+  color: var(--zarrar-text-primary);
+  font-weight: 600;
+}
+
+.preferenceSwitches :global(.mantine-Switch-description),
+.scopeChoice :global(.mantine-Checkbox-description) {
+  color: var(--zarrar-text-muted);
+  font-size: var(--zarrar-text-xs);
+  line-height: var(--zarrar-leading-normal);
+}
+
+.feedback {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--zarrar-space-2);
+  min-width: 0;
+  padding: var(--zarrar-space-3);
+  color: var(--zarrar-text-secondary);
+  background: var(--zarrar-bg-inset);
+  border: 1px solid var(--zarrar-border-strong);
+  border-radius: var(--zarrar-radius-sm);
+  font-size: var(--zarrar-text-sm);
+  overflow-wrap: anywhere;
+}
+
+.feedback svg {
+  flex: 0 0 auto;
+  margin-top: 2px;
+}
+
+.feedback[data-tone='success'] {
+  color: var(--zarrar-success);
+  border-color: var(--zarrar-success-dim);
+}
+
+.feedback[data-tone='error'] {
+  color: var(--zarrar-critical);
+  border-color: var(--zarrar-critical-dim);
+}
+
+.formActions {
+  gap: var(--zarrar-space-2);
+  padding-top: var(--zarrar-space-1);
+}
+
+.tokenIntro {
+  margin-bottom: var(--zarrar-space-4);
+}
+
+.tokenIntro strong,
+.tokenIntro p,
+.oneTimeWarning strong,
+.oneTimeWarning p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.tokenIntro strong,
+.oneTimeWarning strong {
+  color: var(--zarrar-text-primary);
+  font-family: var(--zarrar-font-display);
+  font-size: var(--zarrar-text-sm);
+}
+
+.tokenIntro p,
+.oneTimeWarning p {
+  margin-top: var(--zarrar-space-1);
+}
+
+.tokenIdentity {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.tokenIdentity strong {
+  overflow: hidden;
+  max-width: 13rem;
+  color: var(--zarrar-text-primary);
+  font-size: var(--zarrar-text-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tokenIdentity span,
+.scopeLabel {
+  color: var(--zarrar-text-muted);
+  font-family: var(--zarrar-font-mono);
+  font-size: var(--zarrar-text-2xs);
+}
+
+.scopeLabel {
+  color: var(--zarrar-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.modalContent,
+.modalHeader {
+  color: var(--zarrar-text-primary);
+  background: var(--zarrar-bg-panel);
+}
+
+.modalHeader {
+  border-bottom: 1px solid var(--zarrar-border-subtle);
+}
+
+.tokenForm :global(.mantine-Input-input),
+.tokenForm :global(.mantine-Select-input) {
+  color: var(--zarrar-text-primary);
+  background: var(--zarrar-bg-inset);
+  border-color: var(--zarrar-border-strong);
+}
+
+.tokenForm :global(.mantine-Input-input:focus),
+.tokenForm :global(.mantine-Select-input:focus) {
+  border-color: var(--zarrar-border-accent);
+  box-shadow: var(--zarrar-glow-1);
+}
+
+.oneTimeWarning {
+  color: var(--zarrar-warning);
+  background: color-mix(in srgb, var(--zarrar-warning) 6%, var(--zarrar-bg-inset));
+  border-color: var(--zarrar-warning-dim);
+}
+
+.oneTimeWarning > svg {
+  color: var(--zarrar-warning);
+}
+
+.rawTokenRegion {
+  display: grid;
+  gap: var(--zarrar-space-3);
+  min-width: 0;
+  padding: var(--zarrar-space-3);
+  background: var(--zarrar-bg-inset);
+  border: 1px solid var(--zarrar-border-strong);
+  border-radius: var(--zarrar-radius-sm);
+}
+
+.rawTokenRegion code {
+  display: block;
+  min-width: 0;
+  color: var(--zarrar-text-primary);
+  font-family: var(--zarrar-font-mono);
+  font-size: var(--zarrar-text-xs);
+  line-height: var(--zarrar-leading-relaxed);
+  overflow-wrap: anywhere;
+  word-break: break-all;
+  user-select: all;
+}
+
+@media (max-width: 48em) {
+  .page {
+    gap: var(--zarrar-space-4);
+    padding-block: var(--zarrar-space-3) var(--zarrar-space-6);
+  }
+
+  .pageHeading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--zarrar-space-3);
+  }
+
+  .statusBadge {
+    align-self: flex-start;
+  }
+
+  .preferenceSwitches {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 30em) {
+  .formActions > button,
+  .rawTokenRegion > button {
+    width: 100%;
+  }
+
+  .preferenceForm :global(.mantine-SegmentedControl-label) {
+    padding-inline: var(--zarrar-space-2);
+    font-size: var(--zarrar-text-2xs);
+  }
+}
+
+@media (forced-colors: active) {
+  .statusBadge,
+  .accessibilityNote,
+  .tokenIntro,
+  .oneTimeWarning,
+  .feedback,
+  .rawTokenRegion {
+    border-color: canvastext;
+  }
+}
+
+/* =====================================================================================
+ * M6 "cyber tussle" layer: settings as a control panel — HUD sections, slanted badges and
+ * chamfered controls. Preferences and API tokens keep their logic untouched.
+ * ===================================================================================== */
+
+.pageHeading {
+  font-family: var(--zr-display);
+  font-style: italic;
+  text-transform: uppercase;
+}
+
+.eyebrow {
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  color: #ff4a5a;
+}
+
+.statusBadge,
+.scopeLabel {
+  border-radius: 0;
+  clip-path: var(--zr-slant);
+}
+
+.preferenceGroup,
+.tokenIdentity,
+.rawTokenRegion {
+  border-radius: 0;
+}
+
+.oneTimeWarning,
+.accessibilityNote,
+.feedback {
+  border-radius: 0;
+  box-shadow: inset 3px 0 0 var(--bq-accent);
+}
+
+.rawTokenRegion {
+  color: #1ff28c;
+  background: rgb(4 2 3 / 92%);
+}

@@ -1,0 +1,203 @@
+/*
+ * Admin notice (post) editor.
+ *
+ * Uses only the --zarrar-* design tokens the rest of the Command Center uses, so
+ * the editor reads as part of the admin console rather than a bolted-on form.
+ */
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem);
+  gap: var(--zarrar-space-5);
+  align-items: start;
+}
+
+@media (max-width: 64em) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.main,
+.aside {
+  display: flex;
+  flex-direction: column;
+  gap: var(--zarrar-space-5);
+  min-width: 0;
+}
+
+.aside {
+  position: sticky;
+  top: calc(var(--zarrar-topbar-height, 4rem) + var(--zarrar-space-4));
+}
+
+@media (max-width: 64em) {
+  .aside {
+    position: static;
+  }
+}
+
+/* ------------------------------------------------------------ field chrome */
+
+.counter {
+  color: var(--zarrar-text-faint);
+  font-family: var(--zarrar-font-mono);
+  font-size: var(--zarrar-text-2xs);
+  white-space: nowrap;
+}
+
+.counter[data-over] {
+  color: var(--zarrar-critical, #e33a3a);
+}
+
+.fieldHead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--zarrar-space-3);
+  margin-block-end: var(--zarrar-space-2);
+}
+
+.fieldLabel {
+  margin: 0;
+  color: var(--zarrar-text-primary);
+  font-size: var(--zarrar-text-sm);
+  font-weight: 500;
+}
+
+.fieldHint {
+  margin: 2px 0 0;
+  color: var(--zarrar-text-muted);
+  font-size: var(--zarrar-text-xs);
+}
+
+/* ----------------------------------------------------------- markdown pane */
+
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--zarrar-space-4);
+}
+
+@media (max-width: 48em) {
+  .split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.preview {
+  min-height: 10rem;
+  max-height: 42rem;
+  overflow: auto;
+  padding: var(--zarrar-space-4) var(--zarrar-space-5);
+  border: 1px solid var(--zarrar-border);
+  border-radius: var(--zarrar-radius-md);
+  background: var(--zarrar-glass);
+}
+
+.preview[data-compact] {
+  min-height: 5rem;
+  max-height: 16rem;
+}
+
+.previewEmpty {
+  margin: 0;
+  color: var(--zarrar-text-faint);
+  font-family: var(--zarrar-font-mono);
+  font-size: var(--zarrar-text-xs);
+}
+
+.editor textarea {
+  font-family: var(--zarrar-font-mono);
+  font-size: var(--zarrar-text-sm);
+  line-height: 1.6;
+}
+
+/* ------------------------------------------------------------- side panels */
+
+.metaList {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--zarrar-space-2) var(--zarrar-space-4);
+  margin: 0;
+}
+
+.metaList dt {
+  color: var(--zarrar-text-faint);
+  font-family: var(--zarrar-font-mono);
+  font-size: var(--zarrar-text-2xs);
+  letter-spacing: var(--zarrar-tracking-wide);
+  text-transform: uppercase;
+  align-self: center;
+}
+
+.metaList dd {
+  margin: 0;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--zarrar-text-secondary);
+  font-size: var(--zarrar-text-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pinNote {
+  margin: var(--zarrar-space-2) 0 0;
+  color: var(--zarrar-text-muted);
+  font-size: var(--zarrar-text-xs);
+}
+
+/* Player card preview — mirrors the notice row so admins see the list result. */
+.card {
+  padding: var(--zarrar-space-4);
+  border: 1px solid var(--zarrar-border);
+  border-radius: var(--zarrar-radius-md);
+  background: var(--zarrar-glass);
+}
+
+.card[data-pinned] {
+  border-color: var(--zarrar-border-accent);
+  box-shadow: var(--zarrar-glow-1);
+}
+
+.card[data-sponsor] {
+  border-inline-start: 3px solid var(--zarrar-secondary);
+}
+
+.cardTitle {
+  margin: 0 0 var(--zarrar-space-2);
+  overflow-wrap: anywhere;
+  color: var(--zarrar-text-primary);
+  font-family: var(--zarrar-font-display);
+  font-size: var(--zarrar-text-md);
+}
+
+.cardTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--zarrar-space-2);
+  margin-block-end: var(--zarrar-space-3);
+}
+
+.cardTag {
+  border: 1px solid var(--zarrar-border);
+  border-radius: var(--zarrar-radius-xs);
+  padding: 1px 7px;
+  color: var(--zarrar-text-muted);
+  font-size: var(--zarrar-text-2xs);
+  letter-spacing: var(--zarrar-tracking-wide);
+  text-transform: uppercase;
+}
+
+.cardSummary {
+  max-height: 10rem;
+  overflow: hidden;
+  color: var(--zarrar-text-secondary);
+  font-size: var(--zarrar-text-sm);
+}
+
+.shortcut {
+  color: var(--zarrar-text-faint);
+  font-family: var(--zarrar-font-mono);
+  font-size: var(--zarrar-text-2xs);
+}

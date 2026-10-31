@@ -9,16 +9,16 @@
 **/bin/
 **/obj/
 **/node_modules/
-src/BURAQ/ClientApp/build/
-src/BURAQ/wwwroot/admin/
+src/ZARRAR/ClientApp/build/
+src/ZARRAR/wwwroot/admin/
 
 # Local runtime data, Docker exports, and release artifacts
-.buraq-runtime/
+.zarrar-runtime/
 release/
-Buraq-Demo-*/
-Buraq-Demo-*.zip
-Buraq_Demo_Deployment_Guide.docx
-pcc buraq.zip
+Zarrar-Demo-*/
+Zarrar-Demo-*.zip
+Zarrar_Demo_Deployment_Guide.docx
+pcc zarrar.zip
 *.tar
 *.tar.gz
 
@@ -34,7 +34,7 @@ deploy/production/.env.production
 # ZARRAR runtime data and packages
 DEMO_ACCOUNTS.txt
 zarrar-root.crt
-src/BURAQ/files/
+src/ZARRAR/files/
 *.ivf
 ZARRAR-*.zip
 _zarrar_backup_originals*.zip

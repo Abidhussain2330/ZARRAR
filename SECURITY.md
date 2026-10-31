@@ -1,6 +1,6 @@
 # Security
 
-BURAQ runs untrusted challenge workloads and handles participant credentials, flags, artifacts, and operational telemetry. Treat the host, Docker or MicroVM authority, database, object store, cryptographic keys, and backups as one high-value security boundary.
+ZARRAR runs untrusted challenge workloads and handles participant credentials, flags, artifacts, and operational telemetry. Treat the host, Docker or MicroVM authority, database, object store, cryptographic keys, and backups as one high-value security boundary.
 
 ## Secret rules
 
@@ -13,7 +13,7 @@ BURAQ runs untrusted challenge workloads and handles participant credentials, fl
 ## Network and origin boundaries
 
 - Production exposes only Caddy on the public HTTP/HTTPS ports.
-- Keep PostgreSQL, Redis, MinIO, BURAQ `8080`, management `3000`, and Docker TCP ports private.
+- Keep PostgreSQL, Redis, MinIO, ZARRAR `8080`, management `3000`, and Docker TCP ports private.
 - Use exact trusted origins. Do not use wildcard CORS or disable CSRF/origin checks to work around a client configuration error.
 - Keep secure cookie, forwarded-header, and HTTPS behavior under the production proxy.
 - Shared-runtime and builder origins must use approved HTTPS authorities. Reject authority changes, origin confusion, encoded path traversal, and redirects outside the approved origin.
@@ -22,7 +22,7 @@ BURAQ runs untrusted challenge workloads and handles participant credentials, fl
 
 - Never grant privileged mode, host PID/network namespaces, arbitrary host paths, or Docker-socket access to challenge containers.
 - Enforce CPU, memory, PID, network, lifetime, and global/per-participation instance limits.
-- Scope Docker discovery and lifecycle actions to BURAQ ownership/project labels. Inspect before cleanup and never delete unrelated containers.
+- Scope Docker discovery and lifecycle actions to ZARRAR ownership/project labels. Inspect before cleanup and never delete unrelated containers.
 - In MicroVM mode, mount `/dev/null` in place of the Docker socket and use only a scoped control-plane credential.
 - Treat challenge images as untrusted release artifacts requiring review and immutable tags/digests.
 

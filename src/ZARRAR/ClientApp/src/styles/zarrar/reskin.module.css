@@ -1,0 +1,123 @@
+/*
+ * Scoped token override — "reskin" palette.
+ *
+ * Re-points a subset of the --zarrar-* tokens (tokens.css) from the platform
+ * default (cyan-primary) to a blue-to-purple palette, for the small set of
+ * screens that opt in via this .scope class. Every ZARRAR-system component
+ * reads var(--zarrar-*), so wrapping a subtree in .scope re-themes it without
+ * touching the :root defaults other pages still rely on.
+ *
+ * Glow tokens are guarded behind :not([data-zarrar-energy='low']) so a user's
+ * low-energy preference (tokens.css) still flattens glow inside reskinned
+ * pages exactly as it does everywhere else.
+ */
+
+.scope {
+  --zarrar-bg-base: #04060e;
+  --zarrar-bg-secondary: #070a14;
+  --zarrar-bg-elevated: #0b1020;
+  --zarrar-bg-panel: #0c1126;
+
+  --zarrar-primary: #5b8cff;
+  --zarrar-primary-strong: #2b5cff;
+  --zarrar-secondary: #ff2a3d;
+  --zarrar-secondary-strong: #c4101f;
+
+  --zarrar-border: rgb(91 140 255 / 18%);
+  --zarrar-border-strong: rgb(91 140 255 / 32%);
+  --zarrar-border-accent: rgb(91 140 255 / 45%);
+  --zarrar-border-subtle: rgb(91 140 255 / 10%);
+
+  --zarrar-grid-line: rgb(91 140 255 / 5%);
+
+  --zarrar-font-display: 'Space Grotesk', 'Segoe UI', system-ui, sans-serif;
+  --zarrar-font-sans: 'Space Grotesk', -apple-system, blinkmacsystemfont, 'Segoe UI', sans-serif;
+}
+
+:root:not([data-zarrar-energy='low']) .scope {
+  --zarrar-glow-1: 0 0 8px rgb(91 140 255 / 18%);
+  --zarrar-glow-2: 0 0 16px rgb(91 140 255 / 28%);
+  --zarrar-glow-3: 0 0 28px rgb(91 140 255 / 40%);
+  --zarrar-glow-violet: 0 0 16px rgb(255 42 61 / 30%);
+  --zarrar-focus-ring: 0 0 0 2px var(--zarrar-bg-base), 0 0 0 4px var(--zarrar-primary);
+}
+
+/* Reusable corner-bracket frame — four small L-shaped corner marks. */
+.brackets {
+  position: relative;
+}
+
+.brackets::before,
+.brackets::after,
+.bracketBl,
+.bracketBr {
+  content: '';
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  pointer-events: none;
+}
+
+.brackets::before {
+  top: 12px;
+  left: 12px;
+  border-top: 2px solid var(--zarrar-primary);
+  border-left: 2px solid var(--zarrar-primary);
+  border-top-left-radius: 6px;
+}
+
+.brackets::after {
+  top: 12px;
+  right: 12px;
+  border-top: 2px solid var(--zarrar-primary);
+  border-right: 2px solid var(--zarrar-primary);
+  border-top-right-radius: 6px;
+}
+
+.bracketBl {
+  bottom: 12px;
+  left: 12px;
+  border-bottom: 2px solid var(--zarrar-primary);
+  border-left: 2px solid var(--zarrar-primary);
+  border-bottom-left-radius: 6px;
+}
+
+.bracketBr {
+  bottom: 12px;
+  right: 12px;
+  border-bottom: 2px solid var(--zarrar-primary);
+  border-right: 2px solid var(--zarrar-primary);
+  border-bottom-right-radius: 6px;
+}
+
+/* Gradient call-to-action button, matching the mockups' primary buttons. */
+.ctaButton {
+  background: linear-gradient(90deg, var(--zarrar-primary-strong), var(--zarrar-secondary-strong) 55%, var(--zarrar-secondary));
+  box-shadow: 0 10px 34px rgb(200 20 36 / 45%), inset 0 1px 0 rgb(255 255 255 / 25%);
+  transition: filter var(--zarrar-duration-fast) var(--zarrar-ease-out);
+}
+
+.ctaButton:hover {
+  filter: brightness(1.12);
+}
+
+/* Grid-line + radial-glow backdrop used behind the account-view card. */
+.backdrop {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  background-color: var(--zarrar-bg-base);
+  overflow: hidden;
+}
+
+.backdrop::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(900px 520px at 50% -10%, rgb(60 90 220 / 22%), transparent 70%),
+    radial-gradient(700px 500px at 85% 110%, rgb(150 60 220 / 18%), transparent 70%),
+    repeating-linear-gradient(0deg, var(--zarrar-grid-line) 0 1px, transparent 1px 46px),
+    repeating-linear-gradient(90deg, var(--zarrar-grid-line) 0 1px, transparent 1px 46px);
+}

@@ -1,0 +1,308 @@
+/*
+ * Indicators — difficulty meter, category badge, status dot, live badge.
+ *
+ * One module because the four share a size scale and a pill geometry; keeping
+ * them together is what stops those values drifting apart.
+ */
+
+@keyframes arzLivePulse {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.9;
+  }
+
+  70% {
+    transform: scale(2.1);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(2.1);
+    opacity: 0;
+  }
+}
+
+/* Screen-reader-only text. Scoped per module because CSS Modules are file-local. */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+/* -------------------------------------------------------------- difficulty */
+
+.difficulty {
+  --zarrar-difficulty-color: var(--zarrar-text-muted);
+
+  display: inline-flex;
+  align-items: center;
+  gap: var(--zarrar-space-2);
+  min-width: 0;
+  font-family: var(--zarrar-font-sans);
+  color: var(--zarrar-text-secondary);
+}
+
+.difficulty[data-level='easy'] {
+  --zarrar-difficulty-color: var(--zarrar-difficulty-easy);
+}
+
+.difficulty[data-level='medium'] {
+  --zarrar-difficulty-color: var(--zarrar-difficulty-medium);
+}
+
+.difficulty[data-level='hard'] {
+  --zarrar-difficulty-color: var(--zarrar-difficulty-hard);
+}
+
+.difficulty[data-level='expert'] {
+  --zarrar-difficulty-color: var(--zarrar-difficulty-expert);
+}
+
+.difficulty[data-level='insane'] {
+  --zarrar-difficulty-color: var(--zarrar-difficulty-insane);
+}
+
+.difficultyBars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: var(--zarrar-space-1);
+  flex: 0 0 auto;
+}
+
+.difficultyBar {
+  display: block;
+  width: var(--zarrar-space-1);
+  height: var(--zarrar-space-3);
+  border-radius: var(--zarrar-radius-xs);
+  background-color: var(--zarrar-bg-hover);
+  border: 1px solid var(--zarrar-border-subtle);
+}
+
+.difficultyBar[data-filled] {
+  background-color: var(--zarrar-difficulty-color);
+  border-color: var(--zarrar-difficulty-color);
+}
+
+.difficultyLabel {
+  font-size: var(--zarrar-text-xs);
+  font-weight: 600;
+  letter-spacing: var(--zarrar-tracking-wide);
+  color: var(--zarrar-difficulty-color);
+  white-space: nowrap;
+}
+
+.difficulty[data-size='sm'] .difficultyBar {
+  height: var(--zarrar-space-2);
+}
+
+.difficulty[data-size='sm'] .difficultyLabel {
+  font-size: var(--zarrar-text-2xs);
+}
+
+/* ---------------------------------------------------------------- category */
+
+.category {
+  --zarrar-badge-color: var(--zarrar-cat-misc);
+
+  display: inline-flex;
+  align-items: center;
+  gap: var(--zarrar-space-1);
+  max-width: 100%;
+  min-width: 0;
+  padding: var(--zarrar-space-1) var(--zarrar-space-2);
+
+  border: 1px solid var(--zarrar-badge-color);
+  border-radius: var(--zarrar-radius-sm);
+
+  /*
+   * `color-mix` keeps the fill in step with whatever the category token is,
+   * instead of maintaining a second hand-tuned tint per category.
+   */
+  background-color: color-mix(in srgb, var(--zarrar-badge-color) 14%, transparent);
+  color: var(--zarrar-badge-color);
+
+  font-family: var(--zarrar-font-mono);
+  font-size: var(--zarrar-text-2xs);
+  font-weight: 600;
+  letter-spacing: var(--zarrar-tracking-wide);
+  line-height: var(--zarrar-leading-tight);
+  text-transform: uppercase;
+}
+
+.category[data-size='md'] {
+  padding: var(--zarrar-space-1) var(--zarrar-space-3);
+  font-size: var(--zarrar-text-xs);
+}
+
+.categoryIcon {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.categoryText {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------------------------ status */
+
+.status {
+  --zarrar-status-color: var(--zarrar-text-muted);
+
+  display: inline-flex;
+  align-items: center;
+  gap: var(--zarrar-space-2);
+  min-width: 0;
+  color: var(--zarrar-status-color);
+}
+
+.status[data-status='live'] {
+  --zarrar-status-color: var(--zarrar-critical);
+}
+
+.status[data-status='active'] {
+  --zarrar-status-color: var(--zarrar-primary);
+}
+
+.status[data-status='solved'] {
+  --zarrar-status-color: var(--zarrar-success);
+}
+
+.status[data-status='locked'] {
+  --zarrar-status-color: var(--zarrar-warning);
+}
+
+.status[data-status='offline'] {
+  --zarrar-status-color: var(--zarrar-text-muted);
+}
+
+.statusGlyph {
+  display: block;
+  flex: 0 0 auto;
+  width: var(--zarrar-space-4);
+  height: var(--zarrar-space-4);
+  fill: currentcolor;
+}
+
+.status[data-size='sm'] .statusGlyph {
+  width: var(--zarrar-space-3);
+  height: var(--zarrar-space-3);
+}
+
+/* Outline-only parts of a glyph: the live ring, the tick, the shackle, the slash. */
+.statusRing,
+.statusStroke {
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.statusRing {
+  opacity: 0.45;
+}
+
+.statusLabel {
+  font-family: var(--zarrar-font-sans);
+  font-size: var(--zarrar-text-xs);
+  font-weight: 500;
+  color: var(--zarrar-text-secondary);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* --------------------------------------------------------------- live badge */
+
+.live {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--zarrar-space-2);
+  padding: var(--zarrar-space-1) var(--zarrar-space-2);
+  border: 1px solid var(--zarrar-critical);
+  border-radius: var(--zarrar-radius-sm);
+  background-color: color-mix(in srgb, var(--zarrar-critical) 12%, transparent);
+  color: var(--zarrar-critical);
+  font-family: var(--zarrar-font-mono);
+  font-size: var(--zarrar-text-2xs);
+  font-weight: 700;
+  letter-spacing: var(--zarrar-tracking-widest);
+  line-height: var(--zarrar-leading-tight);
+  white-space: nowrap;
+}
+
+.live[data-size='md'] {
+  padding: var(--zarrar-space-1) var(--zarrar-space-3);
+  font-size: var(--zarrar-text-xs);
+}
+
+.live[data-idle] {
+  border-color: var(--zarrar-border-strong);
+  background-color: var(--zarrar-bg-hover);
+  color: var(--zarrar-text-muted);
+}
+
+.liveLabel {
+  min-width: 0;
+}
+
+.liveDot {
+  position: relative;
+  display: block;
+  flex: 0 0 auto;
+  width: var(--zarrar-space-2);
+  height: var(--zarrar-space-2);
+  border-radius: 50%;
+  background-color: currentcolor;
+}
+
+.liveDot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background-color: currentcolor;
+  animation: arzLivePulse 1.8s var(--zarrar-ease-out) infinite;
+}
+
+.live[data-idle] .liveDot::after {
+  animation: none;
+  opacity: 0;
+}
+
+/*
+ * tokens.css already pauses every animation in low-energy mode; removing the
+ * animation outright also drops the expanded halo it would freeze on.
+ */
+:global(:root[data-zarrar-energy='low']) .liveDot::after {
+  animation: none;
+  opacity: 0;
+}
+
+@media (forced-colors: active) {
+  .category,
+  .live {
+    border-color: canvastext;
+    background-color: canvas;
+    color: canvastext;
+  }
+
+  .difficultyBar[data-filled] {
+    background-color: highlight;
+    border-color: highlight;
+  }
+
+  .liveDot::after {
+    animation: none;
+    opacity: 0;
+  }
+}

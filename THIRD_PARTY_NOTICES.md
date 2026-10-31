@@ -1,6 +1,6 @@
 # Third-Party Notices
 
-BURAQ is a product of THE ARZENS. This file is separate from LICENSE.txt because third-party dependencies are not owned or relicensed by THE ARZENS.
+ZARRAR is a product of THE ARZENS. This file is separate from LICENSE.txt because third-party dependencies are not owned or relicensed by THE ARZENS.
 
 The frontend and backend use external packages whose licenses remain applicable to those packages. Their package metadata is retained in the project manifests and canonical pnpm lockfile. Before distributing a production build, generate and attach the complete notice bundle for the exact resolved dependency graph, including pnpm and NuGet packages, fonts, icons, images, and container/base-image components used by that build.
 

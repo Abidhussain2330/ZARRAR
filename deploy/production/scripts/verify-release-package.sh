@@ -9,9 +9,9 @@ required_files=(
     .dockerignore
     global.json
     Directory.Packages.props
-    src/BURAQ/BURAQ.csproj
-    src/BURAQ/ClientApp/package.json
-    src/BURAQ/ClientApp/pnpm-lock.yaml
+    src/ZARRAR/ZARRAR.csproj
+    src/ZARRAR/ClientApp/package.json
+    src/ZARRAR/ClientApp/pnpm-lock.yaml
     deploy/production/compose.yaml
     deploy/production/compose.local.yaml
     deploy/production/compose.packet-capture.yaml

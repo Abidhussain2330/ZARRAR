@@ -5,7 +5,7 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=common.sh
 source "$SCRIPT_DIR/common.sh"
 
-printf 'Checking BURAQ SOC event outbox health...\n'
+printf 'Checking ZARRAR SOC event outbox health...\n'
 
 compose exec -T postgres psql \
   --username "$POSTGRES_USER" \

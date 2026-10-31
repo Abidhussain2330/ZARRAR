@@ -1,0 +1,109 @@
+/*
+ * Admin sub-navigation — the tab strip inside a game or challenge editor.
+ *
+ * A horizontal strip rather than the previous vertical `Tabs`: a 10rem vertical
+ * rail beside the global sidebar left roughly 500px of usable editor at tablet
+ * width, and nothing at all at 360px. Here the strip scrolls sideways on its
+ * own while the page never does.
+ */
+
+.strip {
+  display: flex;
+  min-width: 0;
+  max-width: 100%;
+  gap: var(--zarrar-space-1);
+  padding-block-end: var(--zarrar-space-1);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+
+  /* Thin, unobtrusive scrollbar — the strip is chrome, not content. */
+  scrollbar-width: thin;
+}
+
+.strip::-webkit-scrollbar {
+  height: 4px;
+}
+
+.strip::-webkit-scrollbar-thumb {
+  border-radius: var(--zarrar-radius-xs);
+  background-color: var(--zarrar-border-strong);
+}
+
+.tab {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: var(--zarrar-space-2);
+  padding: var(--zarrar-space-2) var(--zarrar-space-3);
+  border: 1px solid var(--zarrar-border-subtle);
+  border-radius: var(--zarrar-radius-md);
+  background-color: var(--zarrar-bg-secondary);
+  color: var(--zarrar-text-secondary);
+  font-family: var(--zarrar-font-sans);
+  font-size: var(--zarrar-text-sm);
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color var(--zarrar-duration-fast) var(--zarrar-ease-out),
+    border-color var(--zarrar-duration-fast) var(--zarrar-ease-out),
+    color var(--zarrar-duration-fast) var(--zarrar-ease-out);
+}
+
+.tab:hover {
+  border-color: var(--zarrar-border);
+  background-color: var(--zarrar-bg-hover);
+  color: var(--zarrar-text-primary);
+}
+
+.tab:focus-visible {
+  outline: none;
+  box-shadow: var(--zarrar-focus-ring);
+}
+
+.tab[data-active] {
+  border-color: var(--zarrar-border-accent);
+  background-color: var(--zarrar-bg-selected);
+  color: var(--zarrar-primary);
+}
+
+.tabIcon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+}
+
+/* ------------------------------------------------------- prev / next pager */
+
+.stepper {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--zarrar-space-3);
+  padding-block-start: var(--zarrar-space-3);
+  border-top: 1px solid var(--zarrar-border-subtle);
+}
+
+.stepperCurrent {
+  min-width: 0;
+  flex: 1 1 12rem;
+  overflow: hidden;
+  color: var(--zarrar-text-muted);
+  font-size: var(--zarrar-text-xs);
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: $mantine-breakpoint-sm) {
+  .stepper > * {
+    flex: 1 1 auto;
+  }
+
+  .stepperCurrent {
+    order: -1;
+    flex-basis: 100%;
+  }
+}

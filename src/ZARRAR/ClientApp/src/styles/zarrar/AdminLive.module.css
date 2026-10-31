@@ -1,0 +1,266 @@
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  gap: 20px;
+  align-items: start;
+}
+
+@media (width <= 1200px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.preview {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #000;
+  border: 1px solid rgb(255 42 61 / 45%);
+  box-shadow: 0 0 30px rgb(255 42 61 / 15%);
+}
+
+.previewBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+}
+
+.section {
+  padding: 16px;
+  margin-bottom: 14px;
+  background: var(--zarrar-bg-surface, rgb(255 255 255 / 3%));
+  border: 1px solid var(--zarrar-border, rgb(255 255 255 / 10%));
+}
+
+.sectionTitle {
+  margin: 0 0 12px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--zarrar-text-muted, #9aa1ad);
+}
+
+.status {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.statusDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 0;
+  border-bottom: 1px solid rgb(255 255 255 / 6%);
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.rowMain {
+  min-width: 0;
+}
+
+.rowTitle {
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rowSub {
+  font-size: 12px;
+  color: var(--zarrar-text-muted, #9aa1ad);
+}
+
+.feedDot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  margin-right: 8px;
+  border-radius: 50%;
+}
+
+.hint {
+  margin: 8px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--zarrar-text-muted, #9aa1ad);
+}
+
+.list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 14px;
+}
+
+.gameCard {
+  display: block;
+  padding: 16px;
+  color: inherit;
+  text-decoration: none;
+  background: var(--zarrar-bg-surface, rgb(255 255 255 / 3%));
+  border: 1px solid var(--zarrar-border, rgb(255 255 255 / 10%));
+}
+
+.gameCard:hover {
+  border-color: #ff2a3d;
+}
+
+.gameCard:focus-visible {
+  outline: 2px solid #ff2a3d;
+  outline-offset: 2px;
+}
+
+/* ------------------------------------------------------------ section header */
+
+.sectionHead {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.sectionHead .sectionTitle {
+  margin: 0;
+}
+
+/* --------------------------------------------------------------- shortcuts */
+
+.shortcuts {
+  margin: 6px 0 0;
+  font-size: 12px;
+  line-height: 1.9;
+  color: var(--zarrar-text-muted, #9aa1ad);
+}
+
+.kbd {
+  display: inline-block;
+  min-width: 20px;
+  padding: 0 6px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  line-height: 18px;
+  color: var(--zarrar-text, #eef1f5);
+  text-align: center;
+  background: rgb(255 255 255 / 8%);
+  border: 1px solid rgb(255 255 255 / 18%);
+  border-bottom-width: 2px;
+  border-radius: 3px;
+}
+
+/* ---------------------------------------------------------------- pre-flight */
+
+.check {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 8px 0;
+  border-bottom: 1px solid rgb(255 255 255 / 6%);
+}
+
+.check:last-of-type {
+  border-bottom: none;
+}
+
+.checkMark {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  font-size: 12px;
+  font-weight: 900;
+  border-radius: 50%;
+}
+
+.checkOk {
+  color: #04120a;
+  background: #1ff28c;
+}
+
+.checkWarn {
+  color: #140c00;
+  background: #ffb020;
+}
+
+.checkBad {
+  color: #fff;
+  background: #ff2a3d;
+}
+
+.checkLabel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  font-weight: 600;
+}
+
+.checkTag {
+  padding: 0 6px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: #fff;
+  background: #ff2a3d;
+}
+
+/* ------------------------------------------------------------------ timeline */
+
+.timeline {
+  max-height: 340px;
+  overflow-y: auto;
+}
+
+.tlRow {
+  display: grid;
+  grid-template-columns: 76px 112px minmax(0, 1fr);
+  gap: 10px;
+  align-items: baseline;
+  padding: 6px 0;
+  font-size: 13px;
+  border-bottom: 1px solid rgb(255 255 255 / 6%);
+}
+
+.tlTime {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12px;
+  color: var(--zarrar-text-muted, #9aa1ad);
+}
+
+.tlType {
+  font-weight: 700;
+}
+
+.tlText {
+  overflow-wrap: anywhere;
+}
+
+@media (width <= 600px) {
+  .tlRow {
+    grid-template-columns: 70px minmax(0, 1fr);
+  }
+
+  .tlText {
+    grid-column: 1 / -1;
+  }
+}

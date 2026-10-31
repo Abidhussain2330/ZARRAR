@@ -1,26 +1,26 @@
 # syntax=docker/dockerfile:1.7
 FROM node:24-alpine AS frontend
-WORKDIR /src/BURAQ/ClientApp
+WORKDIR /src/ZARRAR/ClientApp
 RUN corepack enable && corepack prepare pnpm@10.14.0 --activate
-COPY src/BURAQ/ClientApp/package.json src/BURAQ/ClientApp/pnpm-lock.yaml src/BURAQ/ClientApp/pnpm-workspace.yaml ./
+COPY src/ZARRAR/ClientApp/package.json src/ZARRAR/ClientApp/pnpm-lock.yaml src/ZARRAR/ClientApp/pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
-COPY src/BURAQ/ClientApp/ ./
+COPY src/ZARRAR/ClientApp/ ./
 RUN pnpm run build
 
 FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS backend
 WORKDIR /src
-COPY global.json BURAQ.sln Directory.Packages.props ./
-COPY src/BURAQ/BURAQ.csproj src/BURAQ/BURAQ.csproj
-RUN dotnet restore src/BURAQ/BURAQ.csproj
-COPY src/BURAQ/ src/BURAQ/
-RUN dotnet publish src/BURAQ/BURAQ.csproj --configuration Release --no-restore \
+COPY global.json ZARRAR.sln Directory.Packages.props ./
+COPY src/ZARRAR/ZARRAR.csproj src/ZARRAR/ZARRAR.csproj
+RUN dotnet restore src/ZARRAR/ZARRAR.csproj
+COPY src/ZARRAR/ src/ZARRAR/
+RUN dotnet publish src/ZARRAR/ZARRAR.csproj --configuration Release --no-restore \
     -p:SkipFrontendBuild=true --output /out
-COPY --from=frontend /src/BURAQ/ClientApp/build/ /out/wwwroot/admin/
+COPY --from=frontend /src/ZARRAR/ClientApp/build/ /out/wwwroot/admin/
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine AS runtime
 RUN apk add --no-cache icu-libs krb5-libs libgcc libpcap libstdc++ tzdata \
-    && addgroup -S -g 10001 buraq \
-    && adduser -S -D -H -u 10001 -G buraq buraq \
+    && addgroup -S -g 10001 zarrar \
+    && adduser -S -D -H -u 10001 -G zarrar zarrar \
     && mkdir -p /app/files \
     && chown -R 10001:10001 /app
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false \

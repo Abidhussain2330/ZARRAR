@@ -1,0 +1,213 @@
+/*
+ * StatCard — metric tile.
+ * Consumed by src/components/zarrar/StatCard.tsx.
+ */
+
+@keyframes arzStatShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.card {
+  --zarrar-stat-accent: var(--zarrar-text-secondary);
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--zarrar-space-2);
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+  padding: var(--zarrar-space-4);
+
+  background-color: var(--zarrar-bg-elevated);
+  border: 1px solid var(--zarrar-border);
+  border-radius: var(--zarrar-radius-md);
+  color: var(--zarrar-text-primary);
+  font-family: var(--zarrar-font-sans);
+
+  transition: border-color var(--zarrar-duration-fast) var(--zarrar-ease-out);
+}
+
+.card[data-tone='accent'] {
+  --zarrar-stat-accent: var(--zarrar-primary);
+}
+
+.card[data-tone='success'] {
+  --zarrar-stat-accent: var(--zarrar-success);
+}
+
+.card[data-tone='warning'] {
+  --zarrar-stat-accent: var(--zarrar-warning);
+}
+
+.card[data-tone='critical'] {
+  --zarrar-stat-accent: var(--zarrar-critical);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--zarrar-space-2);
+  min-width: 0;
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: var(--zarrar-space-5);
+  height: var(--zarrar-space-5);
+  border-radius: var(--zarrar-radius-sm);
+  color: var(--zarrar-stat-accent);
+  background-color: var(--zarrar-bg-inset);
+  border: 1px solid var(--zarrar-border-subtle);
+}
+
+.label {
+  margin: 0;
+  min-width: 0;
+  font-size: var(--zarrar-text-xs);
+  font-weight: 500;
+  letter-spacing: var(--zarrar-tracking-wide);
+  text-transform: uppercase;
+  color: var(--zarrar-text-muted);
+  line-height: var(--zarrar-leading-tight);
+  overflow-wrap: anywhere;
+}
+
+.value {
+  margin: 0;
+  font-family: var(--zarrar-font-display);
+
+  /* Shrinks on narrow viewports so a six-figure score cannot widen the page. */
+  font-size: clamp(var(--zarrar-text-2xl), 7vw, var(--zarrar-text-3xl));
+  font-weight: 700;
+  line-height: var(--zarrar-leading-tight);
+  letter-spacing: var(--zarrar-tracking-wide);
+  font-variant-numeric: tabular-nums;
+  color: var(--zarrar-text-primary);
+  overflow-wrap: anywhere;
+}
+
+.card[data-tone='accent'] .value,
+.card[data-tone='success'] .value,
+.card[data-tone='warning'] .value,
+.card[data-tone='critical'] .value {
+  color: var(--zarrar-stat-accent);
+}
+
+.meta {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--zarrar-space-1) var(--zarrar-space-2);
+  min-width: 0;
+}
+
+.delta {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--zarrar-space-1);
+  font-size: var(--zarrar-text-xs);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--zarrar-text-secondary);
+}
+
+.delta[data-polarity='good'] {
+  color: var(--zarrar-success);
+}
+
+.delta[data-polarity='bad'] {
+  color: var(--zarrar-critical);
+}
+
+.delta[data-polarity='neutral'] {
+  color: var(--zarrar-text-muted);
+}
+
+.deltaGlyph {
+  font-size: var(--zarrar-text-2xs);
+  line-height: 1;
+}
+
+.deltaValue {
+  white-space: nowrap;
+}
+
+.deltaContext,
+.sublabel {
+  font-size: var(--zarrar-text-2xs);
+  font-weight: 400;
+  color: var(--zarrar-text-muted);
+  overflow-wrap: anywhere;
+}
+
+/* ------------------------------------------------------------- loading */
+
+.skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--zarrar-space-2);
+}
+
+.bar {
+  display: block;
+  height: var(--zarrar-space-3);
+  border-radius: var(--zarrar-radius-xs);
+  background-color: var(--zarrar-bg-hover);
+  background-image: linear-gradient(90deg, transparent, var(--zarrar-bg-selected), transparent);
+  background-size: 200% 100%;
+
+  /*
+   * Deliberately a CSS animation: low-energy mode pauses every animation
+   * globally, so this stops without any per-component JavaScript.
+   */
+  animation: arzStatShimmer 1.4s var(--zarrar-ease-in-out) infinite;
+}
+
+.barValue {
+  width: 60%;
+  height: var(--zarrar-space-6);
+}
+
+.barMeta {
+  width: 35%;
+}
+
+/* Screen-reader-only text. Scoped per module because CSS Modules are file-local. */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+@media (max-width: 30em) {
+  .card {
+    padding: var(--zarrar-space-3);
+  }
+}
+
+@media (forced-colors: active) {
+  .card {
+    border-color: canvastext;
+  }
+
+  .bar {
+    background-image: none;
+    border: 1px solid canvastext;
+  }
+}

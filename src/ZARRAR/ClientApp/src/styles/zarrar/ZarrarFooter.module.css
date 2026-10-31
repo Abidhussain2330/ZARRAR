@@ -1,0 +1,78 @@
+/*
+ * ZARRAR footer.
+ *
+ * Sits in the document flow rather than fixed to the viewport, so a short page
+ * never leaves a floating band over the content.
+ */
+
+.footer {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding-block: var(--zarrar-space-6);
+  border-top: 1px solid var(--zarrar-border);
+  background-color: var(--zarrar-bg-secondary);
+}
+
+.inner {
+  display: flex;
+  max-width: var(--zarrar-content-max);
+  margin-inline: auto;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--zarrar-space-5);
+  padding-inline: 10%;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--zarrar-space-2);
+}
+
+.brandLine {
+  margin: 0;
+  color: var(--zarrar-text-muted);
+  font-family: var(--zarrar-font-mono);
+  font-size: var(--zarrar-text-2xs);
+  letter-spacing: var(--zarrar-tracking-wide);
+}
+
+.legal {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--zarrar-space-3);
+  color: var(--zarrar-text-muted);
+}
+
+.links {
+  max-width: 100%;
+  color: var(--zarrar-text-muted);
+  font-size: var(--zarrar-text-sm);
+  text-align: end;
+}
+
+@media (max-width: $mantine-breakpoint-sm) {
+  .inner {
+    flex-direction: column;
+    align-items: center;
+    padding-inline: var(--zarrar-space-4);
+  }
+
+  .brand {
+    align-items: center;
+  }
+
+  .legal {
+    align-items: center;
+  }
+
+  .links {
+    text-align: center;
+  }
+}

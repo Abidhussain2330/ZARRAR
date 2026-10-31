@@ -21,7 +21,7 @@ esac
 mc alias set local http://minio:9000 "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD" >/dev/null
 mc mb --ignore-existing "local/$MINIO_BUCKET" >/dev/null
 
-cat >/tmp/buraq-policy.json <<EOF
+cat >/tmp/zarrar-policy.json <<EOF
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -49,7 +49,7 @@ cat >/tmp/buraq-policy.json <<EOF
 }
 EOF
 
-mc admin policy create local buraq-app /tmp/buraq-policy.json >/dev/null
+mc admin policy create local zarrar-app /tmp/zarrar-policy.json >/dev/null
 mc admin user add local "$MINIO_ACCESS_KEY" "$MINIO_SECRET_KEY" >/dev/null
-mc admin policy attach local buraq-app --user="$MINIO_ACCESS_KEY" >/dev/null
+mc admin policy attach local zarrar-app --user="$MINIO_ACCESS_KEY" >/dev/null
 mc admin user info local "$MINIO_ACCESS_KEY" >/dev/null

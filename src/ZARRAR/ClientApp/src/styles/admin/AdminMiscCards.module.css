@@ -1,0 +1,47 @@
+/*
+ * Shared "flat glass panel" treatment for admin list items that don't
+ * warrant their own bespoke module — division cards, per-game notice rows,
+ * flag rows, staged-file rows. Mirrors the pattern in AdminChallengeCard
+ * and AdminNotices rather than inventing a new one.
+ */
+
+.card {
+  border: 1px solid var(--zarrar-border);
+  border-radius: var(--zarrar-radius-md);
+  background: var(--zarrar-glass);
+  padding: var(--zarrar-space-4);
+  transition: border-color var(--zarrar-duration-fast) var(--zarrar-ease-out);
+}
+.card:hover {
+  border-color: var(--zarrar-border-strong);
+}
+
+/* Tighter padding for dense rows (flags, staged files). */
+.cardTight {
+  border: 1px solid var(--zarrar-border);
+  border-radius: var(--zarrar-radius-sm);
+  background: var(--zarrar-glass);
+  padding: var(--zarrar-space-2) var(--zarrar-space-3);
+  transition: border-color var(--zarrar-duration-fast) var(--zarrar-ease-out);
+}
+.cardTight:hover {
+  border-color: var(--zarrar-border-strong);
+}
+
+.title {
+  color: var(--zarrar-text-primary);
+  font-family: var(--zarrar-font-display);
+  font-size: var(--zarrar-text-md);
+  font-weight: 500;
+}
+
+.meta {
+  color: var(--zarrar-text-muted);
+  font-family: var(--zarrar-font-mono);
+  font-size: var(--zarrar-text-xs);
+}
+
+.mono {
+  color: var(--zarrar-text-secondary);
+  font-family: var(--zarrar-font-mono);
+}

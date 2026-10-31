@@ -12,19 +12,19 @@ fi
 
 BACKUP_ROOT="$1"
 STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
-BACKUP_DIR="$BACKUP_ROOT/buraq-$STAMP"
-LOCK_DIR="$BACKUP_ROOT/.buraq-backup.lock"
+BACKUP_DIR="$BACKUP_ROOT/zarrar-$STAMP"
+LOCK_DIR="$BACKUP_ROOT/.zarrar-backup.lock"
 APP_STOPPED=false
 
 mkdir -p -- "$BACKUP_ROOT"
 mkdir -- "$LOCK_DIR" 2>/dev/null || {
-    printf 'Another BURAQ backup appears to be running: %s\n' "$LOCK_DIR" >&2
+    printf 'Another ZARRAR backup appears to be running: %s\n' "$LOCK_DIR" >&2
     exit 75
 }
 
 cleanup() {
     if [[ "$APP_STOPPED" == true ]]; then
-        compose up -d buraq proxy >/dev/null || true
+        compose up -d zarrar proxy >/dev/null || true
     fi
     rmdir -- "$LOCK_DIR" 2>/dev/null || true
 }
@@ -34,7 +34,7 @@ mkdir -p -- "$BACKUP_DIR/object-storage"
 printf 'Backup destination: %s\n' "$BACKUP_DIR"
 df -h -- "$BACKUP_ROOT"
 
-compose stop proxy buraq
+compose stop proxy zarrar
 APP_STOPPED=true
 
 compose exec -T postgres pg_dump \
@@ -48,15 +48,15 @@ docker run --rm \
     -e MINIO_ROOT_USER -e MINIO_ROOT_PASSWORD -e MINIO_BUCKET \
     -v "$BACKUP_DIR/object-storage:/backup" \
     --entrypoint /bin/sh \
-    "$BURAQ_MC_IMAGE" -ec '
-        mc alias set buraq http://minio:9000 "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD" >/dev/null
-        mc mirror --overwrite "buraq/$MINIO_BUCKET" "/backup/$MINIO_BUCKET"
+    "$ZARRAR_MC_IMAGE" -ec '
+        mc alias set zarrar http://minio:9000 "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD" >/dev/null
+        mc mirror --overwrite "zarrar/$MINIO_BUCKET" "/backup/$MINIO_BUCKET"
     '
 
 docker run --rm \
     -v "$(volume_name files):/source:ro" \
     -v "$BACKUP_DIR:/backup" \
-    alpine:3.22 tar -czf /backup/buraq-files.tar.gz -C /source .
+    alpine:3.22 tar -czf /backup/zarrar-files.tar.gz -C /source .
 
 docker run --rm \
     -v "$(volume_name caddy_data):/source:ro" \
@@ -75,6 +75,6 @@ printf '%s\n' \
     find . -type f ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum >SHA256SUMS
 )
 
-compose up -d buraq proxy
+compose up -d zarrar proxy
 APP_STOPPED=false
 printf 'Backup complete: %s\n' "$BACKUP_DIR"

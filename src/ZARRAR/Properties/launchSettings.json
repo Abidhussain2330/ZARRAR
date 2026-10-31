@@ -1,0 +1,15 @@
+{
+  "profiles": {
+    "ZARRAR": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "applicationUrl": "http://localhost:8080",
+      "externalUrlConfiguration": true,
+      "environmentVariables": {
+        "ZARRAR_QUERY_LOGGING": "true",
+        "Development__TrustedOrigins__0": "http://localhost:63000",
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

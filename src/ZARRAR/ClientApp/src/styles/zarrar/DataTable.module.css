@@ -1,0 +1,244 @@
+/*
+ * DataTable — themed table wrapper.
+ * Consumed by src/components/zarrar/DataTable.tsx.
+ */
+
+@keyframes arzTableShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Screen-reader-only text. Scoped per module because CSS Modules are file-local. */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+.root {
+  position: relative;
+  box-sizing: border-box;
+
+  /* min-width:0 is what keeps a wide table from widening the page instead of scrolling. */
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  font-family: var(--zarrar-font-sans);
+}
+
+.scroll {
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+  overflow: auto;
+
+  /* Stops a sideways flick inside the table from triggering browser back. */
+  overscroll-behavior-x: contain;
+  border: 1px solid var(--zarrar-border);
+  border-radius: var(--zarrar-radius-md);
+  background-color: var(--zarrar-bg-panel);
+}
+
+.scroll:focus-visible {
+  outline: none;
+  box-shadow: var(--zarrar-focus-ring);
+}
+
+.table {
+  width: 100%;
+  min-width: 0;
+
+  /*
+   * `separate` rather than `collapse`: collapsed borders are painted by the
+   * table, not the cell, and disappear behind sticky headers and columns.
+   */
+  border-collapse: separate;
+  border-spacing: 0;
+  color: var(--zarrar-text-primary);
+  font-size: var(--zarrar-text-sm);
+}
+
+.caption {
+  padding: var(--zarrar-space-3) var(--zarrar-space-4);
+  text-align: start;
+  font-family: var(--zarrar-font-display);
+  font-size: var(--zarrar-text-sm);
+  font-weight: 600;
+  letter-spacing: var(--zarrar-tracking-wide);
+  color: var(--zarrar-text-secondary);
+}
+
+/* ----------------------------------------------------------------- header */
+
+.th {
+  position: relative;
+  padding: var(--zarrar-space-3) var(--zarrar-space-4);
+  background-color: var(--zarrar-bg-inset);
+  border-bottom: 1px solid var(--zarrar-border-strong);
+  font-family: var(--zarrar-font-mono);
+  font-size: var(--zarrar-text-2xs);
+  font-weight: 600;
+  letter-spacing: var(--zarrar-tracking-wider);
+  text-transform: uppercase;
+  color: var(--zarrar-text-muted);
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.th[data-align='left'] {
+  text-align: start;
+}
+
+.th[data-align='center'] {
+  text-align: center;
+}
+
+.th[data-align='right'] {
+  text-align: end;
+}
+
+.stickyHead .th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+/* ------------------------------------------------------------------- body */
+
+.tr {
+  transition: background-color var(--zarrar-duration-fast) var(--zarrar-ease-out);
+}
+
+.tr:hover .td {
+  background-color: var(--zarrar-bg-hover);
+}
+
+.tr[data-highlight] .td {
+  background-color: var(--zarrar-bg-selected);
+}
+
+/* Shape as well as colour: the accent bar marks the row without relying on hue. */
+.tr[data-highlight] .td:first-child {
+  box-shadow: inset var(--zarrar-space-1) 0 0 var(--zarrar-primary);
+}
+
+.td {
+  padding: var(--zarrar-space-3) var(--zarrar-space-4);
+  background-color: var(--zarrar-bg-panel);
+  border-bottom: 1px solid var(--zarrar-border-subtle);
+  vertical-align: middle;
+  overflow-wrap: anywhere;
+}
+
+.td[data-align='left'] {
+  text-align: start;
+}
+
+.td[data-align='center'] {
+  text-align: center;
+}
+
+.td[data-align='right'] {
+  text-align: end;
+}
+
+.td[data-numeric] {
+  font-family: var(--zarrar-font-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.td[data-nowrap] {
+  white-space: nowrap;
+}
+
+.rowHeader {
+  font-weight: 600;
+  color: var(--zarrar-text-primary);
+}
+
+/* ------------------------------------------------------- sticky first column */
+
+.th[data-sticky],
+.td[data-sticky] {
+  position: sticky;
+  left: 0;
+
+  /* Opaque, otherwise the scrolled-under cells show through. */
+  background-color: var(--zarrar-bg-panel);
+  border-right: 1px solid var(--zarrar-border-subtle);
+}
+
+.th[data-sticky] {
+  background-color: var(--zarrar-bg-inset);
+  z-index: 1;
+}
+
+.stickyHead .th[data-sticky] {
+  z-index: 3;
+}
+
+.tr:hover .td[data-sticky] {
+  background-color: var(--zarrar-bg-hover);
+}
+
+.tr[data-highlight] .td[data-sticky] {
+  background-color: var(--zarrar-bg-selected);
+}
+
+/* ------------------------------------------------------- empty and loading */
+
+.emptyCell {
+  padding: 0;
+  background-color: var(--zarrar-bg-panel);
+}
+
+.skeleton {
+  display: block;
+  height: var(--zarrar-space-3);
+  border-radius: var(--zarrar-radius-xs);
+  background-color: var(--zarrar-bg-hover);
+  background-image: linear-gradient(90deg, transparent, var(--zarrar-bg-selected), transparent);
+  background-size: 200% 100%;
+
+  /* Paused wholesale by low-energy mode, so no per-component opt-out is needed. */
+  animation: arzTableShimmer 1.4s var(--zarrar-ease-in-out) infinite;
+}
+
+@media (max-width: 30em) {
+  .th,
+  .td {
+    padding: var(--zarrar-space-2) var(--zarrar-space-3);
+  }
+}
+
+@media (forced-colors: active) {
+  .scroll {
+    border-color: canvastext;
+  }
+
+  .th,
+  .td {
+    border-color: canvastext;
+  }
+
+  .tr[data-highlight] .td:first-child {
+    box-shadow: inset var(--zarrar-space-1) 0 0 highlight;
+  }
+
+  .skeleton {
+    background-image: none;
+    border: 1px solid canvastext;
+  }
+}

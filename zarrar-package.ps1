@@ -13,10 +13,10 @@
 
   Left out of the zip:
     - bin, obj, node_modules, ClientApp\build, wwwroot\admin, .vs/.idea/.vscode, TestResults
-    - src\BURAQ\files (recordings, logs, uploads made while testing)
+    - src\ZARRAR\files (recordings, logs, uploads made while testing)
     - secrets: .env files (the .example templates are kept), *.key, *.pfx, *.pem, *.user
     - _zarrar_backup_originals*.zip, earlier ZARRAR-*.zip packages, *.ivf, *.log
-    - upstream-only material: docs\engineering (BURAQ build-phase notes) and .github
+    - upstream-only material: docs\engineering (ZARRAR build-phase notes) and .github
 
 .PARAMETER Output
   Where to write the zip. Default: ..\ZARRAR-<date>-<time>.zip next to this folder.
@@ -27,10 +27,10 @@
 
 .PARAMETER CleanAll
   -Clean, plus delete ClientApp\node_modules (run `pnpm install` before the next `pnpm dev`)
-  and the test recordings and logs under src\BURAQ\files.
+  and the test recordings and logs under src\ZARRAR\files.
 
 .PARAMETER IncludeRecordings
-  Put src\BURAQ\files\zarrar-recordings into the zip (they are large; off by default).
+  Put src\ZARRAR\files\zarrar-recordings into the zip (they are large; off by default).
 
 .EXAMPLE
   powershell -ExecutionPolicy Bypass -File .\zarrar-package.ps1
@@ -48,8 +48,8 @@ param(
 $ErrorActionPreference = 'Stop'
 $root = (Resolve-Path -LiteralPath $PSScriptRoot).Path.TrimEnd('\')
 
-if (-not (Test-Path -LiteralPath (Join-Path $root 'BURAQ.sln'))) {
-  throw "Run this script from the ZARRAR folder (the one with BURAQ.sln). It is in: $root"
+if (-not (Test-Path -LiteralPath (Join-Path $root 'ZARRAR.sln'))) {
+  throw "Run this script from the ZARRAR folder (the one with ZARRAR.sln). It is in: $root"
 }
 
 if (-not $Output) {
@@ -63,17 +63,17 @@ $skipDirNames = @('bin', 'obj', 'node_modules', '.vs', '.vscode', '.idea', 'Test
 
 # Paths (relative to the root, forward slashes) skipped as a whole.
 $skipPaths = @(
-  'src/BURAQ/ClientApp/build',
-  'src/BURAQ/wwwroot/admin',
+  'src/ZARRAR/ClientApp/build',
+  'src/ZARRAR/wwwroot/admin',
   'docs/engineering',
   '.github',
-  '.buraq-runtime',
+  '.zarrar-runtime',
   'release'
 )
 if ($IncludeRecordings) {
-  $skipPaths += @('src/BURAQ/files/logs')
+  $skipPaths += @('src/ZARRAR/files/logs')
 } else {
-  $skipPaths += @('src/BURAQ/files')
+  $skipPaths += @('src/ZARRAR/files')
 }
 
 function Test-SkipFile([string]$rel, [string]$name) {
@@ -123,14 +123,14 @@ Write-Host ("Packed {0} files ({1} MB) into {2} ({3} MB)." -f $files.Count, $src
 
 if ($Clean -or $CleanAll) {
   $targets = @()
-  foreach ($project in @('src/BURAQ', 'src/BURAQ.AppHost', 'src/BURAQ.Test')) {
+  foreach ($project in @('src/ZARRAR', 'src/ZARRAR.AppHost', 'src/ZARRAR.Test')) {
     $targets += (Join-Path $root "$project/bin"), (Join-Path $root "$project/obj")
   }
-  $targets += (Join-Path $root 'src/BURAQ/ClientApp/build')
+  $targets += (Join-Path $root 'src/ZARRAR/ClientApp/build')
   if ($CleanAll) {
-    $targets += (Join-Path $root 'src/BURAQ/ClientApp/node_modules')
-    $targets += (Join-Path $root 'src/BURAQ/files/zarrar-recordings')
-    $targets += (Join-Path $root 'src/BURAQ/files/logs')
+    $targets += (Join-Path $root 'src/ZARRAR/ClientApp/node_modules')
+    $targets += (Join-Path $root 'src/ZARRAR/files/zarrar-recordings')
+    $targets += (Join-Path $root 'src/ZARRAR/files/logs')
   }
 
   foreach ($target in $targets) {
@@ -145,6 +145,6 @@ if ($Clean -or $CleanAll) {
 
   Write-Host 'Cleaned. The next `dotnet build` recreates bin/obj.' -ForegroundColor Green
   if ($CleanAll) {
-    Write-Host 'Run `pnpm install` in src\BURAQ\ClientApp before the next `pnpm dev`.' -ForegroundColor Yellow
+    Write-Host 'Run `pnpm install` in src\ZARRAR\ClientApp before the next `pnpm dev`.' -ForegroundColor Yellow
   }
 }

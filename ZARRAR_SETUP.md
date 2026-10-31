@@ -1,6 +1,6 @@
-# ZARRAR — 1v1 Showdown on BURAQ
+# ZARRAR — 1v1 Showdown on ZARRAR
 
-ZARRAR turns any BURAQ game into a live 1v1 match:
+ZARRAR turns any ZARRAR game into a live 1v1 match:
 
 - Players keep the normal challenge page, rebranded to ZARRAR red, silver and black.
 - Each player shares their entire screen for the whole match.
@@ -18,11 +18,11 @@ These changes were written without a compiler. Build before anything else, and f
 
 ```powershell
 # backend (and the unit tests, which include the SOC decay and ledger checks)
-dotnet build BURAQ.sln --no-incremental
-dotnet test src/BURAQ.Test
+dotnet build ZARRAR.sln --no-incremental
+dotnet test src/ZARRAR.Test
 
 # frontend (type-check + bundle)
-cd src/BURAQ/ClientApp
+cd src/ZARRAR/ClientApp
 pnpm install --frozen-lockfile
 pnpm build
 ```
@@ -77,7 +77,7 @@ The production Docker build (`deploy/production`) picks the changes up the norma
 The venue has no public domain, so use the local-CA proxy that is already in `deploy/production`:
 
 1. **Give the server a fixed LAN IP** (a DHCP reservation on the venue router), for example `192.168.1.50`.
-2. **In `.env.production`, set `BURAQ_DOMAIN=192.168.1.50`** (the IP, no `https://`).
+2. **In `.env.production`, set `ZARRAR_DOMAIN=192.168.1.50`** (the IP, no `https://`).
 3. **Start the stack with the local override:**
    ```bash
    cd deploy/production
@@ -104,7 +104,7 @@ The venue has no public domain, so use the local-CA proxy that is already in `de
 
 ## 4a. Security settings (optional)
 
-All optional; the defaults are safe. Set them in `.env.production` as `BURAQ_Soc__<Name>` (or in `appsettings.json` under `"Soc"`).
+All optional; the defaults are safe. Set them in `.env.production` as `ZARRAR_Soc__<Name>` (or in `appsettings.json` under `"Soc"`).
 
 | Setting | Default | What it does |
 |---|---|---|
@@ -192,7 +192,7 @@ Notes
 
 ## 6. Recordings
 
-Every player's feed is recorded to `files/zarrar-recordings/<gameId>/<time>-p<participation>-<team>.ivf`. In Docker this is the `buraq_files` volume, at `/app/files`.
+Every player's feed is recorded to `files/zarrar-recordings/<gameId>/<time>-p<participation>-<team>.ivf`. In Docker this is the `zarrar_files` volume, at `/app/files`.
 
 - **Download:** on the admin Live page, under **Recordings**. Each file is labelled with its player. A new file starts every time a player starts sharing, and when a player's laptop falls back from VP9 to VP8, so one player can have a few files. Quality changes within a codec stay in the same file.
 - **Play:** open the file in VLC, or convert it with `ffmpeg -i in.ivf -c copy out.webm`.
@@ -203,7 +203,7 @@ At 2–4 Mbps, a one-hour match is about 1–1.8 GB per player. Check free disk 
 
 ## 7. Sound effects
 
-Drop MP3 files into `src/BURAQ/wwwroot/assets/zarrar/sfx/`:
+Drop MP3 files into `src/ZARRAR/wwwroot/assets/zarrar/sfx/`:
 
 | File | Plays when |
 |---|---|
@@ -321,8 +321,8 @@ On the new machine: unzip, then follow `README.md` (secrets, `dotnet build`, `pn
   - **Wider detection**: impossibly fast solves (from first interaction to the flag), captures under 20 s into a release, one account used from two addresses at once, registration bursts from one address, container egress spikes (> 2 MB/s).
   - **Two-step login** (TOTP + recovery codes) and **sign out everywhere** (`/api/account/twofactor*`, `/api/account/signouteverywhere`); the login pages ask for the code; staff signing in without it are logged. Session checks every minute so bans and sign-outs apply quickly.
   - **Sealed SOC ledger** (`Services/Soc/SocLedger.cs`): every 2 min new SOC events are folded into an HMAC chain and a seal event is written; `GET /api/soc/ledger` verifies it and raises a Critical alert if it is broken.
-  - **Ops**: optional Docker socket proxy (`compose.socket-proxy.yaml`, `BURAQ_DOCKER_URI`), separate fingerprint and ledger keys, SOC event retention by sealed range, and SOC health + staff two-step login in Pre-flight.
-  - New tests: `src/BURAQ.Test/SocHardeningTests.cs`.
+  - **Ops**: optional Docker socket proxy (`compose.socket-proxy.yaml`, `ZARRAR_DOCKER_URI`), separate fingerprint and ledger keys, SOC event retention by sealed range, and SOC health + staff two-step login in Pre-flight.
+  - New tests: `src/ZARRAR.Test/SocHardeningTests.cs`.
 - Clean, robust feeds (20 Oct, F1):
   - stage: the falling scan beam and per-feed sweep are gone; scanlines and vignette sit under the player panels; nothing is drawn over the picture (LIVE badge moved to the panel header)
   - new layouts `f1` / `f2` (keys 5 / 6): one screen full size, pixel for pixel on a 1080p projector
@@ -343,7 +343,7 @@ On the new machine: unzip, then follow `README.md` (secrets, `dotnet build`, `pn
   - `styles/zarrar/*`
 - Rebrand:
   - player tokens and palette switched from violet to ZARRAR red/silver/carbon
-  - BURAQ text replaced with ZARRAR on player-facing pages
+  - ZARRAR text replaced with ZARRAR on player-facing pages
   - new logo, emblem and landing art in `wwwroot/assets/zarrar/`
 - Navigation:
   - Admin rail: **ZARRAR Live** (admins) and **ZARRAR Stage** (monitors)

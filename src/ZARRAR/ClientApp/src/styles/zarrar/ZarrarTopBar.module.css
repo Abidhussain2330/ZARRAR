@@ -1,0 +1,485 @@
+/*
+ * ZARRAR top bar.
+ *
+ * Fixed height comes from --zarrar-topbar-height, the same token the shell feeds
+ * to AppShell, so the bar and the space reserved for it cannot disagree.
+ */
+
+.header {
+  height: var(--zarrar-topbar-height);
+  border-bottom: 1px solid var(--zarrar-border);
+  background-color: var(--zarrar-glass);
+  backdrop-filter: blur(var(--zarrar-glass-blur));
+  color: var(--zarrar-text-primary);
+}
+
+.inner {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--zarrar-space-3);
+  padding-inline: var(--zarrar-space-4);
+}
+
+.left {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  gap: var(--zarrar-space-3);
+}
+
+.right {
+  display: flex;
+  min-width: 0;
+  flex: none;
+  align-items: center;
+  gap: var(--zarrar-space-2);
+}
+
+.pageTitle {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--zarrar-text-primary);
+  font-family: var(--zarrar-font-display);
+  font-size: var(--zarrar-text-lg);
+  font-weight: 600;
+  letter-spacing: var(--zarrar-tracking-wide);
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.compactBrand {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  border-radius: var(--zarrar-radius-sm);
+}
+
+.compactBrand:focus-visible {
+  outline: none;
+  box-shadow: var(--zarrar-focus-ring);
+}
+
+/* ----------------------------------------------------------- icon controls */
+
+.iconButton {
+  display: inline-flex;
+  width: var(--zarrar-space-6);
+  height: var(--zarrar-space-6);
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--zarrar-radius-md);
+  background-color: transparent;
+  color: var(--zarrar-text-secondary);
+  cursor: pointer;
+  transition:
+    background-color var(--zarrar-duration-fast) var(--zarrar-ease-out),
+    color var(--zarrar-duration-fast) var(--zarrar-ease-out),
+    border-color var(--zarrar-duration-fast) var(--zarrar-ease-out);
+}
+
+.iconButton:hover {
+  background-color: var(--zarrar-bg-hover);
+  color: var(--zarrar-text-primary);
+}
+
+.iconButton:focus-visible {
+  outline: none;
+  box-shadow: var(--zarrar-focus-ring);
+}
+
+/* Low-energy mode is on: the control shows its own state, not just its action. */
+.iconButton[data-on] {
+  border-color: var(--zarrar-border-accent);
+  color: var(--zarrar-primary);
+}
+
+/* ------------------------------------------------------------------- clock */
+
+.clock {
+  display: inline-flex;
+  flex: none;
+  align-items: baseline;
+  gap: var(--zarrar-space-1);
+  color: var(--zarrar-text-secondary);
+  font-family: var(--zarrar-font-mono);
+  font-size: var(--zarrar-text-sm);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.clockSeconds {
+  color: var(--zarrar-text-muted);
+}
+
+.clockZone {
+  color: var(--zarrar-text-faint);
+  font-size: var(--zarrar-text-2xs);
+  letter-spacing: var(--zarrar-tracking-wide);
+}
+
+/* ---------------------------------------------------------------- identity */
+
+.identity {
+  display: flex;
+  min-width: 0;
+  flex: none;
+  align-items: center;
+  gap: var(--zarrar-space-2);
+  padding: var(--zarrar-space-1) var(--zarrar-space-2);
+  border: 1px solid var(--zarrar-border-subtle);
+  border-radius: var(--zarrar-radius-md);
+  background-color: var(--zarrar-bg-inset);
+  color: var(--zarrar-text-primary);
+  font-family: var(--zarrar-font-sans);
+  cursor: pointer;
+  transition:
+    background-color var(--zarrar-duration-fast) var(--zarrar-ease-out),
+    border-color var(--zarrar-duration-fast) var(--zarrar-ease-out);
+}
+
+.identity:hover {
+  border-color: var(--zarrar-border-strong);
+  background-color: var(--zarrar-bg-hover);
+}
+
+.identity:focus-visible {
+  outline: none;
+  box-shadow: var(--zarrar-focus-ring);
+}
+
+.avatar {
+  flex: none;
+}
+
+.identityText {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  line-height: var(--zarrar-leading-tight);
+}
+
+.identityName {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: var(--zarrar-text-sm);
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.identityRole {
+  color: var(--zarrar-text-muted);
+  font-family: var(--zarrar-font-mono);
+  font-size: var(--zarrar-text-2xs);
+  letter-spacing: var(--zarrar-tracking-wide);
+  text-transform: uppercase;
+}
+
+/*
+ * Condensed bar. The name/role block is the first thing to go — the avatar plus
+ * the menu still identify the account, and dropping it is what keeps the bar
+ * inside 360px without a horizontal scrollbar.
+ */
+@media (max-width: $mantine-breakpoint-sm) {
+  .inner {
+    gap: var(--zarrar-space-2);
+    padding-inline: var(--zarrar-space-3);
+  }
+
+  .pageTitle {
+    font-size: var(--zarrar-text-md);
+  }
+
+  .identityText {
+    display: none;
+  }
+}
+
+@media (max-width: $mantine-breakpoint-xs) {
+  .clockSeconds,
+  .clockZone {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------- brand + primary navigation */
+
+.brand {
+  display: inline-flex;
+  min-width: 116px;
+  flex: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1px;
+  color: var(--zarrar-text-primary);
+  font-family: var(--zarrar-font-display);
+  line-height: 1;
+  text-decoration: none;
+}
+
+.brandWord {
+  color: var(--zarrar-text-primary);
+  font-size: 1.04rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+}
+
+.brandSubline {
+  color: var(--zarrar-text-muted);
+  font-family: var(--zarrar-font-mono);
+  font-size: 0.48rem;
+  letter-spacing: 0.16em;
+}
+
+.brand:focus-visible {
+  outline: none;
+  box-shadow: var(--zarrar-focus-ring);
+}
+
+.status {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--zarrar-space-1);
+  padding: 0.38rem 0.58rem;
+  border: 1px solid var(--zarrar-border-subtle);
+  border-radius: 999px;
+  color: var(--zarrar-text-muted);
+  font-family: var(--zarrar-font-mono);
+  font-size: var(--zarrar-text-2xs);
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.status strong {
+  color: var(--zarrar-primary);
+  font-weight: 600;
+}
+
+.status[data-state='unreachable'] strong {
+  color: var(--zarrar-danger, #f87171);
+}
+
+.statusDot {
+  width: 0.42rem;
+  height: 0.42rem;
+  border-radius: 50%;
+  background: var(--zarrar-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--zarrar-primary) 14%, transparent);
+}
+
+.status[data-state='unreachable'] .statusDot {
+  background: var(--zarrar-danger, #f87171);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--zarrar-danger, #f87171) 14%, transparent);
+}
+
+/* ------------------------------------------------------- console mode (admin) */
+
+.consoleCrumb {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--zarrar-space-2);
+  font-family: var(--zarrar-font-mono);
+  font-size: var(--zarrar-text-xs);
+  letter-spacing: var(--zarrar-tracking-wide);
+  text-transform: uppercase;
+  color: var(--zarrar-text-muted);
+}
+
+.consoleCrumb strong {
+  color: var(--zarrar-text-primary);
+  font-weight: 600;
+}
+
+.consoleCrumbSep {
+  color: var(--zarrar-text-faint);
+}
+
+.vitals {
+  display: flex;
+  align-items: center;
+  gap: var(--zarrar-space-4);
+  padding-inline-start: var(--zarrar-space-4);
+  border-inline-start: 1px solid var(--zarrar-border);
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.vitals::-webkit-scrollbar {
+  display: none;
+}
+
+.vital {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--zarrar-font-mono);
+  font-size: var(--zarrar-text-xs);
+  color: var(--zarrar-text-secondary);
+  white-space: nowrap;
+}
+
+.vital strong {
+  color: var(--zarrar-text-primary);
+  font-weight: 600;
+}
+
+.vitalDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+}
+
+.vitalDotLive {
+  background: var(--zarrar-success);
+  box-shadow: 0 0 5px var(--zarrar-success);
+}
+
+.vitalDotIdle {
+  background: var(--zarrar-text-faint);
+}
+
+.nav {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  gap: 0.15rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.nav::-webkit-scrollbar {
+  display: none;
+}
+
+.navLink,
+.mobileNavLink {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 0.38rem;
+  border: 1px solid transparent;
+  border-radius: var(--zarrar-radius-md);
+  color: var(--zarrar-text-secondary);
+  font-family: var(--zarrar-font-sans);
+  font-size: var(--zarrar-text-xs);
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    background-color var(--zarrar-duration-fast) var(--zarrar-ease-out),
+    border-color var(--zarrar-duration-fast) var(--zarrar-ease-out),
+    color var(--zarrar-duration-fast) var(--zarrar-ease-out);
+}
+
+.navLink {
+  padding: 0.52rem 0.62rem;
+  white-space: nowrap;
+}
+
+.navLink:hover,
+.navLink[data-active],
+.mobileNavLink:hover,
+.mobileNavLink[data-active] {
+  border-color: var(--zarrar-border-accent);
+  background: var(--zarrar-bg-hover);
+  color: var(--zarrar-text-primary);
+}
+
+.navLink[data-active],
+.mobileNavLink[data-active] {
+  color: var(--zarrar-primary);
+}
+
+.navLink:focus-visible,
+.mobileNavLink:focus-visible {
+  outline: none;
+  box-shadow: var(--zarrar-focus-ring);
+}
+
+.mobileNav {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--zarrar-space-2);
+  padding: var(--zarrar-space-3);
+  border-block-end: 1px solid var(--zarrar-border);
+  background: color-mix(in srgb, var(--zarrar-bg-elevated) 96%, transparent);
+  box-shadow: var(--zarrar-shadow-lg);
+  backdrop-filter: blur(var(--zarrar-glass-blur));
+}
+
+.mobileNavLink {
+  min-height: 2.65rem;
+  padding: 0.65rem 0.75rem;
+}
+
+@media (max-width: $mantine-breakpoint-sm) {
+  .inner {
+    gap: var(--zarrar-space-2);
+    padding-inline: var(--zarrar-space-3);
+  }
+
+  .left {
+    gap: var(--zarrar-space-2);
+  }
+
+  .brand {
+    min-width: 0;
+  }
+
+  .brandSubline,
+  .statusLabel,
+  .status strong {
+    display: none;
+  }
+
+  .status {
+    padding: 0.42rem;
+  }
+
+  .statusDot {
+    width: 0.48rem;
+    height: 0.48rem;
+  }
+
+  .clockSeconds,
+  .clockZone {
+    display: none;
+  }
+}
+
+@media (max-width: $mantine-breakpoint-xs) {
+  .clock {
+    display: none;
+  }
+
+  .brandWord {
+    font-size: 0.92rem;
+  }
+}
+
+/* In sidebar mode the rail owns branding and primary navigation on desktop. */
+@media (min-width: calc($mantine-breakpoint-sm + 0.01em)) {
+  .header[data-sidebar-mode] .brand,
+  .header[data-sidebar-mode] .status,
+  .header[data-sidebar-mode] .nav {
+    display: none;
+  }
+}

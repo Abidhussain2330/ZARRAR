@@ -1,5 +1,5 @@
 services:
-  buraq:
+  zarrar:
     ports:
       # Debug port, loopback only: on the venue LAN, plain-HTTP 8080 would let anyone skip
       # Caddy (TLS, body limits, the trusted-proxy address) and reach the app directly.

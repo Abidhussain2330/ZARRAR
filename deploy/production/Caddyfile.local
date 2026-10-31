@@ -2,12 +2,12 @@
 	admin off
 }
 
-https://{$BURAQ_DOMAIN} {
+https://{$ZARRAR_DOMAIN} {
 	tls internal
 	encode zstd gzip
 
 	request_body {
-		max_size {$BURAQ_PROXY_BODY_LIMIT}
+		max_size {$ZARRAR_PROXY_BODY_LIMIT}
 	}
 
 	header {
@@ -16,5 +16,5 @@ https://{$BURAQ_DOMAIN} {
 		Referrer-Policy "strict-origin-when-cross-origin"
 	}
 
-	reverse_proxy buraq:8080
+	reverse_proxy zarrar:8080
 }

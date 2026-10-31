@@ -1,8 +1,8 @@
 services:
-  buraq:
+  zarrar:
     cap_add:
       - NET_ADMIN
       - NET_RAW
     environment:
-      BURAQ_ENABLE_TRAFFIC_CAPTURE: "true"
+      ZARRAR_ENABLE_TRAFFIC_CAPTURE: "true"
 

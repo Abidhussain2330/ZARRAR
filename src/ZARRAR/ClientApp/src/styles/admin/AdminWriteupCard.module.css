@@ -1,0 +1,15 @@
+.card {
+  border: 2px solid transparent;
+  border-radius: var(--zarrar-radius-md);
+  background: var(--zarrar-glass);
+  padding: var(--zarrar-space-3);
+}
+
+.selected {
+  border-color: var(--zarrar-primary);
+  box-shadow: var(--zarrar-glow-1);
+}
+
+.meta {
+  color: var(--zarrar-text-muted);
+}

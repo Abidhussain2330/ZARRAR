@@ -1,0 +1,160 @@
+/*
+ * ZARRAR — player UI tokens
+ *
+ * Single source of truth for the player-facing surface, keyed to the ZARRAR logo:
+ * carbon black, chrome silver and signal red.
+ *
+ *   Gateway  (landing, login, register, verify, reset) — red on carbon, with the
+ *            chrome hairline where the old gold one sat.
+ *
+ *   Arena    (posts, events, challenges, scoreboard, teams, profile) — the same
+ *            carbon surfaces with red as the single working accent.
+ *
+ * The --bq-* names are kept so existing page modules keep working; only the values
+ * changed. Nothing here collides with --mantine-* or --zarrar-* (admin tokens).
+ */
+
+:root {
+  /* ------------------------------------------------------------- gateway */
+  /* The gateway keeps the palette the landing, login and signup pages shipped with — those
+     designs were signed off before the arena retune and are deliberately NOT swept along with
+     it. The arena's brighter #ff2a3d lives in --bq-accent; do not unify these without asking. */
+  --bq-void: #060607;
+  --bq-violet: #e01b2e;
+  --bq-violet-hi: #ff4a5a;
+  --bq-violet-dim: #8a0f1a;
+  --bq-gold: #c7ccd4;
+
+  /* --------------------------------------------------------------- arena */
+  /* Near-black with a violet cast rather than the previous navy. The whole surface is
+     black-and-purple now: purple is the working accent everywhere, not just the gateway,
+     and the backgrounds sit darker so it has something to pop against. */
+  /* M6: surfaces are translucent so the living backdrop (fx.css) shows through every page. */
+  --bq-deep: #040304;
+  --bq-surface: rgb(14 9 12 / 78%);
+  --bq-panel: rgb(20 10 14 / 84%);
+  --bq-panel-hi: rgb(30 14 19 / 90%);
+
+  /* The single accent for the whole player surface. */
+  --bq-accent: #ff2a3d;
+  --bq-accent-hi: #ff6b78;
+  --bq-accent-dim: #b3121f;
+
+  /* Retained as aliases so the page modules don't all need rewriting; they resolve to the
+     violet accent above. New code should use --bq-accent. */
+  --bq-azure: var(--bq-accent);
+  --bq-azure-hi: var(--bq-accent-hi);
+  --bq-azure-dim: var(--bq-accent-dim);
+
+  /* Borders are violet at low alpha. Raised from the old values because the darker
+     backgrounds need more separation to keep panel edges legible. */
+  --bq-line: rgb(255 42 61 / 38%);
+  --bq-line-hi: rgb(255 70 88 / 70%);
+  --bq-line-soft: rgb(255 42 61 / 20%);
+
+  /* ------------------------------------------------------------------ ink */
+  --bq-ink: #f4f5f7;
+  --bq-ink-2: #d3d5db;
+  --bq-ink-3: #a4a7b0;
+  --bq-ink-4: #7f828c;
+  --bq-ink-5: #666970;
+
+  /* --------------------------------------------------------------- status */
+  --bq-live: #2ee08a;
+  --bq-warn: #ffb02e;
+  --bq-crit: #ff4d5e;
+  --bq-solved: #7fd3ff;
+  --bq-locked: #8b93ad;
+
+  /* Challenge categories. Ordered to stay distinguishable side by side in the
+     challenge grid; never the only signal — every badge carries its label too. */
+  --bq-cat-web: #3ba9ff;
+  --bq-cat-reverse: #ff2a3d;
+  --bq-cat-crypto: #38d6d6;
+  --bq-cat-pwn: #ff4d5e;
+  --bq-cat-forensics: #4d7dff;
+  --bq-cat-misc: #ff5c6c;
+  --bq-cat-osint: #2ee08a;
+  --bq-cat-stego: #6f8dff;
+  --bq-cat-hardware: #9aa6c6;
+  --bq-cat-blockchain: #ffb02e;
+  --bq-cat-ai: #ff7ad9;
+  --bq-cat-mobile: #5ee0b8;
+  --bq-cat-ppc: #ffa07a;
+  --bq-cat-pentest: #f472b6;
+
+  /* Difficulty reads as a 5-bar meter, so the scale is ordinal not categorical. */
+  --bq-diff-easy: #2ee08a;
+  --bq-diff-medium: #ffb02e;
+  --bq-diff-hard: #ff4d5e;
+
+  /* ------------------------------------------------------------ type ramp */
+  --bq-display: 'Chakra Petch', 'Space Grotesk', 'Helvetica Neue', helvetica, sans-serif;
+  --bq-body: 'Space Grotesk', 'Helvetica Neue', helvetica, sans-serif;
+  --bq-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* Headings are set tight and heavy. Space Grotesk's default tracking is comfortable rather
+     than precise; pulling it in gives titles an engineered edge to match the squared corners. */
+  --bq-track-display: -0.01em;
+  --bq-track-mono: 0.14em;
+
+  /* Reserved for the landing hero wordmark only. Everywhere else uses
+     --bq-display; Unbounded does not hold up below ~28px. */
+  --bq-wordmark: orbitron, var(--bq-display);
+
+  /* ZARRAR chrome: the brushed-silver face of the logo lettering. */
+  --zr-red: #ff2a3d;
+  --zr-red-deep: #b3121f;
+  --zr-chrome: linear-gradient(180deg, #ffffff 0%, #d9dde3 38%, #8d939c 52%, #e9ecf0 70%, #a9aeb6 100%);
+  --zr-glow: 0 0 18px rgb(255 42 61 / 55%), 0 0 42px rgb(255 42 61 / 25%);
+  --zr-ice: #46e6ff;
+  --zr-hot: #ff2a3d;
+  --zr-display: orbitron, 'Chakra Petch', sans-serif;
+
+  /* ---------------------------------------------------------------- shape */
+  --bq-r-sm: 3px;
+  --bq-r-md: 4px;
+  --bq-r-lg: 6px;
+  --bq-r-pill: 999px;
+
+  /* The gateway uses a 2px radius — near-square, machined, as shipped. */
+  --bq-r-gate: 2px;
+
+  /* --------------------------------------------------------------- motion */
+  --bq-t-fast: 0.18s ease;
+  --bq-t-base: 0.22s ease;
+
+  /* ---------------------------------------------------------------- glass */
+  --bq-blur: 10px;
+  --bq-glass: rgb(20 10 14 / 84%);
+  --bq-glass-soft: rgb(6 4 6 / 92%);
+
+  /* --------------------------------------------------------------- shadow */
+  --bq-lift: 0 18px 44px rgb(40 4 8 / 65%);
+  --bq-glow-violet: 0 0 26px 2px rgb(255 42 61 / 55%);
+  --bq-glow-azure: 0 10px 34px rgb(200 16 34 / 50%);
+}
+
+/* The grid texture that sits under the gateway panels. Declared once here so the
+   landing and the auth pages can't drift apart. */
+.bqGridField {
+  background-image:
+    radial-gradient(900px 520px at 50% -10%, rgb(200 16 34 / 26%), transparent 70%),
+    radial-gradient(700px 500px at 85% 110%, rgb(255 42 61 / 20%), transparent 70%),
+    repeating-linear-gradient(0deg, rgb(255 42 61 / 6%) 0 1px, transparent 1px 46px),
+    repeating-linear-gradient(90deg, rgb(255 42 61 / 6%) 0 1px, transparent 1px 46px);
+}
+
+/* Focus is a single shared treatment across the whole player surface so keyboard
+   users get one consistent signal. */
+.bqFocusRing:focus-visible {
+  outline: 2px solid var(--bq-accent-hi);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --bq-t-fast: 0.01ms;
+    --bq-t-base: 0.01ms;
+  }
+}

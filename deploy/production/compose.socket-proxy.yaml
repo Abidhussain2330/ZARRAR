@@ -50,7 +50,7 @@ services:
       SESSION: 0
       GRPC: 0
     volumes:
-      - ${BURAQ_RUNTIME_SOCKET_SOURCE:-/var/run/docker.sock}:/var/run/docker.sock:ro
+      - ${ZARRAR_RUNTIME_SOCKET_SOURCE:-/var/run/docker.sock}:/var/run/docker.sock:ro
     networks:
       - data
     read_only: true
@@ -67,12 +67,12 @@ services:
     mem_limit: 64m
     pids_limit: 64
 
-  buraq:
+  zarrar:
     environment:
-      BURAQ_DOCKER_URI: tcp://docker-proxy:2375
+      ZARRAR_DOCKER_URI: tcp://docker-proxy:2375
     # Same volumes as compose.yaml minus the Docker socket.
     volumes: !override
-      - buraq_files:/app/files
+      - zarrar_files:/app/files
     depends_on:
       docker-proxy:
         condition: service_started

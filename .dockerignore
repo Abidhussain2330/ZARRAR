@@ -7,6 +7,6 @@
 **/bin
 **/obj
 **/.cache
-src/BURAQ/ClientApp/build
-src/BURAQ/wwwroot/admin
+src/ZARRAR/ClientApp/build
+src/ZARRAR/wwwroot/admin
 deploy/production/.env.production

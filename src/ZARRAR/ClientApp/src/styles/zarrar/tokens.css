@@ -1,0 +1,315 @@
+/*
+ * ZARRAR — design tokens
+ *
+ * The single source of truth for colour, elevation, glow, motion and spacing.
+ * Every ZARRAR component reads from these variables; no component may hard-code
+ * a hex value. Changing the platform's look should mean editing this file only.
+ *
+ * Tokens are namespaced `--zarrar-*` so they never collide with Mantine's own
+ * `--mantine-*` variables, which remain in use for the existing ZARRAR screens.
+ */
+
+:root {
+  /* ---------------------------------------------------------------- surfaces */
+  --zarrar-bg-base: #07050a;
+  --zarrar-bg-secondary: #0a0609;
+  --zarrar-bg-elevated: #100a0e;
+  --zarrar-bg-panel: #130c11;
+  --zarrar-bg-inset: #08050a;
+  --zarrar-bg-hover: #1c1116;
+  --zarrar-bg-selected: #26141b;
+
+  /* Glass panels sit above the grid texture; alpha keeps the texture readable. */
+  --zarrar-glass: rgb(26 13 17 / 74%);
+  --zarrar-glass-strong: rgb(26 13 17 / 92%);
+  --zarrar-glass-blur: 12px;
+
+  /*
+   * Brand colour — admin build.
+   *
+   * Named `--zarrar-cyan-*` for historical reasons (the token names haven't
+   * changed since the original cyan build), but the values are the admin
+   * red now. This is deliberate: every admin component reads these names,
+   * so re-skinning the platform is still "edit this block only" rather than
+   * a rename sweep. `--zarrar-violet-*` plays the same role for the amber
+   * secondary accent.
+   */
+  --zarrar-cyan: #e33a3a;
+  --zarrar-cyan-bright: #ff6b6b;
+  --zarrar-cyan-dim: #7f1616;
+  --zarrar-blue: #3b82f6;
+  --zarrar-blue-bright: #60a5fa;
+  --zarrar-violet: #f0a63a;
+  --zarrar-violet-bright: #ffc266;
+  --zarrar-magenta: #d946ef;
+
+  /* Primary operational colour — used for focus, active nav and key actions. */
+  --zarrar-primary: var(--zarrar-cyan);
+  --zarrar-secondary: var(--zarrar-violet);
+
+  /*
+   * Mantine's OWN variables, admin scope.
+   *
+   * The comment above claims `--zarrar-*` "never collides with Mantine's own
+   * `--mantine-*` variables, which remain in use" — that was true when this
+   * file only had to cover bespoke ZARRAR components. It's the reason plain
+   * Mantine components used without an explicit `color` prop (Button,
+   * ActionIcon defaults, Menu, Modal, Popover, NavLink active states) were
+   * still rendering the global teal `'brand'` theme from
+   * `utils/ThemeOverride.ts` even after every other admin surface went red:
+   * those components read Mantine's variables, not ours. Mirrors the same
+   * override player already does under `body.bq-player` in
+   * `styles/player/mantine.css` — that block has higher CSS specificity
+   * (`body.bq-player` beats a bare `:root`), so setting these here is safe
+   * and never leaks into player.
+   */
+  --mantine-primary-color-filled: var(--zarrar-cyan);
+  --mantine-primary-color-filled-hover: var(--zarrar-cyan-bright);
+  --mantine-primary-color-light: rgb(227 58 58 / 14%);
+  --mantine-primary-color-light-hover: rgb(227 58 58 / 22%);
+  --mantine-primary-color-light-color: var(--zarrar-cyan);
+
+  --mantine-color-body: var(--zarrar-bg-panel);
+  --mantine-color-text: var(--zarrar-text-primary);
+  --mantine-color-dimmed: var(--zarrar-text-muted);
+  --mantine-color-anchor: var(--zarrar-cyan);
+
+  --mantine-color-default: var(--zarrar-bg-elevated);
+  --mantine-color-default-hover: var(--zarrar-bg-hover);
+  --mantine-color-default-color: var(--zarrar-text-primary);
+  --mantine-color-default-border: rgb(180 90 90 / 18%);
+
+  --mantine-color-dark-0: var(--zarrar-text-primary);
+  --mantine-color-dark-1: var(--zarrar-text-secondary);
+  --mantine-color-dark-2: var(--zarrar-text-muted);
+  --mantine-color-dark-3: var(--zarrar-text-faint);
+  --mantine-color-dark-4: #4a2a2f;
+  --mantine-color-dark-5: var(--zarrar-bg-hover);
+  --mantine-color-dark-6: var(--zarrar-bg-elevated);
+  --mantine-color-dark-7: var(--zarrar-bg-panel);
+  --mantine-color-dark-8: var(--zarrar-bg-secondary);
+  --mantine-color-dark-9: var(--zarrar-bg-base);
+
+  /* ------------------------------------------------------------- status hues */
+  --zarrar-success: #22c55e;
+  --zarrar-success-dim: #15803d;
+  --zarrar-warning: #f59e0b;
+  --zarrar-warning-dim: #b45309;
+  --zarrar-critical: #ef4444;
+  --zarrar-critical-dim: #b91c1c;
+  --zarrar-info: var(--zarrar-blue);
+
+  /* Difficulty scale — ordered, and never the only signal for difficulty. */
+  --zarrar-difficulty-easy: #22c55e;
+  --zarrar-difficulty-medium: #eab308;
+  --zarrar-difficulty-hard: #f97316;
+  --zarrar-difficulty-expert: #ef4444;
+  --zarrar-difficulty-insane: #d946ef;
+
+  /* --------------------------------------------------------------- category */
+  --zarrar-cat-web: #38bdf8;
+  --zarrar-cat-pwn: #f43f5e;
+  --zarrar-cat-crypto: #2dd4bf;
+  --zarrar-cat-reverse: #a78bfa;
+  --zarrar-cat-forensics: #60a5fa;
+  --zarrar-cat-misc: #94a3b8;
+  --zarrar-cat-osint: #4ade80;
+  --zarrar-cat-stego: #e879f9;
+  --zarrar-cat-hardware: #fb923c;
+  --zarrar-cat-mobile: #facc15;
+  --zarrar-cat-blockchain: #f59e0b;
+  --zarrar-cat-ai: #c084fc;
+  --zarrar-cat-pentest: #fb7185;
+
+  /* ------------------------------------------------------------------ text */
+  --zarrar-text-primary: #e8eefc;
+  --zarrar-text-secondary: #a3b1cc;
+  --zarrar-text-muted: #6b7a99;
+  --zarrar-text-faint: #45526b;
+  --zarrar-text-inverse: #05070f;
+  --zarrar-text-on-accent: #04121a;
+
+  /* ---------------------------------------------------------------- borders */
+  --zarrar-border: rgb(180 90 90 / 18%);
+  --zarrar-border-strong: rgb(180 90 90 / 32%);
+  --zarrar-border-accent: rgb(227 58 58 / 45%);
+  --zarrar-border-subtle: rgb(180 90 90 / 10%);
+
+  /* ---------------------------------------------------------------- shadows */
+  --zarrar-shadow-sm: 0 1px 2px rgb(0 0 0 / 40%);
+  --zarrar-shadow-md: 0 4px 12px rgb(0 0 0 / 45%);
+  --zarrar-shadow-lg: 0 12px 32px rgb(0 0 0 / 55%);
+  --zarrar-shadow-panel: 0 2px 16px rgb(0 0 0 / 35%);
+
+  /*
+   * Glow is a scale, not a free-for-all. Levels 1-2 are for resting UI; level 3
+   * is reserved for a single focal element per screen. Low-energy mode zeroes
+   * every level, which is why components must use these rather than their own
+   * box-shadows.
+   */
+  --zarrar-glow-1: 0 0 8px rgb(227 58 58 / 22%);
+  --zarrar-glow-2: 0 0 16px rgb(227 58 58 / 32%);
+  --zarrar-glow-3: 0 0 28px rgb(227 58 58 / 42%);
+  --zarrar-glow-violet: 0 0 16px rgb(240 166 58 / 30%);
+  --zarrar-glow-success: 0 0 12px rgb(34 197 94 / 30%);
+  --zarrar-glow-critical: 0 0 12px rgb(239 68 68 / 30%);
+
+  /* ------------------------------------------------------------ interaction */
+  --zarrar-focus-ring: 0 0 0 2px var(--zarrar-bg-base), 0 0 0 4px var(--zarrar-cyan);
+  --zarrar-focus-ring-inset: inset 0 0 0 2px var(--zarrar-cyan);
+  --zarrar-disabled-opacity: 0.45;
+
+  /* ----------------------------------------------------------------- radius */
+  --zarrar-radius-xs: 3px;
+  --zarrar-radius-sm: 5px;
+  --zarrar-radius-md: 8px;
+  --zarrar-radius-lg: 12px;
+  --zarrar-radius-xl: 16px;
+
+  /* ---------------------------------------------------------------- spacing */
+  --zarrar-space-1: 4px;
+  --zarrar-space-2: 8px;
+  --zarrar-space-3: 12px;
+  --zarrar-space-4: 16px;
+  --zarrar-space-5: 24px;
+  --zarrar-space-6: 32px;
+  --zarrar-space-7: 48px;
+  --zarrar-space-8: 64px;
+
+  /* -------------------------------------------------------------- typography
+   * Three roles: display for page titles, mono for technical data, sans for
+   * everything a user actually reads. Sizes start at 13px — the reference art
+   * uses smaller text, but it fails at 100% zoom on a real monitor.
+   */
+  --zarrar-font-display: 'Chakra Petch', 'Rajdhani', 'Segoe UI', system-ui, sans-serif;
+  --zarrar-font-mono: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, 'Cascadia Code', monospace;
+  --zarrar-font-sans:
+    'Inter', -apple-system, blinkmacsystemfont, 'Segoe UI', roboto, 'Helvetica Neue', arial, sans-serif;
+
+  --zarrar-text-2xs: 0.75rem; /* 12px — badges and dense table meta only */
+  --zarrar-text-xs: 0.8125rem; /* 13px — smallest text permitted for prose */
+  --zarrar-text-sm: 0.875rem; /* 14px */
+  --zarrar-text-base: 0.9375rem; /* 15px — body default */
+  --zarrar-text-md: 1rem; /* 16px */
+  --zarrar-text-lg: 1.125rem; /* 18px */
+  --zarrar-text-xl: 1.375rem; /* 22px */
+  --zarrar-text-2xl: 1.75rem; /* 28px */
+  --zarrar-text-3xl: 2.25rem; /* 36px */
+  --zarrar-text-4xl: 3rem; /* 48px */
+
+  --zarrar-tracking-wide: 0.06em;
+  --zarrar-tracking-wider: 0.12em;
+  --zarrar-tracking-widest: 0.2em;
+
+  --zarrar-leading-tight: 1.2;
+  --zarrar-leading-normal: 1.55;
+  --zarrar-leading-relaxed: 1.7;
+
+  /* ----------------------------------------------------------------- motion */
+  --zarrar-duration-instant: 80ms;
+  --zarrar-duration-fast: 150ms;
+  --zarrar-duration-normal: 250ms;
+  --zarrar-duration-slow: 400ms;
+  --zarrar-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --zarrar-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* --------------------------------------------------------------- textures */
+  --zarrar-grid-line: rgb(210 90 90 / 7%);
+  --zarrar-grid-size: 40px;
+  --zarrar-scanline-opacity: 0.025;
+
+  /* ----------------------------------------------------------------- layout */
+  --zarrar-sidebar-width: 232px;
+  --zarrar-sidebar-width-collapsed: 68px;
+  --zarrar-topbar-height: 64px;
+
+  /*
+   * The point at which the sidebar becomes the mobile drawer. 48em is 768px at
+   * the default root size and is deliberately the same value as Mantine's `sm`
+   * breakpoint, so `useIsMobile()`, AppShell's own navbar collapse and the shell
+   * media queries all switch on the same pixel. Media queries cannot read custom
+   * properties, so the modules use `$mantine-breakpoint-sm` (postcss-simple-vars)
+   * rather than this token; it is declared here so the value is documented in one
+   * place with the rest of the layout scale.
+   */
+  --zarrar-breakpoint-shell: 48em;
+  --zarrar-content-max: 1800px;
+  --zarrar-z-sidebar: 100;
+  --zarrar-z-topbar: 90;
+  --zarrar-z-drawer: 200;
+  --zarrar-z-modal: 300;
+  --zarrar-z-toast: 400;
+}
+
+/*
+ * Low-energy mode.
+ *
+ * A CTF runs for days and participants keep the scoreboard open the whole time.
+ * This flattens every glow, freezes decorative animation and drops the textures,
+ * which measurably reduces GPU work on laptops. It is a user preference, stored
+ * server-side where the user is authenticated, so it follows them across devices.
+ */
+:root[data-zarrar-energy='low'] {
+  --zarrar-glow-1: none;
+  --zarrar-glow-2: none;
+  --zarrar-glow-3: none;
+  --zarrar-glow-violet: none;
+  --zarrar-glow-success: none;
+  --zarrar-glow-critical: none;
+  --zarrar-glass-blur: 0px;
+  --zarrar-glass: rgb(26 13 17 / 96%);
+  --zarrar-glass-strong: rgb(26 13 17 / 100%);
+  --zarrar-scanline-opacity: 0;
+  --zarrar-grid-line: transparent;
+}
+
+:root[data-zarrar-energy='low'] *,
+:root[data-zarrar-energy='low'] *::before,
+:root[data-zarrar-energy='low'] *::after {
+  animation-play-state: paused !important;
+}
+
+/*
+ * Reduced motion.
+ *
+ * Honours the OS setting and an explicit in-app toggle. Transitions are reduced
+ * to near-zero rather than removed, so state changes are still perceivable
+ * instead of jumping without explanation.
+ */
+:root[data-zarrar-motion='reduced'] *,
+:root[data-zarrar-motion='reduced'] *::before,
+:root[data-zarrar-motion='reduced'] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-zarrar-motion='full']) *,
+  :root:not([data-zarrar-motion='full']) *::before,
+  :root:not([data-zarrar-motion='full']) *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/*
+ * Forced-colours (Windows High Contrast).
+ *
+ * The whole aesthetic depends on colour, so in forced-colours mode we hand
+ * control to the OS palette rather than fighting it, and make borders explicit
+ * so panel boundaries survive.
+ */
+@media (forced-colors: active) {
+  :root {
+    --zarrar-border: canvastext;
+    --zarrar-border-strong: canvastext;
+    --zarrar-border-accent: highlight;
+    --zarrar-glow-1: none;
+    --zarrar-glow-2: none;
+    --zarrar-glow-3: none;
+  }
+}

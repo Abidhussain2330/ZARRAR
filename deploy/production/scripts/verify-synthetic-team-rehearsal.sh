@@ -5,34 +5,34 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=common.sh
 source "$SCRIPT_DIR/common.sh"
 
-: "${BURAQ_REHEARSAL_GAME_ID:?BURAQ_REHEARSAL_GAME_ID is required}"
-: "${BURAQ_REHEARSAL_PARTICIPATION_A_ID:?BURAQ_REHEARSAL_PARTICIPATION_A_ID is required}"
-: "${BURAQ_REHEARSAL_PARTICIPATION_B_ID:?BURAQ_REHEARSAL_PARTICIPATION_B_ID is required}"
-: "${BURAQ_REHEARSAL_SINCE_UTC:?BURAQ_REHEARSAL_SINCE_UTC is required, for example 2026-09-13T00:00:00Z}"
+: "${ZARRAR_REHEARSAL_GAME_ID:?ZARRAR_REHEARSAL_GAME_ID is required}"
+: "${ZARRAR_REHEARSAL_PARTICIPATION_A_ID:?ZARRAR_REHEARSAL_PARTICIPATION_A_ID is required}"
+: "${ZARRAR_REHEARSAL_PARTICIPATION_B_ID:?ZARRAR_REHEARSAL_PARTICIPATION_B_ID is required}"
+: "${ZARRAR_REHEARSAL_SINCE_UTC:?ZARRAR_REHEARSAL_SINCE_UTC is required, for example 2026-09-13T00:00:00Z}"
 
-for value in "$BURAQ_REHEARSAL_GAME_ID" "$BURAQ_REHEARSAL_PARTICIPATION_A_ID" \
-    "$BURAQ_REHEARSAL_PARTICIPATION_B_ID"; do
+for value in "$ZARRAR_REHEARSAL_GAME_ID" "$ZARRAR_REHEARSAL_PARTICIPATION_A_ID" \
+    "$ZARRAR_REHEARSAL_PARTICIPATION_B_ID"; do
     [[ "$value" =~ ^[1-9][0-9]*$ ]] || {
         printf 'Game and participation identifiers must be positive integers.\n' >&2
         exit 64
     }
 done
-[[ "$BURAQ_REHEARSAL_PARTICIPATION_A_ID" != "$BURAQ_REHEARSAL_PARTICIPATION_B_ID" ]] || {
+[[ "$ZARRAR_REHEARSAL_PARTICIPATION_A_ID" != "$ZARRAR_REHEARSAL_PARTICIPATION_B_ID" ]] || {
     printf 'Synthetic teams must use different participations.\n' >&2
     exit 64
 }
-[[ "$BURAQ_REHEARSAL_SINCE_UTC" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T ]] || {
-    printf 'BURAQ_REHEARSAL_SINCE_UTC must be an ISO-8601 UTC timestamp.\n' >&2
+[[ "$ZARRAR_REHEARSAL_SINCE_UTC" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T ]] || {
+    printf 'ZARRAR_REHEARSAL_SINCE_UTC must be an ISO-8601 UTC timestamp.\n' >&2
     exit 64
 }
 
 scalar() {
     compose exec -T postgres psql --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" \
         --tuples-only --no-align --set ON_ERROR_STOP=1 \
-        --set game_id="$BURAQ_REHEARSAL_GAME_ID" \
-        --set team_a="$BURAQ_REHEARSAL_PARTICIPATION_A_ID" \
-        --set team_b="$BURAQ_REHEARSAL_PARTICIPATION_B_ID" \
-        --set since_utc="$BURAQ_REHEARSAL_SINCE_UTC" \
+        --set game_id="$ZARRAR_REHEARSAL_GAME_ID" \
+        --set team_a="$ZARRAR_REHEARSAL_PARTICIPATION_A_ID" \
+        --set team_b="$ZARRAR_REHEARSAL_PARTICIPATION_B_ID" \
+        --set since_utc="$ZARRAR_REHEARSAL_SINCE_UTC" \
         --command "$1"
 }
 
@@ -77,4 +77,4 @@ fi
 require_count 'Cross-team risk evidence' 1 \
     'SELECT COUNT(*) FROM "SocRiskEvidence" e JOIN "SocRiskCases" r ON r."Id" = e."RiskCaseId" JOIN "Participations" a ON a."TeamId" = r."PrimaryTeamId" LEFT JOIN "Participations" b ON b."TeamId" = r."RelatedTeamId" AND b."GameId" = a."GameId" WHERE r."GameId" = :'"'"'game_id'"'"'::int AND e."OccurredAtUtc" >= :'"'"'since_utc'"'"'::timestamptz AND a."Id" IN (:'"'"'team_a'"'"'::int, :'"'"'team_b'"'"'::int) AND b."Id" IN (:'"'"'team_a'"'"'::int, :'"'"'team_b'"'"'::int);'
 
-printf 'Synthetic-team rehearsal passed for game %s.\n' "$BURAQ_REHEARSAL_GAME_ID"
+printf 'Synthetic-team rehearsal passed for game %s.\n' "$ZARRAR_REHEARSAL_GAME_ID"

@@ -1,0 +1,138 @@
+/**
+ * ZARRAR V2 Authenticated Shell
+ *
+ * This stylesheet scopes the presentation of the shell only.
+ * It strictly avoids descendant selectors like `button` or `input` to ensure
+ * Mantine components inside the shell remain completely unaffected until their
+ * specific UI components are migrated in later stages.
+ *
+ * This is the one file in the old "zarrar-v2" family that's still load-bearing
+ * — its selectors genuinely match classes ZarrarShell/ZarrarTopBar apply
+ * (`.zarrar-v2-app`, `.zarrar-shell-*`). Its siblings (`zarrar-v2.css`,
+ * `zarrar-v2-ui.css`, `zarrar-v2-auth.css`) were removed: none of their
+ * selectors ever matched a real DOM element (confirmed — `zarrar-v2.css` had
+ * zero references to `.zarrar-v2-app`, the class actually applied; no
+ * script or component ever created the nodes `zarrar-v2-ui.css` targeted).
+ * Don't assume a future "zarrar-v2*" file is load-bearing just because this
+ * one is — check for real class-name matches first.
+ */
+
+.zarrar-v2-app {
+
+
+
+
+
+
+
+
+  
+  background-color: var(--zarrar-bg);
+  background-image: 
+    radial-gradient(circle at top right, rgba(240, 166, 58, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at bottom left, rgba(227, 58, 58, 0.05) 0%, transparent 40%);
+  background-attachment: fixed;
+  color: var(--zarrar-silver);
+  font-family: var(--zarrar-font-sans, system-ui, sans-serif);
+  min-height: 100vh;
+}
+
+/* Base resets for the shell structure only */
+.zarrar-v2-app .zarrar-shell-link {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.zarrar-v2-app .zarrar-shell-link:hover {
+  color: var(--zarrar-cyan);
+}
+
+/* 
+ * Top Bar 
+ */
+.zarrar-shell-topbar {
+  background: rgba(3, 5, 10, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--zarrar-border);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.zarrar-shell-user-menu {
+  border: 1px solid var(--zarrar-border);
+  background: rgba(4, 6, 14, 0.6);
+  border-radius: var(--zarrar-radius-md, 8px);
+  transition: all 0.2s ease;
+}
+.zarrar-shell-user-menu:hover {
+  background: rgba(4, 6, 14, 0.9);
+  border-color: var(--zarrar-cyan);
+}
+
+/*
+ * Sidebar
+ */
+.zarrar-shell-sidebar {
+  background: rgba(3, 5, 10, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-right: 1px solid var(--zarrar-border);
+}
+
+.zarrar-shell-nav-item {
+  color: var(--zarrar-muted);
+  border-radius: var(--zarrar-radius-md, 8px);
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+.zarrar-shell-nav-item:hover {
+  background: rgba(227, 58, 58, 0.08);
+  color: var(--zarrar-silver);
+}
+.zarrar-shell-nav-item[data-active] {
+  background: rgba(227, 58, 58, 0.12);
+  color: var(--zarrar-cyan);
+  border-color: var(--zarrar-border);
+  box-shadow: inset 0 0 10px rgba(227, 58, 58, 0.05);
+}
+
+/* 
+ * Mobile Nav 
+ */
+.zarrar-shell-drawer {
+  background: rgba(3, 5, 10, 0.4) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-right: 1px solid var(--zarrar-border);
+}
+
+/*
+ * Buttons (Shell specific)
+ */
+.zarrar-shell-icon-btn {
+  color: var(--zarrar-muted);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--zarrar-radius-md, 8px);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.zarrar-shell-icon-btn:hover {
+  background: rgba(227, 58, 58, 0.08);
+  color: var(--zarrar-cyan);
+  border-color: var(--zarrar-border);
+}
+
+/*
+ * Preserve Mantine's structural offsets when this compatibility stylesheet is
+ * loaded after the component styles. A `padding: 0` shorthand here used to
+ * erase both offsets, placing page controls underneath the fixed top bar and
+ * the desktop sidebar.
+ */
+.zarrar-shell-main-content {
+  padding-block-start: var(--app-shell-header-offset, var(--zarrar-topbar-height));
+  padding-inline-start: var(--app-shell-navbar-offset, 0rem);
+}

@@ -5,7 +5,7 @@ umask 077
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 DEPLOY_DIR="$(cd -- "$SCRIPT_DIR/.." && pwd)"
-ENV_FILE="${BURAQ_ENV_FILE:-$DEPLOY_DIR/.env.production}"
+ENV_FILE="${ZARRAR_ENV_FILE:-$DEPLOY_DIR/.env.production}"
 COMPOSE_FILE="$DEPLOY_DIR/compose.yaml"
 
 [[ -f "$ENV_FILE" ]] || {
@@ -18,9 +18,9 @@ set -a
 source "$ENV_FILE"
 set +a
 
-: "${COMPOSE_PROJECT_NAME:=buraq}"
-: "${BURAQ_VOLUME_PREFIX:=buraq}"
-: "${BURAQ_MC_IMAGE:=buraq-minio-client:77f82e1}"
+: "${COMPOSE_PROJECT_NAME:=zarrar}"
+: "${ZARRAR_VOLUME_PREFIX:=zarrar}"
+: "${ZARRAR_MC_IMAGE:=zarrar-minio-client:77f82e1}"
 : "${POSTGRES_DB:?POSTGRES_DB is required}"
 : "${POSTGRES_USER:?POSTGRES_USER is required}"
 : "${REDIS_PASSWORD:?REDIS_PASSWORD is required}"
@@ -43,8 +43,8 @@ set +a
     exit 64
 }
 
-[[ "$BURAQ_VOLUME_PREFIX" =~ ^[A-Za-z0-9][A-Za-z0-9_.-]*$ ]] || {
-    printf 'BURAQ_VOLUME_PREFIX contains unsafe characters.\n' >&2
+[[ "$ZARRAR_VOLUME_PREFIX" =~ ^[A-Za-z0-9][A-Za-z0-9_.-]*$ ]] || {
+    printf 'ZARRAR_VOLUME_PREFIX contains unsafe characters.\n' >&2
     exit 64
 }
 
@@ -57,5 +57,5 @@ data_network() {
 }
 
 volume_name() {
-    printf '%s_%s' "$BURAQ_VOLUME_PREFIX" "$1"
+    printf '%s_%s' "$ZARRAR_VOLUME_PREFIX" "$1"
 }

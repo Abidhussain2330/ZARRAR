@@ -1,0 +1,27 @@
+/*
+ * Dashboard content — ops-console layout.
+ *
+ * No hero: the greeting/status-card treatment this page used to have is
+ * gone deliberately (per the console redesign — the persistent topbar now
+ * carries live vitals instead). This file only holds the dense grid rows
+ * and their internals.
+ */
+
+/* Event breakdown — top participants / category stats, side by side once there's room. */
+.breakdownPicker { display: flex; align-items: center; gap: var(--zarrar-space-3); }
+.breakdownPanes { display: grid; min-width: 0; gap: var(--zarrar-space-4); grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 62em) { .breakdownPanes { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* Dashboard content rows — dense, side-by-side panels instead of one stacked column. */
+.dashRowWide { display: grid; min-width: 0; gap: var(--zarrar-space-4); grid-template-columns: minmax(0, 1fr); margin-block: var(--zarrar-space-4); }
+.dashRowEven { display: grid; min-width: 0; gap: var(--zarrar-space-4); grid-template-columns: minmax(0, 1fr); margin-block: var(--zarrar-space-4); }
+@media (min-width: 68em) {
+  .dashRowWide { grid-template-columns: 1.7fr 1fr; }
+  .dashRowEven { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.pulseRows { display: flex; flex-direction: column; padding: var(--zarrar-space-2) var(--zarrar-space-5); }
+.pulseRow { display: flex; align-items: center; justify-content: space-between; padding-block: var(--zarrar-space-3); border-block-end: 1px solid var(--zarrar-border); font-size: var(--zarrar-text-sm); color: var(--zarrar-text-secondary); }
+.pulseRow:last-child { border-block-end: none; }
+.pulseRow strong { color: var(--zarrar-text-primary); font-family: var(--zarrar-font-mono); font-weight: 600; }
+.pulseActions { display: flex; flex-direction: column; gap: var(--zarrar-space-2); padding: var(--zarrar-space-4) var(--zarrar-space-5); border-block-start: 1px solid var(--zarrar-border); }
