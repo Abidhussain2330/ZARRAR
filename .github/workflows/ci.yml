@@ -1,0 +1,67 @@
+name: ZARRAR CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: zarrar-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Backend tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+          cache: true
+          cache-dependency-path: |
+            **/*.csproj
+            Directory.Packages.props
+      - run: dotnet restore ZARRAR.sln
+      - run: dotnet test src/ZARRAR.Test/ZARRAR.Test.csproj --configuration Release -p:SkipFrontendBuild=true --no-restore --verbosity normal
+
+  frontend:
+    name: Frontend tests and build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/ZARRAR/ClientApp
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.14.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: src/ZARRAR/ClientApp/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: node --test tests/*.test.mts
+      - run: pnpm run build
+
+  configuration:
+    name: Deployment configuration
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose --env-file deploy/production/.env.production.example -f deploy/production/compose.yaml -f deploy/production/compose.local.yaml config --quiet
+
+  container:
+    name: Production container build
+    needs: [backend, frontend, configuration]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - run: docker build --file deploy/production/Dockerfile --tag zarrar:ci .
